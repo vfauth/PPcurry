@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PPcurry"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="PPcurry" Height="350" Width="525">
+    <DockPanel Name="MainPanel">
+        <StackPanel Name="ComponentsPanel" DockPanel.Dock="Left">
+            <Image Name="ComponentResistor" VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png"/>
+        </StackPanel>
+        <Grid Name="MainGrid" DockPanel.Dock="Right" />
+    </DockPanel>
 </Window>
