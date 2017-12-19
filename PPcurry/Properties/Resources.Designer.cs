@@ -63,16 +63,6 @@ namespace PPcurry.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ac_voltage_source {
-            get {
-                object obj = ResourceManager.GetObject("ac_voltage_source", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap amplifier {
             get {
                 object obj = ResourceManager.GetObject("amplifier", resourceCulture);
@@ -83,79 +73,9 @@ namespace PPcurry.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap and {
-            get {
-                object obj = ResourceManager.GetObject("and", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap battery {
-            get {
-                object obj = ResourceManager.GetObject("battery", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap capacitor {
             get {
                 object obj = ResourceManager.GetObject("capacitor", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap cell {
-            get {
-                object obj = ResourceManager.GetObject("cell", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap current_source {
-            get {
-                object obj = ResourceManager.GetObject("current_source", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap dc_voltage_source {
-            get {
-                object obj = ResourceManager.GetObject("dc_voltage_source", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap dependant_current_source {
-            get {
-                object obj = ResourceManager.GetObject("dependant_current_source", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap dependant_voltage_source {
-            get {
-                object obj = ResourceManager.GetObject("dependant_voltage_source", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -293,16 +213,6 @@ namespace PPcurry.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap not {
-            get {
-                object obj = ResourceManager.GetObject("not", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap npn {
             get {
                 object obj = ResourceManager.GetObject("npn", resourceCulture);
@@ -326,16 +236,6 @@ namespace PPcurry.Properties {
         internal static System.Drawing.Bitmap opampl {
             get {
                 object obj = ResourceManager.GetObject("opampl", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap or {
-            get {
-                object obj = ResourceManager.GetObject("or", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -606,16 +506,6 @@ namespace PPcurry.Properties {
         internal static System.Drawing.Bitmap varicap {
             get {
                 object obj = ResourceManager.GetObject("varicap", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap xor {
-            get {
-                object obj = ResourceManager.GetObject("xor", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

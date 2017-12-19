@@ -10,13 +10,52 @@
     <DockPanel Name="MainPanel" >
         <ScrollViewer HorizontalAlignment="Right" >
             <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" >
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" Tag="resistor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/inductor.png" Margin="10" Tag="inductor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/capacitor.png" Margin="10" Tag="capacitor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/photoresistor.png" Margin="10" Tag="photoresistor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/diode.png" Margin="10" Tag="diode" MouseLeftButtonUp="ComponentSelectedFromPanel" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/not.png" Margin="10" Tag="not" MouseLeftButtonUp="ComponentSelectedFromPanel" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/lamp.png" Margin="10" Tag="lamp" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/amplifiers/amplifier.png" Tag="amplifiers/amplifier" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/amplifiers/opampl.png" Tag="amplifiers/opampl" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/capacitors/capacitor.png" Tag="capacitors/capacitor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/capacitors/feed-through_capacitor.png" Tag="capacitors/feed-through_capacitor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/capacitors/polarized_capacitor.png" Tag="capacitors/polarized_capacitor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/capacitors/variable_capacitor.png" Tag="capacitors/variable_capacitor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/diac.png" Tag="diodes/diac" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/diode.png" Tag="diodes/diode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/diode1.png" Tag="diodes/diode1" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/led.png" Tag="diodes/led" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/pentode.png" Tag="diodes/pentode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/photodiode.png" Tag="diodes/photodiode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/pin_diode.png" Tag="diodes/pin_diode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/schottky_diode.png" Tag="diodes/schottky_diode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/scr.png" Tag="diodes/scr" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/tetrode.png" Tag="diodes/tetrode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/triac.png" Tag="diodes/triac" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/triode.png" Tag="diodes/triode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/tunnel_diode.png" Tag="diodes/tunnel_diode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/varicap.png" Tag="diodes/varicap" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diodes/zener_diode.png" Tag="diodes/zener_diode" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/inductors/inductor.png" Tag="inductors/inductor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/inductors/tapped_inductor.png" Tag="inductors/tapped_inductor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/inductors/variable_inductor.png" Tag="inductors/variable_inductor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/others/ground.png" Tag="others/ground" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/others/lamp.png" Tag="others/lamp" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/resistors/photoresistor.png" Tag="resistors/photoresistor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/resistors/potentiometer.png" Tag="resistors/potentiometer" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/resistors/resistor.png" Tag="resistors/resistor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/resistors/thermistor.png" Tag="resistors/thermistor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/resistors/variable_resistor.png" Tag="resistors/variable_resistor" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/switches/momentary_switch_normally_closed.png" Tag="switches/momentary_switch_normally_closed" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/switches/momentary_switch_normally_open.png" Tag="switches/momentary_switch_normally_open" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/switches/spdt.png" Tag="switches/spdt" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/switches/spst_closed.png" Tag="switches/spst_closed" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/switches/spst_open.png" Tag="switches/spst_open" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/njfet.png" Tag="transistors/njfet" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/nmosfet_depletion.png" Tag="transistors/nmosfet_depletion" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/nmosfet_enhancement.png" Tag="transistors/nmosfet_enhancement" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/npn.png" Tag="transistors/npn" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/npn_darlington.png" Tag="transistors/npn_darlington" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/pjfet.png" Tag="transistors/pjfet" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/pmosfet_depletion.png" Tag="transistors/pmosfet_depletion" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/pmosfet_enhancement.png" Tag="transistors/pmosfet_enhancement" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/pnp.png" Tag="transistors/pnp" />
+                <Image VerticalAlignment="Top" Width="100" Margin="10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/transistors/pnp_darlington.png" Tag="transistors/pnp_darlington" />
             </StackPanel>
         </ScrollViewer>
         <Rectangle Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="3" Fill="#FF051034"/>

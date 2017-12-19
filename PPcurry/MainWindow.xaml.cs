@@ -23,7 +23,7 @@ namespace PPcurry
     {
         // Attributes
 
-        private String ComponentToAdd;
+        private String PathToComponentToAdd;
         private List<Component> ComponentsList;
 
 
@@ -35,7 +35,7 @@ namespace PPcurry
         public MainWindow()
         {
             InitializeComponent();
-            ComponentToAdd = "";
+            PathToComponentToAdd = "";
             ComponentsList = new List<Component>();
         }
 
@@ -44,22 +44,22 @@ namespace PPcurry
 
         private void ComponentSelectedFromPanel(object sender, MouseButtonEventArgs e)
         {
-            this.ComponentToAdd = (String)((Image)sender).Tag;
+            this.PathToComponentToAdd = (String)((Image)sender).Tag;
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ComponentToAdd != "")
+            if (PathToComponentToAdd != "")
             {
                 Image NewImage = new Image();
-                NewImage.Source = new BitmapImage(new Uri($"pack://siteoforigin:,,,/Resources/{ComponentToAdd}.png"));
+                NewImage.Source = new BitmapImage(new Uri($"pack://siteoforigin:,,,/Resources/{PathToComponentToAdd}.png"));
                 NewImage.Height = 100; // TO BE IMPROVED: must not be fixed
                 NewImage.Width = 100;
                 NewImage.SetValue(Canvas.LeftProperty, (e.GetPosition(MainCanvas)).X); // Place the component at the click position, relative to the canvas
                 NewImage.SetValue(Canvas.TopProperty, (e.GetPosition(MainCanvas)).Y);
                 MainCanvas.Children.Add(NewImage);
 
-                this.ComponentToAdd = ""; // TO BE IMPROVED // Reinitialize the chosen component; must be tied to configuration (for serial insertion)
+                this.PathToComponentToAdd = ""; // TO BE IMPROVED // Reinitialize the chosen component; must be tied to configuration (for serial insertion)
             }
         }
     }
