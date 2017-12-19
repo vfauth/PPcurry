@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Component.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -102,6 +103,168 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\resistor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ac_voltage_source.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\amplifier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\and.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\battery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\current_source.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dc_voltage_source.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dependant_current_source.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dependant_voltage_source.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\diac.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\diode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\diode1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\feed-through_capacitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\led.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\momentary_switch_normally_closed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\momentary_switch_normally_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\njfet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nmosfet_depletion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nmosfet_enhancement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\not.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\npn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\npn_darlington.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\opampl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\or.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pentode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\photodiode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\photoresistor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pin_diode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pjfet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pmosfet_depletion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pmosfet_enhancement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pnp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pnp_darlington.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\polarized_capacitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\potentiometer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\schottky_diode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\spdt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\spst_closed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\spst_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tapped_inductor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tetrode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\thermistor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\triac.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\triode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tunnel_diode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\variable_capacitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\variable_inductor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\variable_resistor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\varicap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\zener_diode.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

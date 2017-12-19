@@ -5,29 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PPcurry"
         mc:Ignorable="d"
-        Title="PPcurry" Height="350" Width="525">
+        Title="PPcurry" >
 
-    <DockPanel Name="MainPanel">
+    <DockPanel Name="MainPanel" >
         <ScrollViewer HorizontalAlignment="Right" >
-            <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5">
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
-                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+            <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" >
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" Tag="resistor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/inductor.png" Margin="10" Tag="inductor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/capacitor.png" Margin="10" Tag="capacitor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/photoresistor.png" Margin="10" Tag="photoresistor" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/diode.png" Margin="10" Tag="diode" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/not.png" Margin="10" Tag="not" MouseLeftButtonUp="ComponentSelectedFromPanel" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/lamp.png" Margin="10" Tag="lamp" MouseLeftButtonUp="ComponentSelectedFromPanel" />
             </StackPanel>
         </ScrollViewer>
         <Rectangle Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="3" Fill="#FF051034"/>
 
-        <Grid Name="MainGrid" DockPanel.Dock="Right" />
+        <Canvas Name="MainCanvas" DockPanel.Dock="Right" Background="#00000000" MouseUp="MainCanvas_MouseUp" Height="Auto" Width="Auto" />
     </DockPanel>
 </Window>
