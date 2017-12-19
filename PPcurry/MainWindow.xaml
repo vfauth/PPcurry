@@ -6,10 +6,28 @@
         xmlns:local="clr-namespace:PPcurry"
         mc:Ignorable="d"
         Title="PPcurry" Height="350" Width="525">
+
     <DockPanel Name="MainPanel">
-        <StackPanel Name="ComponentsPanel" DockPanel.Dock="Left">
-            <Image Name="ComponentResistor" VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png"/>
-        </StackPanel>
+        <ScrollViewer HorizontalAlignment="Right" >
+            <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5">
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+                <Image VerticalAlignment="Top" Width="100" Source="pack://siteoforigin:,,,/Resources/resistor.png" Margin="10" />
+            </StackPanel>
+        </ScrollViewer>
+        <Rectangle Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="3" Fill="#FF051034"/>
+
         <Grid Name="MainGrid" DockPanel.Dock="Right" />
     </DockPanel>
 </Window>
