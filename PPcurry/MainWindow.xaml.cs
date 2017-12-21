@@ -23,7 +23,7 @@ namespace PPcurry
     {
         // Attributes
 
-        private String PathToComponentToAdd;
+        private String ComponentToAddTag;
         private List<Component> ComponentsList;
 
 
@@ -35,7 +35,7 @@ namespace PPcurry
         public MainWindow()
         {
             InitializeComponent();
-            PathToComponentToAdd = "";
+            ComponentToAddTag = "";
             ComponentsList = new List<Component>();
         }
 
@@ -44,22 +44,21 @@ namespace PPcurry
 
         private void ComponentSelectedFromPanel(object sender, MouseButtonEventArgs e)
         {
-            this.PathToComponentToAdd = (String)((Image)sender).Tag;
+            this.ComponentToAddTag = (String)((Image)sender).Tag;
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (PathToComponentToAdd != "")
+            if (ComponentToAddTag != "")
             {
-                Image NewImage = new Image();
-                NewImage.Source = new BitmapImage(new Uri($"pack://siteoforigin:,,,/Resources/{PathToComponentToAdd}.png"));
-                NewImage.Height = 100; // TO BE IMPROVED: must not be fixed
-                NewImage.Width = 100;
-                NewImage.SetValue(Canvas.LeftProperty, (e.GetPosition(MainCanvas)).X); // Place the component at the click position, relative to the canvas
-                NewImage.SetValue(Canvas.TopProperty, (e.GetPosition(MainCanvas)).Y);
-                MainCanvas.Children.Add(NewImage);
+                double X = (e.GetPosition(MainCanvas)).X; // Place the component at the click position, relative to the canvas
+                double Y = (e.GetPosition(MainCanvas)).Y;
+                Uri ImageUri = Component.GetComponentUri(ComponentToAddTag); // Get the default URI to the image
+                String Name = Component.GetComponentDefaultName(ComponentToAddTag); // Get the default component name
+                Component NewComponent = new Component(X, Y, ImageUri, Name, MainCanvas); // Create the component and display it
+                this.ComponentsList.Add(NewComponent);
 
-                this.PathToComponentToAdd = ""; // TO BE IMPROVED // Reinitialize the chosen component; must be tied to configuration (for serial insertion)
+                this.ComponentToAddTag = ""; // TO BE IMPROVED // Reinitialize the chosen component; must be tied to configuration (for serial insertion)
             }
         }
     }
