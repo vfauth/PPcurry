@@ -1,0 +1,59 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {french}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Introduction}{1}{chapter*.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{1}{chapter*.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{1}{chapter*.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{1}{chapter*.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {1}Montée en compétences : programmation d'un programme simple}{2}{chapter.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{2}{chapter.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.1}La dualité C\#/XAML}{2}{section.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{2}{section.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{2}{section.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{2}{section.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.2}Règles du jeu}{3}{section.1.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{3}{section.1.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.3}Implémentation}{3}{section.1.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.1}Le modèle MVC}{3}{subsection.1.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{3}{subsection.1.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.2}Le modèle}{3}{subsection.1.3.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{3}{subsection.1.3.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.3}Le contrôleur}{3}{subsection.1.3.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.4}La vue}{3}{subsection.1.3.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{L'interface graphique statique en XAML}{3}{subsection.1.3.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{L'interactivité en C\#}{3}{subsection.1.3.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {2}Cahier des charges}{5}{chapter.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.1}Test}{5}{section.2.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.1}Test2}{5}{subsection.2.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {3}Stage}{6}{chapter.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Conclusion}{7}{chapter*.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}{chapter*.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Glossaire}{8}{section*.7}

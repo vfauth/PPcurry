@@ -1,0 +1,30 @@
+\ifglsentryexists{IDE}{}%
+{%
+\gls@defglossaryentry{IDE}%
+{%
+name={EDIe},%
+sort={EDIe},%
+type={main},%
+first={EDIe},%
+firstplural={EDIes},%
+text={EDIe},%
+plural={EDIes},%
+description={L'environnement de développement intégré (IDE en anglais) est un logiciel permettant à la fois d'éditer du code et de le compiler. Il comprend souvent des outils simplifiant le développement, tel un débogueur.},%
+descriptionplural={L'environnement de développement intégré (IDE en anglais) est un logiciel permettant à la fois d'éditer du code et de le compiler. Il comprend souvent des outils simplifiant le développement, tel un débogueur.},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
