@@ -14,7 +14,7 @@
 	public const int CARD_Y = 200; // Height (in pixels) of every card
 
 
-	// Constructors
+	// Constructor
 
 	/// Create a graphical interface for the game and initialize the game itself
 	public Display(MainWindow mainWindow, int X, int Y)
