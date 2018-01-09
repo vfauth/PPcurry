@@ -19,57 +19,101 @@ using System.Diagnostics;
 
 namespace PPcurry
 {
-    class Component
+    public class Component : Image
     {
-        // Attributes
+        #region Attributes
 
-        private double[] Pos; // The position of the component on the grid
-		private Uri ComponentImageUri; // The path to the resource
-        private Image ComponentImage; // The Image object
+        private double[] Position; // The position of the component on the grid
 		private String ComponentName; // The component name
+        private bool IsDragged; // Whether thhe component is currently being dragged
+        private MainWindow MainWindow; // The main window in which is this component
+        #endregion
 
 
-        // Accessors/Mutators
+        #region Accessors/Mutators
 
-        public double[] GetPosition() => this.Pos;
-        public void SetPosition(double[] position) => this.Pos = position;
+        public double[] GetPosition() => this.Position;
+        public void SetPosition(double[] position) => this.Position = position;
 
         public String GetName() => this.ComponentName;
         public void SetName(String name)
         {
             this.ComponentName = name;
-            this.ComponentImage.ToolTip = name; // Update the tooltip
+            this.ToolTip = name; // Update the tooltip
         }
+        #endregion
 
 
-        // Constructors
+        #region Constructor
 
         /// <summary>
-        /// Add one component to the board.
+        /// Add one component to the board
         /// </summary>
-        /// <param name="x">The component abscissa.</param>
-        /// <param name="y">The component ordinate.</param>
+        /// <param name="x">The component abscissa</param>
+        /// <param name="y">The component ordinate</param>
+        /// <param name="imageUri">The URI to the image to display</param>
+        /// <param name="name">The component name</param>
+        /// <param name="canvas">The canvas on which to display the component</param>
         public Component(double x, double y, Uri imageUri, String name, Canvas canvas)
         {
             // Save attributes
-            this.Pos = new double[2] { x , y }; 
-            this.ComponentImageUri = imageUri;
+            this.Position = new double[2] { x , y };
             this.ComponentName = name;
+            this.MainWindow = (MainWindow)Window.GetWindow(canvas);
+            Debug.WriteLine(MainWindow);
 
-            // Create the image and display it
-            this.ComponentImage = new Image();
-            this.ComponentImage.Width = 100; /* TO BE IMPROVED: must not be fixed (implement zoom) */
-            this.ComponentImage.Height = 100;
-            this.ComponentImage.Margin = new Thickness(0);
-            this.ComponentImage.Source = new BitmapImage(imageUri);
-            this.ComponentImage.SetValue(Canvas.LeftProperty, x); 
-            this.ComponentImage.SetValue(Canvas.TopProperty, y);
-            canvas.Children.Add(this.ComponentImage); 
-            this.ComponentImage.ToolTip = name;
+            // Set the image attributes and display it
+            this.Width = 100; // Size /* TO BE IMPROVED: must not be fixed (implement zoom) */
+            this.Height = 100;
+            this.Source = new BitmapImage(imageUri); // Image to display
+            this.SetValue(Canvas.LeftProperty, x); // Position
+            this.SetValue(Canvas.TopProperty, y);
+            this.ToolTip = name;
+            this.MouseLeftButtonDown += Component_MouseLeftButtonDown;
+            this.MouseLeftButtonUp += Component_MouseLeftButtonUp;
+            this.MouseMove += Component_MouseMove;
+            canvas.Children.Add(this); // Add the component
+        }
+        #endregion
+
+
+        #region Methods
+
+        /// <summary>
+        /// When the component is left-clicked, he is dragged
+        /// </summary>
+        public void Component_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            IsDragged = true;
+            ((Component)sender).CaptureMouse();  // The cursor cannot quit the image
         }
 
+        /// <summary>
+        /// The dragging finishes when the component is released
+        /// </summary>
+        public void Component_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            IsDragged = false;
+            ((Component)sender).ReleaseMouseCapture(); // Cancel CaptureMouse()
+        }
 
-        // Methods
+        /// <summary>
+        /// This function manages the dragging of the component and is called for each move
+        /// </summary>
+        public void Component_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!IsDragged) return; // This function must do nothing if the component is not being dragged
+
+            Canvas MainCanvas = (Canvas)MainWindow.FindName("MainCanvas");
+
+            Point MousePos = e.GetPosition(MainCanvas); // Mouse position relative to the MainCanvas
+
+            // The image is centered on the mouse position
+            double Left = MousePos.X - (this.ActualWidth / 2);
+            double Top = MousePos.Y - (this.ActualHeight / 2);
+            Canvas.SetLeft(this, Left);
+            Canvas.SetTop(this, Top);
+        }
 
         public static Uri GetComponentUri(String tag)
         {
@@ -149,5 +193,6 @@ namespace PPcurry
             }
             return ComponentName;
         }
+        #endregion
     }
 }

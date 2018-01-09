@@ -6,24 +6,25 @@
         xmlns:local="clr-namespace:PPcurry"
         mc:Ignorable="d"
         Title="PPcurry" >
+    <Canvas Name="MainCanvas">
+        <DockPanel Name="MainPanel" >
+            <ScrollViewer HorizontalAlignment="Right" >
+                <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" >
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/resistor.png" ToolTip="Résistance" Tag="resistor" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/inductor.png" ToolTip="Inductance" Tag="inductor" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/capacitor.png" ToolTip="Condensateur" Tag="capacitor" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/ac_voltage_source.png" ToolTip="Source de tension alternative" Tag="ac_voltage_source" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/dc_voltage_source.png" ToolTip="Source de tension continue" Tag="dc_voltage_source" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/current_source.png" ToolTip="Source de courant" Tag="current_source" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/ground.png" ToolTip="Terre" Tag="ground" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/diode.png" ToolTip="Diode" Tag="diode" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/spst_closed.png" ToolTip="Interrupteur fermé" Tag="spst_closed" />
+                    <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentsPanel_ComponentSelected" Source="pack://siteoforigin:,,,/Resources/spst_open.png" ToolTip="Interrupteur ouvert" Tag="spst_open" />
+                </StackPanel>
+            </ScrollViewer>
+            <Rectangle Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="3" Fill="#FF051034"/>
 
-    <DockPanel Name="MainPanel" >
-        <ScrollViewer HorizontalAlignment="Right" >
-            <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" >
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/resistor.png" ToolTip="Résistance" Tag="resistor" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/inductor.png" ToolTip="Inductance" Tag="inductor" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/capacitor.png" ToolTip="Condensateur" Tag="capacitor" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/ac_voltage_source.png" ToolTip="Source de tension alternative" Tag="ac_voltage_source" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/dc_voltage_source.png" ToolTip="Source de tension continue" Tag="dc_voltage_source" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/current_source.png" ToolTip="Source de courant" Tag="current_source" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/ground.png" ToolTip="Terre" Tag="ground" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/diode.png" ToolTip="Diode" Tag="diode" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/spst_closed.png" ToolTip="Interrupteur fermé" Tag="spst_closed" />
-                <Image VerticalAlignment="Top" Width="100" Margin="10,5,5,10" MouseLeftButtonUp="ComponentSelectedFromPanel" Source="pack://siteoforigin:,,,/Resources/spst_open.png" ToolTip="Interrupteur ouvert" Tag="spst_open" />
-            </StackPanel>
-        </ScrollViewer>
-        <Rectangle Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="3" Fill="#FF051034"/>
-
-        <Canvas Name="MainCanvas" DockPanel.Dock="Right" Background="#00000000" MouseUp="MainCanvas_MouseUp" Height="Auto" Width="Auto" />
-    </DockPanel>
+            <Canvas Name="BoardCanvas" DockPanel.Dock="Right" Background="#00000000" Height="Auto" Width="Auto" />
+        </DockPanel>
+    </Canvas>
 </Window>
