@@ -21,45 +21,55 @@ namespace PPcurry
     /// </summary>
     public partial class MainWindow : Window
     {
-        // Attributes
+        #region Attributes
 
-        private String ComponentToAddTag;
-        private List<Component> ComponentsList;
-
-
-        // Accessors/Mutators
+        private List<Component> ComponentsList; // The list of components on the board
+        #endregion
 
 
-        // Constructors
+        #region Accessors/Mutators
+
+        public void AddComponent(Component component)
+        {
+            if (component != null)
+            {
+                this.ComponentsList.Add(component);
+            }
+        }
+        #endregion
+
+
+        #region Constructor
 
         public MainWindow()
         {
             InitializeComponent();
-            ComponentToAddTag = "";
             ComponentsList = new List<Component>();
         }
+        #endregion
 
 
-        // Methods
+        #region Methods
 
-        private void ComponentSelectedFromPanel(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// When a component is selected in the left panel, a new Component is created then dragged
+        /// </summary>
+        private void ComponentsPanel_ComponentSelected(object sender, MouseButtonEventArgs e)
         {
-            this.ComponentToAddTag = (String)((Image)sender).Tag;
-        }
+            Image ComponentSelected = (Image)sender;
+            String ComponentToAddTag = (String)ComponentSelected.Tag; // To identify the component selected
 
-        private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (ComponentToAddTag != "")
-            {
-                double X = (e.GetPosition(MainCanvas)).X; // Place the component at the click position, relative to the canvas
-                double Y = (e.GetPosition(MainCanvas)).Y;
-                Uri ImageUri = Component.GetComponentUri(ComponentToAddTag); // Get the default URI to the image
-                String Name = Component.GetComponentDefaultName(ComponentToAddTag); // Get the default component name
-                Component NewComponent = new Component(X, Y, ImageUri, Name, MainCanvas); // Create the component and display it
-                this.ComponentsList.Add(NewComponent);
+            // Create the component at the image location 
+            Point RelativePosition = ComponentSelected.TransformToAncestor(ComponentsPanel).Transform(new Point(0, 0)); // Position of the selected component relative to the panel
+            RelativePosition.X -= ComponentSelected.ActualWidth/2;
+            RelativePosition.Y -= ComponentSelected.ActualHeight/2;
+            Uri ImageUri = Component.GetComponentUri(ComponentToAddTag); // Get the default URI to the image
+            String Name = Component.GetComponentDefaultName(ComponentToAddTag); // Get the default component name
+            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, ImageUri, Name, MainCanvas); // Create the component and display it
+            this.AddComponent(NewComponent);
 
-                this.ComponentToAddTag = ""; // TO BE IMPROVED // Reinitialize the chosen component; must be tied to configuration (for serial insertion)
-            }
+            NewComponent.Component_MouseLeftButtonDown(NewComponent, e); // Begin the drag
         }
+        #endregion
     }
 }
