@@ -26,7 +26,7 @@ namespace PPcurry
         private double[] Position; // The position of the component on the grid
 		private String ComponentName; // The component name
         private bool IsDragged; // Whether thhe component is currently being dragged
-        private MainWindow MainWindow; // The main window in which is this component
+        private BoardGrid Grid; // The main window in which is this component
         #endregion
 
 
@@ -59,8 +59,7 @@ namespace PPcurry
             // Save attributes
             this.Position = new double[2] { x , y };
             this.ComponentName = name;
-            this.MainWindow = (MainWindow)Window.GetWindow(canvas);
-            Debug.WriteLine(MainWindow);
+            this.Grid = canvas as BoardGrid;
 
             // Set the image attributes and display it
             this.Width = 100; // Size /* TO BE IMPROVED: must not be fixed (implement zoom) */
@@ -95,7 +94,6 @@ namespace PPcurry
         {
             IsDragged = false;
             ((Component)sender).ReleaseMouseCapture(); // Cancel CaptureMouse()
-            MainWindow.BoardGrid.DrawGrid();
         }
 
         /// <summary>
@@ -105,15 +103,12 @@ namespace PPcurry
         {
             if (!IsDragged) return; // This function must do nothing if the component is not being dragged
 
-            Canvas BoardCanvas = (Canvas)MainWindow.FindName("BoardCanvas");
+            Point MousePos = e.GetPosition(Grid); // Mouse position relative to the BoardCanvas
 
-            Point MousePos = e.GetPosition(BoardCanvas); // Mouse position relative to the BoardCanvas
-
-            // The image is centered on the mouse position
-            double Left = MousePos.X - (this.ActualWidth / 2);
-            double Top = MousePos.Y - (this.ActualHeight / 2);
-            Canvas.SetLeft(this, Left);
-            Canvas.SetTop(this, Top);
+            // The image is aligned with the grid
+            MousePos = Grid.Magnetize(MousePos);
+            Canvas.SetLeft(this, MousePos.X);
+            Canvas.SetTop(this, MousePos.Y);
         }
 
         /// <summary>

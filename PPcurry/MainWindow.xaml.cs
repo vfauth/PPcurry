@@ -68,7 +68,7 @@ namespace PPcurry
             RelativePosition.Y -= ComponentSelected.ActualHeight/2;
             Uri ImageUri = Component.GetComponentUri(ComponentToAddTag); // Get the default URI to the image
             String Name = Component.GetComponentDefaultName(ComponentToAddTag); // Get the default component name
-            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, ImageUri, Name, BoardCanvas); // Create the component and display it
+            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, ImageUri, Name, BoardGrid); // Create the component and display it
             this.AddComponent(NewComponent);
 
             NewComponent.Component_MouseLeftButtonDown(NewComponent, e); // Begin the drag

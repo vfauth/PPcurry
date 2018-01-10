@@ -82,6 +82,33 @@ namespace PPcurry
         }
 
         /// <summary>
+        /// Returns the nearest grid node (as a Point) of given Point
+        /// </summary>
+        public Point Magnetize(Point point)
+        {
+            double X = point.X;
+            double Y = point.Y;
+            Point Nearest = new Point();
+            if (Math.Abs(X - Spacing * (int)(X/Spacing)) < Math.Abs(X - Spacing * ((int)(X / Spacing) + 1)))
+            {
+                Nearest.X = Spacing * (int)(X / Spacing);
+            }
+            else
+            {
+                Nearest.X = Spacing * ((int)(X / Spacing) + 1);
+            }
+            if (Math.Abs(Y - Spacing * (int)(Y / Spacing)) < Math.Abs(Y - Spacing * ((int)(Y / Spacing) + 1)))
+            {
+                Nearest.Y = Spacing * (int)(Y / Spacing);
+            }
+            else
+            {
+                Nearest.Y = Spacing * ((int)(Y / Spacing) + 1);
+            }
+            return Nearest;
+        }
+
+        /// <summary>
         /// Draw the grid when the component is loaded 
         /// </summary>
         private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
