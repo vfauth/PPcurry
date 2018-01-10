@@ -95,6 +95,7 @@ namespace PPcurry
         {
             IsDragged = false;
             ((Component)sender).ReleaseMouseCapture(); // Cancel CaptureMouse()
+            MainWindow.BoardGrid.DrawGrid();
         }
 
         /// <summary>
@@ -104,9 +105,9 @@ namespace PPcurry
         {
             if (!IsDragged) return; // This function must do nothing if the component is not being dragged
 
-            Canvas MainCanvas = (Canvas)MainWindow.FindName("MainCanvas");
+            Canvas BoardCanvas = (Canvas)MainWindow.FindName("BoardCanvas");
 
-            Point MousePos = e.GetPosition(MainCanvas); // Mouse position relative to the MainCanvas
+            Point MousePos = e.GetPosition(BoardCanvas); // Mouse position relative to the BoardCanvas
 
             // The image is centered on the mouse position
             double Left = MousePos.X - (this.ActualWidth / 2);
@@ -115,6 +116,9 @@ namespace PPcurry
             Canvas.SetTop(this, Top);
         }
 
+        /// <summary>
+        /// Return the URI of the image corresponding to the component
+        /// </summary>
         public static Uri GetComponentUri(String tag)
         {
             Uri ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/resistor.png"); // Without a default value to return, the code doesn't compile
@@ -154,7 +158,9 @@ namespace PPcurry
             return ComponentUri;
         }
 
-
+        /// <summary>
+        /// Return the default name of the component
+        /// </summary>
         public static String GetComponentDefaultName(String tag)
         {
             String ComponentName = "";

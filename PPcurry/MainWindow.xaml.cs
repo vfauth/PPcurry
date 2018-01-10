@@ -24,6 +24,7 @@ namespace PPcurry
         #region Attributes
 
         private List<Component> ComponentsList; // The list of components on the board
+        public BoardGrid BoardGrid; // The grid on the board
         #endregion
 
 
@@ -45,6 +46,8 @@ namespace PPcurry
         {
             InitializeComponent();
             ComponentsList = new List<Component>();
+            this.BoardGrid = new BoardGrid(39, 1);
+            BoardCanvas.Children.Add(BoardGrid);
         }
         #endregion
 
@@ -65,7 +68,7 @@ namespace PPcurry
             RelativePosition.Y -= ComponentSelected.ActualHeight/2;
             Uri ImageUri = Component.GetComponentUri(ComponentToAddTag); // Get the default URI to the image
             String Name = Component.GetComponentDefaultName(ComponentToAddTag); // Get the default component name
-            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, ImageUri, Name, MainCanvas); // Create the component and display it
+            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, ImageUri, Name, BoardCanvas); // Create the component and display it
             this.AddComponent(NewComponent);
 
             NewComponent.Component_MouseLeftButtonDown(NewComponent, e); // Begin the drag
