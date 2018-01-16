@@ -21,7 +21,7 @@ namespace PPcurry
         #region Attributes
 
         private Point Origin; // The position of the origin
-        private int Spacing; // The distance between two lines or columns
+        private int GridSpacing; // The distance between two lines or columns
         private int GridThickness; // The lines thickness
         private double BoardWidth; // The canvas width
         private double BoardHeight; // The canvas height
@@ -31,6 +31,12 @@ namespace PPcurry
         #endregion
 
         #region Accessors/Mutators
+        
+        public int GetGridSpacing() => this.GridSpacing;
+        public void SetGridSpacing(int spacing) => this.GridSpacing = spacing;
+
+        public int GetGridThickness() => this.GridThickness;
+        public void SetGridThickness(int thickness) => this.GridThickness = thickness;
         #endregion
 
 
@@ -41,7 +47,7 @@ namespace PPcurry
 
             // Initialization of attributes
             this.Origin = new Point(spacing/2, spacing/2);
-            this.Spacing = spacing;
+            this.GridSpacing = spacing;
             this.GridThickness = thickness;
             this.Lines = new List<Rectangle>();
             this.Columns = new List<Rectangle>();
@@ -59,23 +65,23 @@ namespace PPcurry
             this.BoardHeight = ((StackPanel)(((Canvas)(this.Parent)).Parent)).ActualHeight;
 
             // Generation of new lines and columns if the board has extended 
-            for (int y = Lines.Count(); y < (int)((BoardHeight + Origin.Y) / Spacing) + 1; y++)
+            for (int y = Lines.Count(); y < (int)((BoardHeight + Origin.Y) / GridSpacing) + 1; y++)
             {
                 Rectangle Line = new Rectangle();
                 Line.Height = GridThickness;
                 Line.Width = BoardWidth;
                 Line.Fill = new SolidColorBrush(Colors.Gray);
-                Line.SetValue(TopProperty, Origin.Y + y * Spacing); // Position
+                Line.SetValue(TopProperty, Origin.Y + y * GridSpacing); // Position
                 Lines.Add(Line);
                 this.Children.Add(Line); // Display the line
             }
-            for (int x = Columns.Count(); x < (int)((BoardWidth + Origin.X) / Spacing) + 1; x++)
+            for (int x = Columns.Count(); x < (int)((BoardWidth + Origin.X) / GridSpacing) + 1; x++)
             {
                 Rectangle Column = new Rectangle();
                 Column.Height = BoardHeight;
                 Column.Width = GridThickness;
                 Column.Fill = new SolidColorBrush(Colors.Gray);
-                Column.SetValue(LeftProperty, Origin.X + x * Spacing); // Position
+                Column.SetValue(LeftProperty, Origin.X + x * GridSpacing); // Position
                 Columns.Add(Column);
                 this.Children.Add(Column); // Display the column
             }
@@ -89,21 +95,21 @@ namespace PPcurry
             double X = point.X;
             double Y = point.Y;
             Point Nearest = new Point();
-            if (Math.Abs(X - Spacing * (int)(X/Spacing)) < Math.Abs(X - Spacing * ((int)(X / Spacing) + 1)))
+            if (Math.Abs(X - GridSpacing * (int)(X/GridSpacing)) < Math.Abs(X - GridSpacing * ((int)(X / GridSpacing) + 1)))
             {
-                Nearest.X = Spacing * (int)(X / Spacing);
+                Nearest.X = GridSpacing * (int)(X / GridSpacing);
             }
             else
             {
-                Nearest.X = Spacing * ((int)(X / Spacing) + 1);
+                Nearest.X = GridSpacing * ((int)(X / GridSpacing) + 1);
             }
-            if (Math.Abs(Y - Spacing * (int)(Y / Spacing)) < Math.Abs(Y - Spacing * ((int)(Y / Spacing) + 1)))
+            if (Math.Abs(Y - GridSpacing * (int)(Y / GridSpacing)) < Math.Abs(Y - GridSpacing * ((int)(Y / GridSpacing) + 1)))
             {
-                Nearest.Y = Spacing * (int)(Y / Spacing);
+                Nearest.Y = GridSpacing * (int)(Y / GridSpacing);
             }
             else
             {
-                Nearest.Y = Spacing * ((int)(Y / Spacing) + 1);
+                Nearest.Y = GridSpacing * ((int)(Y / GridSpacing) + 1);
             }
             return Nearest;
         }
