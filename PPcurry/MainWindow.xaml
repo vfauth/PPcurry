@@ -10,13 +10,8 @@
         MinHeight="400" >
     <DockPanel Name="MainPanel" >
         <ScrollViewer DockPanel.Dock="Left" >
-            <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" >
-            </StackPanel>
+            <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" />
         </ScrollViewer>
         <Rectangle DockPanel.Dock="Left" Height="Auto" Width="3" Fill="Black" />
-
-        <StackPanel  DockPanel.Dock="Right" Width="Auto" Height="Auto" MinWidth="200" MinHeight="200" >
-            <Canvas Name="BoardCanvas" />
-        </StackPanel>
     </DockPanel>
 </Window>

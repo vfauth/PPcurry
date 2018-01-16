@@ -25,20 +25,14 @@ namespace PPcurry
         #region Attributes
 
         private BoardGrid BoardGrid; // The grid on the board
-        private List<Component> ComponentsOnBoard; // The list of components on the board
         private XElement XmlComponentsList; // The XML Element containing all the available components data
         #endregion
 
 
         #region Accessors/Mutators
 
-        public void AddComponent(Component component)
-        {
-            if (component != null)
-            {
-                this.ComponentsOnBoard.Add(component);
-            }
-        }
+        public XElement GetXmlComponentsList() => this.XmlComponentsList;
+        public void SetXmlComponentsList(XElement xmlComponentsList) => this.XmlComponentsList = xmlComponentsList;
         #endregion
 
 
@@ -47,9 +41,9 @@ namespace PPcurry
         public MainWindow()
         {
             InitializeComponent();
-            ComponentsOnBoard = new List<Component>();
+            Application.Current.MainWindow = this; // Application.Current.MainWindow can return null sometimes, so we prevent it
             this.BoardGrid = new BoardGrid(39, 1);
-            BoardCanvas.Children.Add(BoardGrid);
+            MainPanel.Children.Add(BoardGrid);
             LoadComponents();
         }
         #endregion
@@ -69,12 +63,12 @@ namespace PPcurry
                 NewComponent.Source = new BitmapImage(new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value))); // The image to display
                 NewComponent.Margin = new Thickness(10, 5, 5, 10); // The thickness around the image
                 NewComponent.VerticalAlignment = VerticalAlignment.Top;
-                NewComponent.Width = 2*(BoardGrid.GetGridSpacing()+BoardGrid.GetGridThickness()); // The component covers 2 grid cells
-                NewComponent.Height = 2 * (BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness()); // The component covers 2 grid cells
+                NewComponent.Width = 2*BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(); // The component covers 2 grid cells
+                NewComponent.Height = 2*BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(); // The component covers 2 grid cells
                 NewComponent.MouseLeftButtonUp += ComponentsPanel_ComponentSelected; // Event handler for component selection
                 NewComponent.ToolTip = element.Element("name").Value; // The name of the component appears on the tooltip
                 NewComponent.Tag = element.Element("type").Value; // The component is identified by the image tag
-
+                
                 ComponentsPanel.Children.Add(NewComponent); // The component is added to the left panel
             }
         }
@@ -85,17 +79,8 @@ namespace PPcurry
         private void ComponentsPanel_ComponentSelected(object sender, MouseButtonEventArgs e)
         {
             Image ComponentSelected = (Image)sender;
-            String ComponentType = (String)ComponentSelected.Tag; // The component type
-
-            // Create the component at the image location 
-            Point RelativePosition = ComponentSelected.TransformToAncestor(ComponentsPanel).Transform(new Point(0, 0)); // Position of the selected component relative to the panel
-            RelativePosition.X -= ComponentSelected.ActualWidth/2;
-            RelativePosition.Y -= ComponentSelected.ActualHeight/2;
-            XElement XmlElement = this.XmlComponentsList.Element(ComponentType); // Get the XML element with all the component data
-            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, BoardGrid, XmlElement); // Create the component and display it
-            this.AddComponent(NewComponent);
-
-            NewComponent.Component_MouseLeftButtonDown(NewComponent, e); // Begin the drag
+            string ComponentType = (string)ComponentSelected.Tag; // The component type
+            DragDrop.DoDragDrop(ComponentSelected, ComponentSelected.Tag, DragDropEffects.Move); // Begin the drag&drop
         }
         #endregion
     }

@@ -23,15 +23,12 @@ namespace PPcurry.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Resources")]
         public string ResourcesFolder {
             get {
                 return ((string)(this["ResourcesFolder"]));
-            }
-            set {
-                this["ResourcesFolder"] = value;
             }
         }
     }
