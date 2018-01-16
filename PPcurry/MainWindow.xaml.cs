@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace PPcurry
 {
@@ -23,8 +24,9 @@ namespace PPcurry
     {
         #region Attributes
 
+        private BoardGrid BoardGrid; // The grid on the board
         private List<Component> ComponentsList; // The list of components on the board
-        public BoardGrid BoardGrid; // The grid on the board
+        private XElement XmlComponentsList; // The XML Element containing all the available components data
         #endregion
 
 
@@ -45,6 +47,7 @@ namespace PPcurry
         public MainWindow()
         {
             InitializeComponent();
+            this.XmlComponentsList = XElement.Load(@"Components.xml");
             ComponentsList = new List<Component>();
             this.BoardGrid = new BoardGrid(39, 1);
             BoardCanvas.Children.Add(BoardGrid);
@@ -60,15 +63,14 @@ namespace PPcurry
         private void ComponentsPanel_ComponentSelected(object sender, MouseButtonEventArgs e)
         {
             Image ComponentSelected = (Image)sender;
-            String ComponentToAddTag = (String)ComponentSelected.Tag; // To identify the component selected
+            String ComponentType = (String)ComponentSelected.Tag; // The component type
 
             // Create the component at the image location 
             Point RelativePosition = ComponentSelected.TransformToAncestor(ComponentsPanel).Transform(new Point(0, 0)); // Position of the selected component relative to the panel
             RelativePosition.X -= ComponentSelected.ActualWidth/2;
             RelativePosition.Y -= ComponentSelected.ActualHeight/2;
-            Uri ImageUri = Component.GetComponentUri(ComponentToAddTag); // Get the default URI to the image
-            String Name = Component.GetComponentDefaultName(ComponentToAddTag); // Get the default component name
-            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, ImageUri, Name, BoardGrid); // Create the component and display it
+            XElement XmlElement = this.XmlComponentsList.Element(ComponentType); // Get the XML element with all the component data
+            Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, BoardGrid, XmlElement); // Create the component and display it
             this.AddComponent(NewComponent);
 
             NewComponent.Component_MouseLeftButtonDown(NewComponent, e); // Begin the drag

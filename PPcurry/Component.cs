@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Diagnostics;
-
+using System.Xml.Linq;
 
 namespace PPcurry
 {
@@ -51,23 +51,23 @@ namespace PPcurry
         /// </summary>
         /// <param name="x">The component abscissa</param>
         /// <param name="y">The component ordinate</param>
-        /// <param name="imageUri">The URI to the image to display</param>
-        /// <param name="name">The component name</param>
         /// <param name="canvas">The canvas on which to display the component</param>
-        public Component(double x, double y, Uri imageUri, String name, Canvas canvas)
+        /// <param name="xmlElement">The XML Element with the component data</param>
+        public Component(double x, double y, Canvas canvas, XElement xmlElement)
         {
             // Save attributes
             this.Position = new double[2] { x , y };
-            this.ComponentName = name;
+            this.ComponentName = xmlElement.Element("name").Value;
             this.Grid = canvas as BoardGrid;
 
             // Set the image attributes and display it
             this.Width = 100; // Size /* TO BE IMPROVED: must not be fixed (implement zoom) */
             this.Height = 100;
-            this.Source = new BitmapImage(imageUri); // Image to display
+            Uri ImageUri = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value));
+            this.Source = new BitmapImage(ImageUri); // Image to display
             this.SetValue(Canvas.LeftProperty, x); // Position
             this.SetValue(Canvas.TopProperty, y);
-            this.ToolTip = name;
+            this.ToolTip = this.ComponentName;
             this.MouseLeftButtonDown += Component_MouseLeftButtonDown;
             this.MouseLeftButtonUp += Component_MouseLeftButtonUp;
             this.MouseMove += Component_MouseMove;
@@ -109,90 +109,6 @@ namespace PPcurry
             MousePos = Grid.Magnetize(MousePos);
             Canvas.SetLeft(this, MousePos.X);
             Canvas.SetTop(this, MousePos.Y);
-        }
-
-        /// <summary>
-        /// Return the URI of the image corresponding to the component
-        /// </summary>
-        public static Uri GetComponentUri(String tag)
-        {
-            Uri ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/resistor.png"); // Without a default value to return, the code doesn't compile
-            switch(tag)
-            {
-                case "ac_voltage_source":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/ac_voltage_source.png");
-                    break;
-                case "capacitor":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/capacitor.png");
-                    break;
-                case "current_source":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/current_source.png");
-                    break;
-                case "dc_voltage_source":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/dc_voltage_source.png");
-                    break;
-                case "diode":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/diode.png");
-                    break;
-                case "ground":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/ground.png");
-                    break;
-                case "inductor":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/inductor.png");
-                    break;
-                case "resistor":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/resistor.png");
-                    break;
-                case "spst_closed":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/spst_closed.png");
-                    break;
-                case "spst_open":
-                    ComponentUri = new Uri("pack://siteoforigin:,,,/Resources/spst_open.png");
-                    break;
-            }
-            return ComponentUri;
-        }
-
-        /// <summary>
-        /// Return the default name of the component
-        /// </summary>
-        public static String GetComponentDefaultName(String tag)
-        {
-            String ComponentName = "";
-            switch (tag)
-            {
-                case "ac_voltage_source":
-                    ComponentName = "Source de tension alternative";
-                    break;
-                case "capacitor":
-                    ComponentName = "Condensateur";
-                    break;
-                case "current_source":
-                    ComponentName = "Source de courant";
-                    break;
-                case "dc_voltage_source":
-                    ComponentName = "Source de tension continue";
-                    break;
-                case "diode":
-                    ComponentName = "Diode";
-                    break;
-                case "ground":
-                    ComponentName = "Terre";
-                    break;
-                case "inductor":
-                    ComponentName = "Inductance";
-                    break;
-                case "resistor":
-                    ComponentName = "Résistance";
-                    break;
-                case "spst_closed":
-                    ComponentName = "Interrupteur fermé";
-                    break;
-                case "spst_open":
-                    ComponentName = "Interrupteur ouvert";
-                    break;
-            }
-            return ComponentName;
         }
         #endregion
     }
