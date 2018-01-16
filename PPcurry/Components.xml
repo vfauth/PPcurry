@@ -88,11 +88,11 @@
         <type>ground</type>
         <image>ground.png</image>
         <name>Terre</name>
-        <width>922</width>
-        <height>922</height>
+        <width>500</width>
+        <height>500</height>
         <anchors>
             <anchor>
-                <posX>460</posX>
+                <posX>250</posX>
                 <posY>0</posY>
             </anchor>
         </anchors>

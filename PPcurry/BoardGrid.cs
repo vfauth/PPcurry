@@ -93,21 +93,6 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Add a transparent rectangle on the whole surface to manage mouse events
-        /// </summary>
-        public void CreateBackground()
-        {
-
-            //this.Background = new Rectangle();
-            //this.Background.Width = this.ActualWidth;
-            //this.Background.Height = this.ActualHeight;
-            //this.Background.AllowDrop = true; // Components can be dropped on the board
-            //this.Background.Drop += BoardGrid_ComponentDropped; // Event handler for component dropping
-            //this.Background.DragOver += BoardGrid_DragOver; // Event handler for component dragging
-
-        }
-
-        /// <summary>
         /// Returns the nearest grid node (as a Point) of given Point
         /// </summary>
         public Point Magnetize(Point point)
@@ -139,7 +124,6 @@ namespace PPcurry
         /// </summary>
         private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            //CreateBackground();
             DrawGrid();
         }
 
