@@ -42,7 +42,6 @@ namespace PPcurry
                 this.SelectedComponent.SetIsSelected(false);
             }
             this.SelectedComponent = selectedComponent;
-            SelectedComponent.SetIsSelected(true);
         }
         #endregion
         
@@ -74,6 +73,15 @@ namespace PPcurry
 
 
         #region Methods
+
+        /// <summary>
+        /// Draw the grid once the component is loaded 
+        /// </summary>
+        private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            DrawGrid();
+        }
+
         /// <summary>
         /// Update the grid and draw it
         /// </summary>
@@ -115,31 +123,23 @@ namespace PPcurry
             double Y = point.Y;
             double gridTotalSpacing = GridSpacing + GridThickness;
             Point Nearest = new Point();
-            if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing))
+            if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing)) // If the nearest line is the upper one
             {
                 Nearest.X = gridTotalSpacing * (int)(X / gridTotalSpacing);
             }
-            else
+            else // If the nearest line is the lower one
             {
                 Nearest.X = gridTotalSpacing * ((int)(X / gridTotalSpacing) + 1);
             }
-            if (Math.Abs(Y % gridTotalSpacing) < Math.Abs(gridTotalSpacing - Y % gridTotalSpacing))
+            if (Math.Abs(Y % gridTotalSpacing) < Math.Abs(gridTotalSpacing - Y % gridTotalSpacing)) // If the nearest column is the left one
             {
                 Nearest.Y = gridTotalSpacing * (int)(Y / gridTotalSpacing);
             }
-            else
+            else // If the nearest colun is the right one
             {
                 Nearest.Y = gridTotalSpacing * ((int)(Y / gridTotalSpacing) + 1);
             }
             return Nearest;
-        }
-
-        /// <summary>
-        /// Draw the grid once the component is loaded 
-        /// </summary>
-        private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            DrawGrid();
         }
 
         /// <summary>

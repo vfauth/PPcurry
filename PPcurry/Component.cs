@@ -24,7 +24,7 @@ namespace PPcurry
         #region Attributes
 
         private Image ComponentImage;
-        private BoardGrid Grid; // The board on which is this component
+        private BoardGrid BoardGrid; // The board on which is this component
         private Point Position; // The position of the component on the grid
         private Vector Size; // The component displayed size as a Vector
         private Vector Anchor; // The vector between the image origin and one of the component anchors
@@ -60,11 +60,27 @@ namespace PPcurry
                 this.IsSelected = isSelected;
                 if (isSelected)
                 {
+                    this.BoardGrid.SetSelectedComponent(this);
                     this.BorderThickness = new Thickness(Properties.Settings.Default.ComponentBorderThickness);
+
+                    // Adjust the component size and position to avoid image resizing
+                    double thickness = Properties.Settings.Default.ComponentBorderThickness;
+                    this.Width += thickness*2;
+                    this.Height += thickness*2;
+                    this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) - thickness);
+                    this.SetValue(Canvas.TopProperty, (double)this.GetValue(Canvas.TopProperty) - thickness);
                 }
                 else
                 {
+                    this.BoardGrid.SetSelectedComponent(null);
                     this.BorderThickness = new Thickness(0);
+
+                    // Adjust the component size and position to avoid image resizing
+                    double thickness = Properties.Settings.Default.ComponentBorderThickness;
+                    this.Width -= thickness * 2;
+                    this.Height -= thickness * 2;
+                    this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) + thickness); 
+                    this.SetValue(Canvas.TopProperty, (double)this.GetValue(Canvas.TopProperty) + thickness);
                 }
             }
         }
@@ -87,15 +103,15 @@ namespace PPcurry
         public Component(Point position, BoardGrid boardGrid, XElement xmlElement)
         {
             // Save attributes
-            this.Grid = boardGrid as BoardGrid;
+            this.BoardGrid = boardGrid as BoardGrid;
             this.Position = position;
             this.ComponentName = xmlElement.Element("name").Value;
             this.Anchor.X = (double)xmlElement.Element("anchors").Element("anchor").Element("posX");
             this.Anchor.Y = (double)xmlElement.Element("anchors").Element("anchor").Element("posY");
 
             // Set the image attributes and display it
-            this.Width = 2*Grid.GetGridSpacing() + 3*Grid.GetGridThickness(); // The component covers 2 grid cells
-            this.Height = 2*Grid.GetGridSpacing() + 3*Grid.GetGridThickness(); // The component covers 2 grid cells
+            this.Width = 2*BoardGrid.GetGridSpacing() + 3*BoardGrid.GetGridThickness(); // The component covers 2 grid cells
+            this.Height = 2*BoardGrid.GetGridSpacing() + 3*BoardGrid.GetGridThickness(); // The component covers 2 grid cells
             this.Size = new Vector(this.Width, this.Height);
 
             this.Scale = this.Width / (double)xmlElement.Element("width");
