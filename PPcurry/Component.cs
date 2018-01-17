@@ -24,21 +24,27 @@ namespace PPcurry
         #region Attributes
 
         private BoardGrid Grid; // The board on which is this component
-        private double[] Position; // The position of the component on the grid
-		private string ComponentName; // The component name
-        private Point CursorDraggingPosition; // The position of the cursor on the image during dragging
+        private Point Position; // The position of the component on the grid
+        private Vector Size; // The component displayed size as a Vector
+        private Vector Anchor; // The vector between the image origin and one of the component anchors
+        double Scale; // The scaling factor applied to the image
+        private string Name; // The component name
         #endregion
 
 
         #region Accessors/Mutators
 
-        public double[] GetPosition() => this.Position;
-        public void SetPosition(double[] position) => this.Position = position;
+        public Vector GetAnchor() => this.Anchor * this.Scale;
 
-        public string GetName() => this.ComponentName;
+        public Vector GetSize() => this.Size;
+
+        public Point GetPosition() => this.Position;
+        public void SetPosition(Point position) => this.Position = position;
+
+        public string GetName() => this.Name;
         public void SetName(string name)
         {
-            this.ComponentName = name;
+            this.Name = name;
             this.ToolTip = name; // Update the tooltip
         }
         #endregion
@@ -51,25 +57,30 @@ namespace PPcurry
         /// </summary>
         /// <param name="x">The component abscissa</param>
         /// <param name="y">The component ordinate</param>
-        /// <param name="canvas">The canvas on which to display the component</param>
+        /// <param name="boardGrid">The canvas on which to display the component</param>
         /// <param name="xmlElement">The XML Element with the component data</param>
-        public Component(double x, double y, Canvas canvas, XElement xmlElement)
+        public Component(Point position, BoardGrid boardGrid, XElement xmlElement)
         {
             // Save attributes
-            this.Position = new double[2] { x , y };
-            this.ComponentName = xmlElement.Element("name").Value;
-            this.Grid = canvas as BoardGrid;
+            this.Grid = boardGrid as BoardGrid;
+            this.Position = position;
+            this.Name = xmlElement.Element("name").Value;
+            this.Anchor.X = (double)xmlElement.Element("anchors").Element("anchor").Element("posX");
+            this.Anchor.Y = (double)xmlElement.Element("anchors").Element("anchor").Element("posY");
 
             // Set the image attributes and display it
-            this.Width = 2*Grid.GetGridSpacing() + Grid.GetGridThickness(); // The component covers 2 grid cells
-            this.Height = 2*Grid.GetGridSpacing() + Grid.GetGridThickness(); // The component covers 2 grid cells
+            this.Width = 2*Grid.GetGridSpacing() + 3*Grid.GetGridThickness(); // The component covers 2 grid cells
+            this.Height = 2*Grid.GetGridSpacing() + 3*Grid.GetGridThickness(); // The component covers 2 grid cells
+            this.Size = new Vector(this.Width, this.Height);
+            this.Scale = this.Width / (double)xmlElement.Element("width");
             Uri imageUri = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value));
             this.Source = new BitmapImage(imageUri); // Image to display
-            this.SetValue(Canvas.LeftProperty, x); // Position
-            this.SetValue(Canvas.TopProperty, y);
-            this.ToolTip = this.ComponentName;
-            this.MouseMove += Component_MouseMove;
-            canvas.Children.Add(this); // Add the component
+            this.SetValue(Canvas.LeftProperty, Position.X); // Position
+            this.SetValue(Canvas.TopProperty, Position.Y);
+            this.ToolTip = this.Name; // Tooltip
+            boardGrid.AddComponent(this); // Add the component
+
+            this.MouseMove += Component_MouseMove; // Event handler to trigger drag&drop
         }
         #endregion
 

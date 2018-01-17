@@ -67,7 +67,7 @@ namespace PPcurry
                     Width = 2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(), // The component covers 2 grid cells
                     Height = 2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness() // The component covers 2 grid cells
                 };
-                newComponent.MouseMove += ComponentInLefttPanel_MouseMove; // Event handler for component selection
+                newComponent.MouseMove += ComponentInLeftPanel_MouseMove; // Event handler for component selection
                 newComponent.ToolTip = element.Element("name").Value; // The name of the component appears on the tooltip
                 newComponent.Tag = element.Element("type").Value; // The component is identified by the image tag
                 
@@ -78,13 +78,22 @@ namespace PPcurry
         /// <summary>
         /// If the mouse moves over a component in the left panel and the left mouse button is pressed, the component is dragged
         /// </summary>
-        private void ComponentInLefttPanel_MouseMove(object sender, MouseEventArgs e)
+        private void ComponentInLeftPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed) // Drag only if the left button is pressed
             {
-                Image componentSelected = (Image)sender;
-                string componentType = (string)componentSelected.Tag; // The component type
-                DragDrop.DoDragDrop(componentSelected, componentSelected.Tag, DragDropEffects.Move); // Begin the drag&drop
+
+                Point relativePosition = e.GetPosition(this); // Position of the drop relative to the board
+                relativePosition.X -= (2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness()) / 2;
+                relativePosition.Y -= (2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness()) / 2;
+                XElement xmlElement = XmlComponentsList.Element((string)((Image)sender).Tag); // Get the XML element with all the component data
+
+                Component newComponent = new Component(relativePosition, BoardGrid, xmlElement)
+                {
+                    Opacity = 0 // The component is only displayed once on the board
+                }; // Create the component and display it
+                
+                DragDrop.DoDragDrop(newComponent, newComponent, DragDropEffects.Move); // Begin the drag&drop
             }
         }
         #endregion

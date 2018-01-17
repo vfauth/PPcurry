@@ -38,6 +38,11 @@ namespace PPcurry
             if (component != null)
             {
                 this.ComponentsOnBoard.Add(component);
+                if (component.Parent != null)
+                {
+                    ((Panel)component.Parent).Children.Remove(component);
+                }
+                this.Children.Add(component);
             }
         }
         #endregion
@@ -61,7 +66,10 @@ namespace PPcurry
             }; // Background to enable mouse events
 
             this.AllowDrop = true; // Components can be dropped on the board
+            this.DragEnter += BoardGrid_DragEnter; // Event handler called when a dragged component enters the board
+            this.DragOver += BoardGrid_DragOver; // Event handler continusously called while dragging
             this.Drop += BoardGrid_Drop; // Event handler called when a component is dropped
+            this.DragLeave += BoardGrid_DragLeave; // Event handler called when a dragged component leaves the board
         }
         #endregion
 
@@ -81,7 +89,7 @@ namespace PPcurry
                     Width = this.ActualWidth,
                     Fill = new SolidColorBrush(Colors.Gray)
                 };
-                Line.SetValue(TopProperty, (double)(GridSpacing / 2 + y * (GridSpacing + GridThickness))); // Position
+                Line.SetValue(TopProperty, (double)(y * (GridSpacing + GridThickness))); // Position
                 Lines.Add(Line);
                 this.Children.Add(Line); // Display the line
             }
@@ -93,7 +101,7 @@ namespace PPcurry
                     Width = GridThickness,
                     Fill = new SolidColorBrush(Colors.Gray)
                 };
-                Column.SetValue(LeftProperty, (double)(GridSpacing / 2 + x * (GridSpacing + GridThickness))); // Position
+                Column.SetValue(LeftProperty, (double)(x * (GridSpacing + GridThickness))); // Position
                 Columns.Add(Column);
                 this.Children.Add(Column); // Display the column
             }
@@ -102,26 +110,27 @@ namespace PPcurry
         /// <summary>
         /// Returns the nearest grid node (as a Point) of given Point
         /// </summary>
-        public Point Magnetize(Point point)
+        private Point Magnetize(Point point)
         {
             double X = point.X;
             double Y = point.Y;
+            double gridTotalSpacing = GridSpacing + GridThickness;
             Point Nearest = new Point();
-            if (Math.Abs(X - GridSpacing * (int)(X/GridSpacing)) < Math.Abs(X - GridSpacing * ((int)(X / GridSpacing) + 1)))
+            if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing))
             {
-                Nearest.X = GridSpacing * (int)(X / GridSpacing);
+                Nearest.X = gridTotalSpacing * (int)(X / gridTotalSpacing);
             }
             else
             {
-                Nearest.X = GridSpacing * ((int)(X / GridSpacing) + 1);
+                Nearest.X = gridTotalSpacing * ((int)(X / gridTotalSpacing) + 1);
             }
-            if (Math.Abs(Y - GridSpacing * (int)(Y / GridSpacing)) < Math.Abs(Y - GridSpacing * ((int)(Y / GridSpacing) + 1)))
+            if (Math.Abs(Y % gridTotalSpacing) < Math.Abs(gridTotalSpacing - Y % gridTotalSpacing))
             {
-                Nearest.Y = GridSpacing * (int)(Y / GridSpacing);
+                Nearest.Y = gridTotalSpacing * (int)(Y / gridTotalSpacing);
             }
             else
             {
-                Nearest.Y = GridSpacing * ((int)(Y / GridSpacing) + 1);
+                Nearest.Y = gridTotalSpacing * ((int)(Y / gridTotalSpacing) + 1);
             }
             return Nearest;
         }
@@ -135,31 +144,59 @@ namespace PPcurry
         }
 
         /// <summary>
+        /// Event handler called when a dragged component enters the board
+        /// </summary>
+        private void BoardGrid_DragEnter(object sender, DragEventArgs e)
+        {
+            Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
+
+            component.Opacity = 100; // Display the component
+        }
+
+        /// <summary>
+        /// Event handler continuously called while dragging
+        /// </summary>
+        private void BoardGrid_DragOver(object sender, DragEventArgs e)
+        {
+            Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
+
+            Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
+            Point gridNode = Magnetize(relativePosition - component.GetSize()/2 + component.GetAnchor()); // The nearest grid node from the anchor
+            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X); // The component is moved
+            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y);
+
+            // If the component is dragged outside of the board, it is hidden
+            if (relativePosition.X < 0 || relativePosition.X > this.ActualWidth || relativePosition.Y < 0 || relativePosition.Y > this.ActualHeight)
+            {
+                component.Opacity = 0;
+            }
+            else
+            {
+                component.Opacity = 100;
+            }
+        }
+
+        /// <summary>
         /// Event handler called when a component is dropped
         /// </summary>
         private void BoardGrid_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.StringFormat)) // If a component is dragged from the left panel, a new Component object must be created
-            {
-                string componentType = e.Data.GetData(DataFormats.StringFormat) as string; // The component type
-                
-                Point relativePosition = e.GetPosition(this); // Position of the drop relative to the board
-                relativePosition.X -= (2*GridSpacing + GridThickness) / 2;
-                relativePosition.Y -= (2*GridSpacing + GridThickness) / 2;
-                XElement xmlElement = ((MainWindow)Application.Current.MainWindow).GetXmlComponentsList().Element(componentType); // Get the XML element with all the component data
-                Component newComponent = new Component(relativePosition.X, relativePosition.Y, this, xmlElement); // Create the component and display it
-                this.AddComponent(newComponent);
-            }
-            else if (e.Data.GetDataPresent(typeof(Component))) // If a component already present of the board is dragged
-            {
-                Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
+            Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
-                Point relativePosition = e.GetPosition(this); // Position of the drop relative to the board
-                relativePosition.X -= (2 * GridSpacing + GridThickness) / 2;
-                relativePosition.Y -= (2 * GridSpacing + GridThickness) / 2;
-                component.SetValue(LeftProperty, relativePosition.X); // The component is moved
-                component.SetValue(TopProperty, relativePosition.Y);
-            }
+            Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
+            Point gridNode = Magnetize(relativePosition - component.GetSize() / 2 + component.GetAnchor()); // The nearest grid node from the anchor
+            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X); // The component is moved
+            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y);
+        }
+
+        /// <summary>
+        /// Event handler called when a dragged component leaves the board
+        /// </summary>
+        private void BoardGrid_DragLeave(object sender, DragEventArgs e)
+        {
+            Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
+
+            component.Opacity = 0; // Do not display the component
         }
         #endregion
     }
