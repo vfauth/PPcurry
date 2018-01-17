@@ -59,28 +59,33 @@ namespace PPcurry
             this.XmlComponentsList = XElement.Load(@"Components.xml"); // Load the XML file
             foreach (XElement element in XmlComponentsList.Elements())
             {
-                Image NewComponent = new Image();
-                NewComponent.Source = new BitmapImage(new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value))); // The image to display
-                NewComponent.Margin = new Thickness(10, 5, 5, 10); // The thickness around the image
-                NewComponent.VerticalAlignment = VerticalAlignment.Top;
-                NewComponent.Width = 2*BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(); // The component covers 2 grid cells
-                NewComponent.Height = 2*BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(); // The component covers 2 grid cells
-                NewComponent.MouseLeftButtonUp += ComponentsPanel_ComponentSelected; // Event handler for component selection
-                NewComponent.ToolTip = element.Element("name").Value; // The name of the component appears on the tooltip
-                NewComponent.Tag = element.Element("type").Value; // The component is identified by the image tag
+                Image newComponent = new Image
+                {
+                    Source = new BitmapImage(new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value))), // The image to display
+                    Margin = new Thickness(10, 5, 5, 10), // The thickness around the image
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Width = 2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(), // The component covers 2 grid cells
+                    Height = 2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness() // The component covers 2 grid cells
+                };
+                newComponent.MouseMove += ComponentInLefttPanel_MouseMove; // Event handler for component selection
+                newComponent.ToolTip = element.Element("name").Value; // The name of the component appears on the tooltip
+                newComponent.Tag = element.Element("type").Value; // The component is identified by the image tag
                 
-                ComponentsPanel.Children.Add(NewComponent); // The component is added to the left panel
+                ComponentsPanel.Children.Add(newComponent); // The component is added to the left panel
             }
         }
 
         /// <summary>
-        /// When a component is selected in the left panel, a new Component is created then dragged
+        /// If the mouse moves over a component in the left panel and the left mouse button is pressed, the component is dragged
         /// </summary>
-        private void ComponentsPanel_ComponentSelected(object sender, MouseButtonEventArgs e)
+        private void ComponentInLefttPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            Image ComponentSelected = (Image)sender;
-            string ComponentType = (string)ComponentSelected.Tag; // The component type
-            DragDrop.DoDragDrop(ComponentSelected, ComponentSelected.Tag, DragDropEffects.Move); // Begin the drag&drop
+            if (e.LeftButton == MouseButtonState.Pressed) // Drag only if the left button is pressed
+            {
+                Image componentSelected = (Image)sender;
+                string componentType = (string)componentSelected.Tag; // The component type
+                DragDrop.DoDragDrop(componentSelected, componentSelected.Tag, DragDropEffects.Move); // Begin the drag&drop
+            }
         }
         #endregion
     }

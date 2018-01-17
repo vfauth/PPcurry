@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Linq;
 
 namespace PPcurry
@@ -16,12 +18,12 @@ namespace PPcurry
         
         private int GridSpacing; // The distance between two lines or columns
         private int GridThickness; // The lines thickness
-        //private Rectangle Background; // The background receiving mouse events
         private List<Rectangle> Lines; // The lines of the grid
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
 
         #endregion
+
 
         #region Accessors/Mutators
 
@@ -39,7 +41,7 @@ namespace PPcurry
             }
         }
         #endregion
-
+        
 
         #region Constructor
         public BoardGrid(int spacing, int thickness)
@@ -53,12 +55,13 @@ namespace PPcurry
             this.Columns = new List<Rectangle>();
             ComponentsOnBoard = new List<Component>();
 
-            this.Background = new SolidColorBrush(); // Background to enable mouse events
-            this.Background.Opacity = 0; // Transparent background
+            this.Background = new SolidColorBrush
+            {
+                Opacity = 0 // Transparent background
+            }; // Background to enable mouse events
 
             this.AllowDrop = true; // Components can be dropped on the board
-            this.Drop += BoardGrid_ComponentDropped; // Event handler for component dropping
-            this.DragOver += BoardGrid_DragOver; // Event handler for component dragging
+            this.Drop += BoardGrid_Drop; // Event handler called when a component is dropped
         }
         #endregion
 
@@ -72,20 +75,24 @@ namespace PPcurry
             // Generation of new lines and columns if the board has extended 
             for (int y = Lines.Count(); y < this.ActualHeight / (GridSpacing + GridThickness) + 1; y++)
             {
-                Rectangle Line = new Rectangle();
-                Line.Height = GridThickness;
-                Line.Width =this.ActualWidth;
-                Line.Fill = new SolidColorBrush(Colors.Gray);
+                Rectangle Line = new Rectangle
+                {
+                    Height = GridThickness,
+                    Width = this.ActualWidth,
+                    Fill = new SolidColorBrush(Colors.Gray)
+                };
                 Line.SetValue(TopProperty, (double)(GridSpacing / 2 + y * (GridSpacing + GridThickness))); // Position
                 Lines.Add(Line);
                 this.Children.Add(Line); // Display the line
             }
             for (int x = Columns.Count(); x < this.ActualWidth / (GridSpacing + GridThickness) + 1; x++)
             {
-                Rectangle Column = new Rectangle();
-                Column.Height = this.ActualHeight;
-                Column.Width = GridThickness;
-                Column.Fill = new SolidColorBrush(Colors.Gray);
+                Rectangle Column = new Rectangle
+                {
+                    Height = this.ActualHeight,
+                    Width = GridThickness,
+                    Fill = new SolidColorBrush(Colors.Gray)
+                };
                 Column.SetValue(LeftProperty, (double)(GridSpacing / 2 + x * (GridSpacing + GridThickness))); // Position
                 Columns.Add(Column);
                 this.Children.Add(Column); // Display the column
@@ -120,7 +127,7 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Draw the grid when the component is loaded 
+        /// Draw the grid once the component is loaded 
         /// </summary>
         private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
         {
@@ -128,27 +135,31 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Handle a drop on the board
+        /// Event handler called when a component is dropped
         /// </summary>
-        private void BoardGrid_ComponentDropped(object sender, DragEventArgs e)
+        private void BoardGrid_Drop(object sender, DragEventArgs e)
         {
-            if (true) // If a component is dragged from the left panel, a new Component object must be created
+            if (e.Data.GetDataPresent(DataFormats.StringFormat)) // If a component is dragged from the left panel, a new Component object must be created
             {
-                string ComponentType = e.Data.GetData(DataFormats.StringFormat) as string; // The component type
+                string componentType = e.Data.GetData(DataFormats.StringFormat) as string; // The component type
                 
-                Point RelativePosition = e.GetPosition(this); // Position of the drop relative to the board
-                RelativePosition.X -= (2*GridSpacing + GridThickness) / 2;
-                RelativePosition.Y -= (2*GridSpacing + GridThickness) / 2;
-                XElement XmlElement = ((MainWindow)Application.Current.MainWindow).GetXmlComponentsList().Element(ComponentType); // Get the XML element with all the component data
-                Component NewComponent = new Component(RelativePosition.X, RelativePosition.Y, this, XmlElement); // Create the component and display it
-                Debug.WriteLine("TEST2");
-                this.AddComponent(NewComponent);
+                Point relativePosition = e.GetPosition(this); // Position of the drop relative to the board
+                relativePosition.X -= (2*GridSpacing + GridThickness) / 2;
+                relativePosition.Y -= (2*GridSpacing + GridThickness) / 2;
+                XElement xmlElement = ((MainWindow)Application.Current.MainWindow).GetXmlComponentsList().Element(componentType); // Get the XML element with all the component data
+                Component newComponent = new Component(relativePosition.X, relativePosition.Y, this, xmlElement); // Create the component and display it
+                this.AddComponent(newComponent);
             }
-        }
+            else if (e.Data.GetDataPresent(typeof(Component))) // If a component already present of the board is dragged
+            {
+                Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
-        private void BoardGrid_DragOver(object sender, DragEventArgs e)
-        {
-            Debug.WriteLine("DRAGOVER");
+                Point relativePosition = e.GetPosition(this); // Position of the drop relative to the board
+                relativePosition.X -= (2 * GridSpacing + GridThickness) / 2;
+                relativePosition.Y -= (2 * GridSpacing + GridThickness) / 2;
+                component.SetValue(LeftProperty, relativePosition.X); // The component is moved
+                component.SetValue(TopProperty, relativePosition.Y);
+            }
         }
         #endregion
     }

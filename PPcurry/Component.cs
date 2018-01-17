@@ -23,10 +23,9 @@ namespace PPcurry
     {
         #region Attributes
 
-        private BoardGrid Grid; // The main window in which is this component
+        private BoardGrid Grid; // The board on which is this component
         private double[] Position; // The position of the component on the grid
 		private string ComponentName; // The component name
-        private bool IsDragged; // Whether thhe component is currently being dragged
         private Point CursorDraggingPosition; // The position of the cursor on the image during dragging
         #endregion
 
@@ -64,13 +63,11 @@ namespace PPcurry
             // Set the image attributes and display it
             this.Width = 2*Grid.GetGridSpacing() + Grid.GetGridThickness(); // The component covers 2 grid cells
             this.Height = 2*Grid.GetGridSpacing() + Grid.GetGridThickness(); // The component covers 2 grid cells
-            Uri ImageUri = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value));
-            this.Source = new BitmapImage(ImageUri); // Image to display
+            Uri imageUri = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value));
+            this.Source = new BitmapImage(imageUri); // Image to display
             this.SetValue(Canvas.LeftProperty, x); // Position
             this.SetValue(Canvas.TopProperty, y);
             this.ToolTip = this.ComponentName;
-            this.MouseLeftButtonDown += Component_MouseLeftButtonDown;
-            this.MouseLeftButtonUp += Component_MouseLeftButtonUp;
             this.MouseMove += Component_MouseMove;
             canvas.Children.Add(this); // Add the component
         }
@@ -80,37 +77,14 @@ namespace PPcurry
         #region Methods
 
         /// <summary>
-        /// When the component is left-clicked, he is dragged
-        /// </summary>
-        public void Component_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            IsDragged = true;
-            Debug.WriteLine(e.GetPosition((Image)sender).X + "; " + e.GetPosition((Image)sender).Y);
-            CursorDraggingPosition = e.GetPosition((Image)sender); // The position of the cursor on the image during dragging
-           ((Component)sender).CaptureMouse();  // The cursor cannot quit the image
-        }
-
-        /// <summary>
-        /// The dragging finishes when the component is released
-        /// </summary>
-        public void Component_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            IsDragged = false;
-            ((Component)sender).ReleaseMouseCapture(); // Cancel CaptureMouse()
-        }
-
-        /// <summary>
-        /// This function manages the dragging of the component and is called for each move
+        /// If the mouse moves over a component on the board and the left mouse button is pressed, the component is dragged
         /// </summary>
         public void Component_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!IsDragged) return; // This function must do nothing if the component is not being dragged
-
-            Point MousePos = e.GetPosition(Grid); // Mouse position relative to the BoardCanvas
-            // The image is aligned with the grid
-            //MousePos = Grid.Magnetize(MousePos);
-            Canvas.SetLeft(this, MousePos.X - this.ActualWidth/2 + CursorDraggingPosition.X);
-            Canvas.SetTop(this, MousePos.Y - this.ActualHeight/2 + CursorDraggingPosition.Y);
+            if (e.LeftButton == MouseButtonState.Pressed) // Drag only if the left button is pressed
+            {
+                DragDrop.DoDragDrop((Component)sender, (Component)sender, DragDropEffects.Move); // Begin the drag&drop
+            }
         }
         #endregion
     }
