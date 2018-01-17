@@ -16,46 +16,45 @@ namespace PPcurry
     {
         #region Attributes
         
-        private int GridSpacing; // The distance between two lines or columns
-        private int GridThickness; // The lines thickness
+        private double GridSpacing; // The distance between two lines or columns
+        private double GridThickness; // The lines thickness
         private List<Rectangle> Lines; // The lines of the grid
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
+        private Component SelectedComponent; // The component currently selected
 
         #endregion
 
 
         #region Accessors/Mutators
 
-        public int GetGridSpacing() => this.GridSpacing;
+        public double GetGridSpacing() => this.GridSpacing;
         public void SetGridSpacing(int spacing) => this.GridSpacing = spacing;
 
-        public int GetGridThickness() => this.GridThickness;
+        public double GetGridThickness() => this.GridThickness;
         public void SetGridThickness(int thickness) => this.GridThickness = thickness;
 
-        public void AddComponent(Component component)
+        public Component GetSelectedComponent() => this.SelectedComponent;
+        public void SetSelectedComponent(Component selectedComponent)
         {
-            if (component != null)
+            if (SelectedComponent != null)
             {
-                this.ComponentsOnBoard.Add(component);
-                if (component.Parent != null)
-                {
-                    ((Panel)component.Parent).Children.Remove(component);
-                }
-                this.Children.Add(component);
+                this.SelectedComponent.SetIsSelected(false);
             }
+            this.SelectedComponent = selectedComponent;
+            SelectedComponent.SetIsSelected(true);
         }
         #endregion
         
 
         #region Constructor
-        public BoardGrid(int spacing, int thickness)
+        public BoardGrid()
         {
             this.Loaded += BoardGrid_Loaded; // Draw the grid a first time after initialization
 
             // Initialization of attributes
-            this.GridSpacing = spacing;
-            this.GridThickness = thickness;
+            this.GridSpacing = Properties.Settings.Default.GridSpacing;
+            this.GridThickness = Properties.Settings.Default.GridThickness;
             this.Lines = new List<Rectangle>();
             this.Columns = new List<Rectangle>();
             ComponentsOnBoard = new List<Component>();
@@ -197,6 +196,22 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
             component.Opacity = 0; // Do not display the component
+        }
+
+        /// <summary>
+        /// Add a component on the board
+        /// </summary>
+        public void AddComponent(Component component)
+        {
+            if (component != null)
+            {
+                this.ComponentsOnBoard.Add(component);
+                if (component.Parent != null)
+                {
+                    ((Panel)component.Parent).Children.Remove(component);
+                }
+                this.Children.Add(component);
+            }
         }
         #endregion
     }

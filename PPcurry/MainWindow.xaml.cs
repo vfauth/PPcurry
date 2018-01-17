@@ -42,7 +42,7 @@ namespace PPcurry
         {
             InitializeComponent();
             Application.Current.MainWindow = this; // Application.Current.MainWindow can return null sometimes, so we prevent it
-            this.BoardGrid = new BoardGrid(39, 1);
+            this.BoardGrid = new BoardGrid();
             MainPanel.Children.Add(BoardGrid);
             LoadComponents();
         }
