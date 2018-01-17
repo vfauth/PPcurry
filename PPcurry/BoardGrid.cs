@@ -70,6 +70,8 @@ namespace PPcurry
             this.DragOver += BoardGrid_DragOver; // Event handler continusously called while dragging
             this.Drop += BoardGrid_Drop; // Event handler called when a component is dropped
             this.DragLeave += BoardGrid_DragLeave; // Event handler called when a dragged component leaves the board
+
+            this.SizeChanged += BoardGrid_SizeChanged; // Event handler called when the board is resized
         }
         #endregion
 
@@ -80,6 +82,17 @@ namespace PPcurry
         /// </summary>
         public void DrawGrid()
         {
+            foreach (Rectangle child in this.Lines) // Clear the former grid
+            {
+                this.Children.Remove(child);
+            }
+            foreach (Rectangle child in this.Columns) // Clear the former grid
+            {
+                this.Children.Remove(child);
+            }
+            Lines.Clear();
+            Columns.Clear();
+
             // Generation of new lines and columns if the board has extended 
             for (int y = Lines.Count(); y < this.ActualHeight / (GridSpacing + GridThickness) + 1; y++)
             {
@@ -139,6 +152,14 @@ namespace PPcurry
         /// Draw the grid once the component is loaded 
         /// </summary>
         private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            DrawGrid();
+        }
+
+        /// <summary>
+        /// Event handler called when the board is resized
+        /// </summary>
+        private void BoardGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawGrid();
         }
