@@ -45,8 +45,20 @@ namespace PPcurry
                 this.Children.Add(component);
             }
         }
+        public void AddNode(Node Node)
+        {
+            if (Node.GetPosition() != null)
+            {
+                //this.ComponentsOnBoard.Add(component);
+                //if (component.Parent != null)
+                //{
+                //    ((Panel)component.Parent).Children.Remove(component);
+                //}
+                //this.Children.Add(component);
+            }
+        }
         #endregion
-        
+
 
         #region Constructor
         public BoardGrid(int spacing, int thickness)
@@ -142,6 +154,8 @@ namespace PPcurry
         {
             DrawGrid();
         }
+
+
 
         /// <summary>
         /// Event handler called when a dragged component enters the board

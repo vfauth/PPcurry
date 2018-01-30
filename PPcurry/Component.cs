@@ -100,15 +100,5 @@ namespace PPcurry
         #endregion
     }
 
-    public class Node 
-    {
-        #region Attributes
-        private BoardGrid Grid; // The board on which is this Node
-        Point Position; // The position of the Node
-        Component[] ConnectedComponents = new Component[4]; // The components connected (Up, Right, Down, Left)
-        #endregion
 
-        #region Accessors/Mutators
-
-    }
 }
