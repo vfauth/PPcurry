@@ -135,8 +135,8 @@ namespace PPcurry
 
             // Rotation
             Rotation = new RotateTransform(0);
-            Rotation.CenterX = this.Width / 2; // To make the component rotate around its center
-            Rotation.CenterY = this.Height / 2;
+            Rotation.CenterX = this.Width / 2 + Properties.Settings.Default.ComponentBorderThickness; // To make the component rotate around its center
+            Rotation.CenterY = this.Height / 2 + Properties.Settings.Default.ComponentBorderThickness;
 
             this.MouseLeftButtonDown += Component_MouseLeftButtonDown; // Event handler to trigger selection or properties editing
             this.MouseLeftButtonUp += Component_MouseLeftButtonUp; // Event handler to trigger selection or properties editing
