@@ -76,14 +76,6 @@ namespace PPcurry
         #region Methods
 
         /// <summary>
-        /// Draw the grid once the component is loaded 
-        /// </summary>
-        private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            DrawGrid();
-        }
-
-        /// <summary>
         /// Update the grid and draw it
         /// </summary>
         public void DrawGrid()
