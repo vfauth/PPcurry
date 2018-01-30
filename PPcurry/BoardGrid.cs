@@ -147,6 +147,22 @@ namespace PPcurry
         }
 
         /// <summary>
+        /// Add a component on the board
+        /// </summary>
+        public void AddComponent(Component component)
+        {
+            if (component != null)
+            {
+                this.ComponentsOnBoard.Add(component);
+                if (component.Parent != null)
+                {
+                    ((Panel)component.Parent).Children.Remove(component);
+                }
+                this.Children.Add(component);
+            }
+        }
+
+        /// <summary>
         /// Draw the grid once the component is loaded 
         /// </summary>
         private void BoardGrid_Loaded(object sender, RoutedEventArgs e)
@@ -181,8 +197,8 @@ namespace PPcurry
 
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Point gridNode = Magnetize(relativePosition - component.GetSize()/2 + component.GetAnchor()); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X); // The component is moved
-            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y);
+            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X - component.BorderThickness.Left); // The component is moved
+            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y - component.BorderThickness.Top);
 
             // If the component is dragged outside of the board, it is hidden
             if (relativePosition.X < 0 || relativePosition.X > this.ActualWidth || relativePosition.Y < 0 || relativePosition.Y > this.ActualHeight)
@@ -204,8 +220,8 @@ namespace PPcurry
 
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Point gridNode = Magnetize(relativePosition - component.GetSize() / 2 + component.GetAnchor()); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X); // The component is moved
-            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y);
+            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X - component.BorderThickness.Left); // The component is moved
+            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y - component.BorderThickness.Top);
         }
 
         /// <summary>
@@ -216,22 +232,6 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
             component.Opacity = 0; // Do not display the component
-        }
-
-        /// <summary>
-        /// Add a component on the board
-        /// </summary>
-        public void AddComponent(Component component)
-        {
-            if (component != null)
-            {
-                this.ComponentsOnBoard.Add(component);
-                if (component.Parent != null)
-                {
-                    ((Panel)component.Parent).Children.Remove(component);
-                }
-                this.Children.Add(component);
-            }
         }
         #endregion
     }
