@@ -131,38 +131,4 @@
             </anchor>
         </anchors>
     </resistor>
-    <spst_closed>
-        <type>spst_closed</type>
-        <image>spst_closed.png</image>
-        <name>Interrupteur fermé</name>
-        <width>922</width>
-        <height>922</height>
-        <anchors>
-            <anchor>
-                <posX>0</posX>
-                <posY>460</posY>
-            </anchor>
-            <anchor>
-                <posX>921</posX>
-                <posY>460</posY>
-            </anchor>
-        </anchors>
-    </spst_closed>
-    <spst_open>
-        <type>spst_open</type>
-        <image>spst_open.png</image>
-        <name>Interrupteur ouvert</name>
-        <width>922</width>
-        <height>922</height>
-        <anchors>
-            <anchor>
-                <posX>0</posX>
-                <posY>460</posY>
-            </anchor>
-            <anchor>
-                <posX>921</posX>
-                <posY>460</posY>
-            </anchor>
-        </anchors>
-    </spst_open>
 </components>

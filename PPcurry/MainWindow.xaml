@@ -7,8 +7,22 @@
         mc:Ignorable="d"
         Title="PPcurry"
         MinWidth="600"
-        MinHeight="400" >
+        MinHeight="400" KeyUp="Window_KeyUp" >
     <DockPanel Name="MainPanel" >
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar >
+                <Button MinWidth="30" MinHeight="30" Margin="5" Style="{StaticResource ImageButton}" Click="LeftRotationButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="pack://siteoforigin:,,,/Resources/rotate_left.png"/>
+                    </Button.Background>
+                </Button>
+                <Button MinWidth="30" MinHeight="30" Margin="5" Style="{StaticResource ImageButton}" Click="RightRotationButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="pack://siteoforigin:,,,/Resources/rotate_right.png"/>
+                    </Button.Background>
+                </Button>
+            </ToolBar >
+        </ToolBarTray>
         <ScrollViewer DockPanel.Dock="Left" >
             <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" />
         </ScrollViewer>
