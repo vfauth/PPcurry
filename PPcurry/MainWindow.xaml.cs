@@ -96,6 +96,28 @@ namespace PPcurry
                 DragDrop.DoDragDrop(newComponent, newComponent, DragDropEffects.Move); // Begin the drag&drop
             }
         }
+
+        /// <summary>
+        /// Handler called when the left rotation button is clicked.
+        /// </summary>
+        private void LeftRotationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.BoardGrid.GetSelectedComponent() != null)
+            {
+                this.BoardGrid.GetSelectedComponent().RotateLeft();
+            }
+        }
+
+        /// <summary>
+        /// Handler called when the right rotation button is clicked.
+        /// </summary>
+        private void RightRotationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.BoardGrid.GetSelectedComponent() != null)
+            {
+                this.BoardGrid.GetSelectedComponent().RotateRight();
+            }
+        }
         #endregion
     }
 }

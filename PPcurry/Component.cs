@@ -31,6 +31,8 @@ namespace PPcurry
         private double Scale; // The scaling factor applied to the image
         private string ComponentName; // The component name
 
+        private RotateTransform Rotation; // To rotation operation to apply
+
         private bool IsSelected; // Is true when the component is selected
         private int LastMouseLeftButtonDown; // Timestamp of last MouseLeftButtonDown event; 0 if already handled
         private int LastMouseLeftButtonUp; // Timestamp of last MouseLeftButtonUp event; 0 if already handled
@@ -65,8 +67,8 @@ namespace PPcurry
 
                     // Adjust the component size and position to avoid image resizing
                     double thickness = Properties.Settings.Default.ComponentBorderThickness;
-                    this.Width += thickness*2;
-                    this.Height += thickness*2;
+                    this.Width += thickness * 2;
+                    this.Height += thickness * 2;
                     this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) - thickness);
                     this.SetValue(Canvas.TopProperty, (double)this.GetValue(Canvas.TopProperty) - thickness);
                 }
@@ -79,7 +81,7 @@ namespace PPcurry
                     double thickness = Properties.Settings.Default.ComponentBorderThickness;
                     this.Width -= thickness * 2;
                     this.Height -= thickness * 2;
-                    this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) + thickness); 
+                    this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) + thickness);
                     this.SetValue(Canvas.TopProperty, (double)this.GetValue(Canvas.TopProperty) + thickness);
                 }
             }
@@ -109,15 +111,19 @@ namespace PPcurry
             this.Anchor.X = (double)xmlElement.Element("anchors").Element("anchor").Element("posX");
             this.Anchor.Y = (double)xmlElement.Element("anchors").Element("anchor").Element("posY");
 
+            this.RenderTransform = Rotation;
+
             // Set the image attributes and display it
-            this.Width = 2*BoardGrid.GetGridSpacing() + 3*BoardGrid.GetGridThickness(); // The component covers 2 grid cells
-            this.Height = 2*BoardGrid.GetGridSpacing() + 3*BoardGrid.GetGridThickness(); // The component covers 2 grid cells
+            this.Width = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
+            this.Height = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
             this.Size = new Vector(this.Width, this.Height);
 
             this.Scale = this.Width / (double)xmlElement.Element("width");
             Uri imageUri = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value));
-            this.ComponentImage = new Image();
-            this.ComponentImage.Source = new BitmapImage(imageUri); // Image to display
+            this.ComponentImage = new Image
+            {
+                Source = new BitmapImage(imageUri) // Image to display
+            };
             this.Child = ComponentImage;
 
             this.BorderBrush = new SolidColorBrush(Colors.Black);
@@ -127,6 +133,11 @@ namespace PPcurry
             this.ToolTip = this.ComponentName; // Tooltip
             boardGrid.AddComponent(this); // Add the component
 
+            // Rotation
+            Rotation = new RotateTransform(0);
+            Rotation.CenterX = this.Width / 2; // To make the component rotate around its center
+            Rotation.CenterY = this.Height / 2;
+
             this.MouseLeftButtonDown += Component_MouseLeftButtonDown; // Event handler to trigger selection or properties editing
             this.MouseLeftButtonUp += Component_MouseLeftButtonUp; // Event handler to trigger selection or properties editing
             this.MouseMove += Component_MouseMove; // Event handler to trigger drag&drop
@@ -135,6 +146,24 @@ namespace PPcurry
 
 
         #region Methods
+
+        /// <summary>
+        /// Rotate the component by 90 degrees counterclockwise.
+        /// </summary>
+        public void RotateLeft()
+        {
+            this.Rotation.Angle -= 90;
+            this.RenderTransform = this.Rotation;
+        }
+
+        /// <summary>
+        /// Rotate the component by 90 degrees clockwise.
+        /// </summary>
+        public void RotateRight()
+        {
+            this.Rotation.Angle += 90;
+            this.RenderTransform = this.Rotation;
+        }
 
         /// <summary>
         /// If the mouse moves over a component on the board and the left mouse button is pressed, the component is dragged

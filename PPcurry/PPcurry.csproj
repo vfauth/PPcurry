@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="BoardGrid.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="Enumerations.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -99,6 +100,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Components.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rotate_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rotate_right.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

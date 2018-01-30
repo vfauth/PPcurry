@@ -22,7 +22,6 @@ namespace PPcurry
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
         private Component SelectedComponent; // The component currently selected
-
         #endregion
 
 
