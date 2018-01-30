@@ -21,6 +21,7 @@ namespace PPcurry
         private List<Rectangle> Lines; // The lines of the grid
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
+        private List<List<Node>> Nodes;
 
         #endregion
 
@@ -71,6 +72,7 @@ namespace PPcurry
             this.Lines = new List<Rectangle>();
             this.Columns = new List<Rectangle>();
             ComponentsOnBoard = new List<Component>();
+            Nodes = new List<List<Node>>();
 
             this.Background = new SolidColorBrush
             {
@@ -92,8 +94,10 @@ namespace PPcurry
         /// </summary>
         public void DrawGrid()
         {
+            double gridTotalSpacing = GridSpacing + GridThickness;
+
             // Generation of new lines and columns if the board has extended 
-            for (int y = Lines.Count(); y < this.ActualHeight / (GridSpacing + GridThickness) + 1; y++)
+            for (int y = Lines.Count(); y < this.ActualHeight / gridTotalSpacing + 1; y++)
             {
                 Rectangle Line = new Rectangle
                 {
@@ -101,11 +105,19 @@ namespace PPcurry
                     Width = this.ActualWidth,
                     Fill = new SolidColorBrush(Colors.Gray)
                 };
-                Line.SetValue(TopProperty, (double)(y * (GridSpacing + GridThickness))); // Position
+                Line.SetValue(TopProperty, (double)(y * gridTotalSpacing)); // Position
                 Lines.Add(Line);
                 this.Children.Add(Line); // Display the line
+
+                Nodes.Add(new List<Node>()); // Add a list of nodes for that line
+                for (int x = 0; x < this.ActualWidth / gridTotalSpacing + 1; x++)
+                {
+                    // Create the nodes on that line
+                    Point nodePosition = new Point(x * gridTotalSpacing, y * gridTotalSpacing);
+                    Nodes[y].Add(new Node(nodePosition, this));
+                }
             }
-            for (int x = Columns.Count(); x < this.ActualWidth / (GridSpacing + GridThickness) + 1; x++)
+            for (int x = Columns.Count(); x < this.ActualWidth / gridTotalSpacing + 1; x++)
             {
                 Rectangle Column = new Rectangle
                 {
@@ -113,14 +125,21 @@ namespace PPcurry
                     Width = GridThickness,
                     Fill = new SolidColorBrush(Colors.Gray)
                 };
-                Column.SetValue(LeftProperty, (double)(x * (GridSpacing + GridThickness))); // Position
+                Column.SetValue(LeftProperty, (double)(x * gridTotalSpacing)); // Position
                 Columns.Add(Column);
                 this.Children.Add(Column); // Display the column
+
+                // Add nodes for the new columns
+                for(int y = 0; y < Nodes.Count; y++)
+                {
+                    Point nodePosition = new Point(x * gridTotalSpacing, y * gridTotalSpacing);
+                    Nodes[y].Add(new Node(nodePosition, this));
+                }
             }
         }
 
         /// <summary>
-        /// Returns the nearest grid node (as a Point) of given Point
+        /// Returns the nearest grid node (as a Point) of the given Point
         /// </summary>
         private Point Magnetize(Point point)
         {
