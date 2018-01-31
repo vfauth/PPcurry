@@ -46,7 +46,13 @@ namespace PPcurry
         public Vector GetImageSize() => this.ImageSize;
 
         public Point GetImagePosition() => this.ImagePosition;
-        public void SetImagePosition(Point position) => this.ImagePosition = position;
+        public void SetPosition(Point position)
+        {
+            Canvas.SetLeft(this, position.X); // Position
+            Canvas.SetTop(this, position.Y);
+
+            UpdatePosition(); // Update the image position
+        }
 
         public string GetName() => this.ComponentName;
         public void SetName(string name)
@@ -69,8 +75,7 @@ namespace PPcurry
                     double thickness = Properties.Settings.Default.ComponentBorderThickness;
                     this.Width += thickness * 2;
                     this.Height += thickness * 2;
-                    this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) - thickness);
-                    this.SetValue(Canvas.TopProperty, (double)this.GetValue(Canvas.TopProperty) - thickness);
+                    this.SetPosition(new Point(Canvas.GetLeft(this) - thickness, Canvas.GetTop(this) - thickness));
                 }
                 else
                 {
@@ -81,8 +86,7 @@ namespace PPcurry
                     double thickness = Properties.Settings.Default.ComponentBorderThickness;
                     this.Width -= thickness * 2;
                     this.Height -= thickness * 2;
-                    this.SetValue(Canvas.LeftProperty, (double)this.GetValue(Canvas.LeftProperty) + thickness);
-                    this.SetValue(Canvas.TopProperty, (double)this.GetValue(Canvas.TopProperty) + thickness);
+                    this.SetPosition(new Point(Canvas.GetLeft(this) - thickness, Canvas.GetTop(this) + thickness));
                 }
             }
         }
@@ -125,8 +129,7 @@ namespace PPcurry
 
             this.BorderBrush = new SolidColorBrush(Colors.Black);
             this.BorderThickness = new Thickness(0);
-            this.SetValue(Canvas.LeftProperty, ImagePosition.X); // Position
-            this.SetValue(Canvas.TopProperty, ImagePosition.Y);
+            this.SetPosition(position);
             this.ToolTip = this.ComponentName; // Tooltip
             boardGrid.AddComponent(this); // Add the component
 
@@ -220,8 +223,8 @@ namespace PPcurry
         /// </summary>
         public void UpdatePosition()
         {
-            this.ImagePosition.X = (double)this.GetValue(Canvas.LeftProperty) + this.BorderThickness.Left;
-            this.ImagePosition.Y = (double)this.GetValue(Canvas.TopProperty) + this.BorderThickness.Top;
+            this.ImagePosition.X = (double)Canvas.GetLeft(this) + this.BorderThickness.Left;
+            this.ImagePosition.Y = (double)Canvas.GetTop(this) + this.BorderThickness.Top;
         }
 
         /// <summary>

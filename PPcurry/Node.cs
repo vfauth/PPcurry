@@ -28,11 +28,12 @@ public class Node
     public Dictionary<object, Directions> ConnectedComponents = new Dictionary<object, Directions>(); // The components connected (Up, Right, Down, Left)
     #endregion
 
+
     #region Accessors/Mutators
 
     public Point GetPosition() => this.Position;
-    public void SetPosition(Point point) => this.Position = point;
     #endregion
+
 
     #region Constructor
 

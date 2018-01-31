@@ -121,27 +121,29 @@ namespace PPcurry
             // Generation of new lines and columns
             for (int y = 0; y < this.ActualHeight / gridTotalSpacing + 2; y++)
             {
-                Rectangle Line = new Rectangle
+                Rectangle line = new Rectangle
                 {
                     Height = GridThickness,
                     Width = this.ActualWidth,
                     Fill = new SolidColorBrush(Colors.Gray)
                 };
-                Line.SetValue(TopProperty, (double)(y * gridTotalSpacing)); // Position
-                Lines.Add(Line);
-                this.Children.Add(Line); // Display the line
+                Canvas.SetTop(line, (double)(y * gridTotalSpacing)); // Position
+                Canvas.SetZIndex(line, -99); // Grid must always be in the background
+                Lines.Add(line);
+                this.Children.Add(line); // Display the line
             }
             for (int x = 0; x < this.ActualWidth / gridTotalSpacing + 2; x++)
             {
-                Rectangle Column = new Rectangle
+                Rectangle column = new Rectangle
                 {
                     Height = this.ActualHeight,
                     Width = GridThickness,
                     Fill = new SolidColorBrush(Colors.Gray)
                 };
-                Column.SetValue(LeftProperty, (double)(x * gridTotalSpacing)); // Position
-                Columns.Add(Column);
-                this.Children.Add(Column); // Display the column
+                Canvas.SetLeft(column, (double)(x * gridTotalSpacing)); // Position
+                Canvas.SetZIndex(column, -99); // Grid must always be in the background
+                Columns.Add(column);
+                this.Children.Add(column); // Display the column
             }
         }
 
@@ -226,8 +228,8 @@ namespace PPcurry
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
             Node gridNode = Magnetize(relativePosition - component.GetImageSize() / 2 + anchor); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
-            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
+            Canvas.SetLeft(component, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
+            Canvas.SetTop(component, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
             component.UpdatePosition(); // Update the component position attribute
 
             // If the component is dragged outside of the board, it is hidden
@@ -251,8 +253,8 @@ namespace PPcurry
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
             Node gridNode = Magnetize(relativePosition - component.GetImageSize() / 2 + anchor); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
-            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
+            Vector thickness = new Vector(component.BorderThickness.Left, component.BorderThickness.Top);
+            component.SetPosition(gridNode.GetPosition() - anchor - thickness);
             component.UpdatePosition(); // Update the component position attribute
             component.ConnectAnchors(); // Connect anchors to nodes
         }
