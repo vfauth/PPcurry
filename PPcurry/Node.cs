@@ -42,6 +42,5 @@ public class Node
         this.Grid = boardGrid as BoardGrid;
         this.Position = position;
     }
-
     #endregion
 }

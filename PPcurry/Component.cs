@@ -25,8 +25,8 @@ namespace PPcurry
 
         private Image ComponentImage;
         private BoardGrid BoardGrid; // The board on which is this component
-        private Point Position; // The position of the component on the grid
-        private Vector Size; // The component displayed size as a Vector
+        private Point ImagePosition; // The position of the component on the grid // WARNING: Position of the image, border excluded
+        private Vector ImageSize; // The component displayed size as a Vector
         private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
         private double Scale; // The scaling factor applied to the image
         private string ComponentName; // The component name
@@ -43,10 +43,10 @@ namespace PPcurry
 
         public List<Vector> GetAnchors() => this.Anchors;
 
-        public Vector GetSize() => this.Size;
+        public Vector GetImageSize() => this.ImageSize;
 
-        public Point GetPosition() => this.Position;
-        public void SetPosition(Point position) => this.Position = position;
+        public Point GetImagePosition() => this.ImagePosition;
+        public void SetImagePosition(Point position) => this.ImagePosition = position;
 
         public string GetName() => this.ComponentName;
         public void SetName(string name)
@@ -106,13 +106,13 @@ namespace PPcurry
         {
             // Save attributes
             this.BoardGrid = boardGrid as BoardGrid;
-            this.Position = position;
+            this.ImagePosition = position;
             this.ComponentName = xmlElement.Element("name").Value;
 
             // Size
             this.Width = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
             this.Height = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
-            this.Size = new Vector(this.Width, this.Height);
+            this.ImageSize = new Vector(this.Width, this.Height);
             this.Scale = this.Width / (double)xmlElement.Element("width");
 
             // Display the image
@@ -125,15 +125,17 @@ namespace PPcurry
 
             this.BorderBrush = new SolidColorBrush(Colors.Black);
             this.BorderThickness = new Thickness(0);
-            this.SetValue(Canvas.LeftProperty, Position.X); // Position
-            this.SetValue(Canvas.TopProperty, Position.Y);
+            this.SetValue(Canvas.LeftProperty, ImagePosition.X); // Position
+            this.SetValue(Canvas.TopProperty, ImagePosition.Y);
             this.ToolTip = this.ComponentName; // Tooltip
             boardGrid.AddComponent(this); // Add the component
 
             // Rotation
-            Rotation = new RotateTransform(0);
-            Rotation.CenterX = this.Width / 2 + Properties.Settings.Default.ComponentBorderThickness; // To make the component rotate around its center
-            Rotation.CenterY = this.Height / 2 + Properties.Settings.Default.ComponentBorderThickness;
+            Rotation = new RotateTransform(0)
+            {
+                CenterX = this.Width / 2 + Properties.Settings.Default.ComponentBorderThickness, // To make the component rotate around its center
+                CenterY = this.Height / 2 + Properties.Settings.Default.ComponentBorderThickness
+            };
             this.RenderTransform = Rotation;
 
             // Anchors
@@ -143,9 +145,11 @@ namespace PPcurry
                 // Parse each anchor's position
                 Vector anchor = new Vector
                 {
-                    X = (double)xmlElement.Element("anchors").Element("anchor").Element("posX") * this.Scale + this.BorderThickness.Left,
-                    Y = (double)xmlElement.Element("anchors").Element("anchor").Element("posY") * this.Scale + this.BorderThickness.Top
+                    X = (double)xmlAnchor.Element("posX") * this.Scale + this.BorderThickness.Left,
+                    Y = (double)xmlAnchor.Element("posY") * this.Scale + this.BorderThickness.Top
                 };
+                anchor.X = Math.Round(anchor.X, 0); // Round the anchor composants
+                anchor.Y = Math.Round(anchor.Y, 0);
                 this.Anchors.Add(anchor);
             }
 
@@ -159,21 +163,65 @@ namespace PPcurry
         #region Methods
 
         /// <summary>
-        /// Rotate the component by 90 degrees counterclockwise.
+        /// Rotate the component by 90 degrees counterclockwise and reconnects anchors to nodes
         /// </summary>
         public void RotateLeft()
         {
             this.Rotation.Angle -= 90;
+            if (this.Rotation.Angle < 0) // Angles are 360-periodic
+            {
+                this.Rotation.Angle += 360;
+            }
             this.RenderTransform = this.Rotation;
+            TransformAnchorsAfterRotation(-90);
+            ConnectAnchors(); // Reconnect anchors
         }
 
         /// <summary>
-        /// Rotate the component by 90 degrees clockwise.
+        /// Rotate the component by 90 degrees clockwise and reconnects anchors to nodes
         /// </summary>
         public void RotateRight()
         {
             this.Rotation.Angle += 90;
+            if (this.Rotation.Angle >= 360) // Angles are 360-periodic
+            {
+                this.Rotation.Angle -= 360;
+            }
             this.RenderTransform = this.Rotation;
+            TransformAnchorsAfterRotation(90);
+            ConnectAnchors(); // Reconnect anchors
+        }
+
+        /// <summary>
+        /// Compute new values for anchor vectors after a rotation of a given angle
+        /// </summary>
+        private void TransformAnchorsAfterRotation(double rotation)
+        {
+            rotation *= Math.PI / 180; // Convert the angle to radians
+            Vector center = this.ImageSize / 2;
+            Vector tmpVector = new Vector();
+
+            for (int i = 0; i < this.Anchors.Count(); i++) // Apply the transformation to each anchor
+            {
+                Vector vectorToRotate = Anchors[i] - center; // Rotation around the center, so we change the origin
+                
+                // Apply the rotation matrix
+                tmpVector.X = Math.Cos(rotation) * vectorToRotate.X - Math.Sin(rotation) * vectorToRotate.Y;
+                tmpVector.Y = Math.Sin(rotation) * vectorToRotate.X + Math.Cos(rotation) * vectorToRotate.Y;
+                tmpVector += center; // Change origin again
+                tmpVector.X = Math.Round(tmpVector.X, 0);
+                tmpVector.Y = Math.Round(tmpVector.Y, 0);
+                this.Anchors[i] = tmpVector;
+            }
+        }
+
+        /// <summary>
+        /// Updates the position attribute after the component has been moved
+        /// </summary>
+        public void UpdatePosition()
+        {
+            this.ImagePosition.X = (double)this.GetValue(Canvas.LeftProperty) + this.BorderThickness.Left;
+            this.ImagePosition.Y = (double)this.GetValue(Canvas.TopProperty) + this.BorderThickness.Top;
         }
 
         /// <summary>
@@ -186,7 +234,7 @@ namespace PPcurry
                 // Disconnect all anchors from their node
                 foreach (Vector anchor in this.Anchors)
                 {
-                    this.BoardGrid.Magnetize(this.Position + anchor).ConnectedComponents.Remove(this);
+                    this.BoardGrid.Magnetize(this.ImagePosition + anchor).ConnectedComponents.Remove(this);
                 }
                 DragDrop.DoDragDrop((Component)sender, (Component)sender, DragDropEffects.Move); // Begin the drag&drop
             }
@@ -197,32 +245,59 @@ namespace PPcurry
         /// </summary>
         public void ConnectAnchors()
         {
+            ClearAnchors(); // Clear previous connections
             foreach (Vector anchor in this.Anchors)
             {
-                Node node = this.BoardGrid.Magnetize(this.Position + anchor); // The nearest node
-                Directions direction = new Directions(); // Direction of the component relative to the node 
+                Node node = this.BoardGrid.Magnetize(this.ImagePosition + anchor); // The nearest node
 
-                Debug.WriteLine("TEST1");
-                Debug.WriteLine(node.GetPosition());
-                if ((this.Position + anchor + this.Size).X == node.GetPosition().X)
+                Vector nodeRelativePosition = node.GetPosition() - this.ImagePosition; // Node position relative to the image
+                Directions direction = new Directions(); // Direction of the component relative to the node 
+                
+                try
                 {
-                    direction = Directions.Left;
+                    if (Math.Abs(this.ImageSize.X - nodeRelativePosition.X) < Properties.Settings.Default.GridSpacing / 10) // The grid spacing is used as an error threshold
+                    {
+                        direction = Directions.Left;
+                    }
+                    else if (Math.Abs(this.ImageSize.Y - nodeRelativePosition.Y) < Properties.Settings.Default.GridSpacing / 10)
+                    {
+                        direction = Directions.Up;
+                    }
+                    else if (Math.Abs(nodeRelativePosition.Y) < Properties.Settings.Default.GridSpacing / 10)
+                    {
+                        direction = Directions.Down;
+                    }
+                    else if (Math.Abs(nodeRelativePosition.X) < Properties.Settings.Default.GridSpacing / 10)
+                    {
+                        direction = Directions.Right;
+                    }
+                    else
+                    {
+                        throw new System.ApplicationException("Can't determine anchor position relatively to the node.");
+                    }
                 }
-                else if ((this.Position + anchor + this.Size).Y == node.GetPosition().Y)
+                catch (System.ApplicationException e)
                 {
-                    direction = Directions.Up;
+                    ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log
                 }
-                else if ((this.Position + anchor).Y == node.GetPosition().Y)
-                {
-                    direction = Directions.Down;
-                }
-                else if ((this.Position + anchor).X == node.GetPosition().X)
-                {
-                    direction = Directions.Right;
-                }
-                Debug.WriteLine("TEST");
-                Debug.WriteLine(direction);
                 node.ConnectedComponents.Add(this, direction);
+            }
+        }
+
+        /// <summary>
+        /// Remove this object from all connected anchors
+        /// </summary>
+        public void ClearAnchors()
+        {
+            foreach (List<Node> lineNode in this.BoardGrid.GetNodes())
+            {
+                foreach (Node node in lineNode)
+                {
+                    if (node.ConnectedComponents.ContainsKey(this))
+                    {
+                        node.ConnectedComponents.Remove(this); // Remove the anchor from the node connected elements
+                    }
+                }
             }
         }
 

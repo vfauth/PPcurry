@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Xml.Linq;
+using System.IO;
 
 namespace PPcurry
 {
@@ -76,20 +77,6 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Defines the hotkeys.
-        /// </summary>
-        private void AddHotKeys()
-        {
-            RoutedCommand leftRotation = new RoutedCommand();
-            leftRotation.InputGestures.Add(new KeyGesture(Key.E));
-            CommandBindings.Add(new CommandBinding(leftRotation, LeftRotationButton_Click));
-
-            RoutedCommand rightRotation = new RoutedCommand();
-            rightRotation.InputGestures.Add(new KeyGesture(Key.R));
-            CommandBindings.Add(new CommandBinding(rightRotation, RightRotationButton_Click));
-        }
-
-        /// <summary>
         /// If the mouse moves over a component in the left panel and the left mouse button is pressed, the component is dragged
         /// </summary>
         private void ComponentInLeftPanel_MouseMove(object sender, MouseEventArgs e)
@@ -128,7 +115,7 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Handler called when the left rotation button is clicked or when the E key is pressed.
+        /// Handler called when the left rotation button is clicked or when the E key is pressed
         /// </summary>
         private void LeftRotationButton_Click(object sender, RoutedEventArgs e)
         {
@@ -139,7 +126,7 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Handler called when the right rotation button is clicked or when the R key is pressed.
+        /// Handler called when the right rotation button is clicked or when the R key is pressed
         /// </summary>
         private void RightRotationButton_Click(object sender, RoutedEventArgs e)
         {
@@ -147,6 +134,19 @@ namespace PPcurry
             {
                 this.BoardGrid.GetSelectedComponent().RotateRight();
             }
+        }
+
+        /// <summary>
+        /// Write an error message to the log file and terminate the application
+        /// </summary>
+        public void LogError(System.Exception exception)
+        {
+            using (StreamWriter logFile = new StreamWriter("log.txt", true)) // The file to which append the text
+            {
+                logFile.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ff ") + exception.Message);
+            }
+            Application.Current.Shutdown(); // Close the window
+            Environment.Exit(0); // Terminate the process
         }
         #endregion
     }

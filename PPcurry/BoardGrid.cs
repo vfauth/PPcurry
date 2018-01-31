@@ -43,18 +43,8 @@ namespace PPcurry
             }
             this.SelectedComponent = selectedComponent;
         }
-        public void AddNode(Node Node)
-        {
-            if (Node.GetPosition() != null)
-            {
-                //this.ComponentsOnBoard.Add(component);
-                //if (component.Parent != null)
-                //{
-                //    ((Panel)component.Parent).Children.Remove(component);
-                //}
-                //this.Children.Add(component);
-            }
-        }
+
+        public List<List<Node>> GetNodes() => this.Nodes;
         #endregion
 
 
@@ -97,7 +87,7 @@ namespace PPcurry
             double gridTotalSpacing = GridSpacing + GridThickness;
 
             // Generation of new nodes if the board has extended 
-            for (int y = Lines.Count(); y < this.ActualHeight / gridTotalSpacing + 1; y++)
+            for (int y = Lines.Count(); y < this.ActualHeight / gridTotalSpacing + 2; y++)
             {
                 Nodes.Add(new List<Node>()); // Add a list of nodes for that line
                 for (int x = 0; x < this.ActualWidth / gridTotalSpacing + 1; x++)
@@ -107,7 +97,7 @@ namespace PPcurry
                     Nodes[y].Add(new Node(nodePosition, this));
                 }
             }
-            for (int x = Columns.Count(); x < this.ActualWidth / gridTotalSpacing + 1; x++)
+            for (int x = Columns.Count(); x < this.ActualWidth / gridTotalSpacing + 2; x++)
             {
                 // Add nodes for the new columns
                 for(int y = 0; y < Nodes.Count; y++)
@@ -129,7 +119,7 @@ namespace PPcurry
             Columns.Clear();
 
             // Generation of new lines and columns
-            for (int y = 0; y < this.ActualHeight / gridTotalSpacing + 1; y++)
+            for (int y = 0; y < this.ActualHeight / gridTotalSpacing + 2; y++)
             {
                 Rectangle Line = new Rectangle
                 {
@@ -141,7 +131,7 @@ namespace PPcurry
                 Lines.Add(Line);
                 this.Children.Add(Line); // Display the line
             }
-            for (int x = 0; x < this.ActualWidth / gridTotalSpacing + 1; x++)
+            for (int x = 0; x < this.ActualWidth / gridTotalSpacing + 2; x++)
             {
                 Rectangle Column = new Rectangle
                 {
@@ -235,9 +225,10 @@ namespace PPcurry
 
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
-            Node gridNode = Magnetize(relativePosition - component.GetSize() / 2 + anchor); // The nearest grid node from the anchor
+            Node gridNode = Magnetize(relativePosition - component.GetImageSize() / 2 + anchor); // The nearest grid node from the anchor
             component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
             component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
+            component.UpdatePosition(); // Update the component position attribute
 
             // If the component is dragged outside of the board, it is hidden
             if (relativePosition.X < 0 || relativePosition.X > this.ActualWidth || relativePosition.Y < 0 || relativePosition.Y > this.ActualHeight)
@@ -259,11 +250,11 @@ namespace PPcurry
 
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
-            Node gridNode = Magnetize(relativePosition - component.GetSize() / 2 + anchor); // The nearest grid node from the anchor
+            Node gridNode = Magnetize(relativePosition - component.GetImageSize() / 2 + anchor); // The nearest grid node from the anchor
             component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
             component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
-
-            //component.ConnectAnchors(); // Connect all the component's anchors to nodes
+            component.UpdatePosition(); // Update the component position attribute
+            component.ConnectAnchors(); // Connect anchors to nodes
         }
 
         /// <summary>
