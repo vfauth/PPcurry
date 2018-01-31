@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="BoardGrid.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="Enumerations.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

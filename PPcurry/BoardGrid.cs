@@ -139,31 +139,33 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Returns the nearest grid node (as a Point) of the given Point
+        /// Returns the nearest grid node of the given Point
         /// </summary>
-        private Point Magnetize(Point point)
+        public Node Magnetize(Point point)
         {
-            double X = point.X;
-            double Y = point.Y;
+            int X = (int)point.X;
+            int Y = (int)point.Y;
             double gridTotalSpacing = GridSpacing + GridThickness;
-            Point Nearest = new Point();
+            int nearestX = 0; // X index of the nearest node
+            int nearestY = 0; // Y index of the nearest node
+
             if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing))
             {
-                Nearest.X = gridTotalSpacing * (int)(X / gridTotalSpacing);
+                nearestX = (int)(X / gridTotalSpacing);
             }
             else
             {
-                Nearest.X = gridTotalSpacing * ((int)(X / gridTotalSpacing) + 1);
+                nearestX = ((int)(X / gridTotalSpacing) + 1);
             }
             if (Math.Abs(Y % gridTotalSpacing) < Math.Abs(gridTotalSpacing - Y % gridTotalSpacing))
             {
-                Nearest.Y = gridTotalSpacing * (int)(Y / gridTotalSpacing);
+                nearestY = (int)(Y / gridTotalSpacing);
             }
             else
             {
-                Nearest.Y = gridTotalSpacing * ((int)(Y / gridTotalSpacing) + 1);
+                nearestY = ((int)(Y / gridTotalSpacing) + 1);
             }
-            return Nearest;
+            return Nodes[nearestY][nearestX];
         }
 
         /// <summary>
@@ -194,9 +196,10 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
-            Point gridNode = Magnetize(relativePosition - component.GetSize()/2 + component.GetAnchor()); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X); // The component is moved
-            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y);
+            Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
+            Node gridNode = Magnetize(relativePosition - component.GetSize() / 2 + anchor); // The nearest grid node from the anchor
+            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X); // The component is moved
+            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y);
 
             // If the component is dragged outside of the board, it is hidden
             if (relativePosition.X < 0 || relativePosition.X > this.ActualWidth || relativePosition.Y < 0 || relativePosition.Y > this.ActualHeight)
@@ -217,9 +220,12 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
-            Point gridNode = Magnetize(relativePosition - component.GetSize() / 2 + component.GetAnchor()); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.X - component.GetAnchor().X); // The component is moved
-            component.SetValue(TopProperty, gridNode.Y - component.GetAnchor().Y);
+            Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
+            Node gridNode = Magnetize(relativePosition - component.GetSize() / 2 + anchor); // The nearest grid node from the anchor
+            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X); // The component is moved
+            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y);
+
+            component.ConnectAnchors(); // Connect all the component's anchors to nodes
         }
 
         /// <summary>

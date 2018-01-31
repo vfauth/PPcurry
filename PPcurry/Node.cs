@@ -25,24 +25,13 @@ public class Node
 
     private BoardGrid Grid; // The board on which is this Node
     private Point Position; // The position of the Node
-    private Component[] ConnectedComponents = new Component[4]; // The components connected (Up/North, Right/East, Down/South, Left/West)
+    public Dictionary<object, Directions> ConnectedComponents = new Dictionary<object, Directions>(); // The components connected (Up, Right, Down, Left)
     #endregion
 
     #region Accessors/Mutators
 
     public Point GetPosition() => this.Position;
-
-    public Component[] GetComponents() => this.ConnectedComponents;
     public void SetPosition(Point point) => this.Position = point;
-
-    public void SetTopComponent(Component component) => this.ConnectedComponents[0] = component;
-
-    public void SetRightComponent(Component component) => this.ConnectedComponents[1] = component;
-
-    public void SetBottomComponent(Component component) => this.ConnectedComponents[2] = component;
-
-
-    public void SetLeftComponent(Component component) => this.ConnectedComponents[3] = component;
     #endregion
 
     #region Constructor
