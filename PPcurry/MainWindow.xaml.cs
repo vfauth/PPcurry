@@ -42,7 +42,7 @@ namespace PPcurry
         {
             InitializeComponent();
             Application.Current.MainWindow = this; // Application.Current.MainWindow can return null sometimes, so we prevent it
-            this.BoardGrid = new BoardGrid(39, 1);
+            this.BoardGrid = new BoardGrid();
             MainPanel.Children.Add(BoardGrid);
             LoadComponents();
         }
@@ -76,6 +76,20 @@ namespace PPcurry
         }
 
         /// <summary>
+        /// Defines the hotkeys.
+        /// </summary>
+        private void AddHotKeys()
+        {
+            RoutedCommand leftRotation = new RoutedCommand();
+            leftRotation.InputGestures.Add(new KeyGesture(Key.E));
+            CommandBindings.Add(new CommandBinding(leftRotation, LeftRotationButton_Click));
+
+            RoutedCommand rightRotation = new RoutedCommand();
+            rightRotation.InputGestures.Add(new KeyGesture(Key.R));
+            CommandBindings.Add(new CommandBinding(rightRotation, RightRotationButton_Click));
+        }
+
+        /// <summary>
         /// If the mouse moves over a component in the left panel and the left mouse button is pressed, the component is dragged
         /// </summary>
         private void ComponentInLeftPanel_MouseMove(object sender, MouseEventArgs e)
@@ -94,6 +108,44 @@ namespace PPcurry
                 }; // Create the component and display it
                 
                 DragDrop.DoDragDrop(newComponent, newComponent, DragDropEffects.Move); // Begin the drag&drop
+            }
+        }
+
+        /// <summary>
+        /// Handler called when a key is released
+        /// </summary>
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.E:
+                    LeftRotationButton_Click(sender, e);
+                    break;
+                case Key.R:
+                    RightRotationButton_Click(sender, e);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Handler called when the left rotation button is clicked or when the E key is pressed.
+        /// </summary>
+        private void LeftRotationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.BoardGrid.GetSelectedComponent() != null)
+            {
+                this.BoardGrid.GetSelectedComponent().RotateLeft();
+            }
+        }
+
+        /// <summary>
+        /// Handler called when the right rotation button is clicked or when the R key is pressed.
+        /// </summary>
+        private void RightRotationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.BoardGrid.GetSelectedComponent() != null)
+            {
+                this.BoardGrid.GetSelectedComponent().RotateRight();
             }
         }
         #endregion

@@ -102,5 +102,11 @@
   <ItemGroup>
     <Resource Include="Components.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rotate_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rotate_right.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

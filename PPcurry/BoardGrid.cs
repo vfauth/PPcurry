@@ -16,35 +16,32 @@ namespace PPcurry
     {
         #region Attributes
         
-        private int GridSpacing; // The distance between two lines or columns
-        private int GridThickness; // The lines thickness
+        private double GridSpacing; // The distance between two lines or columns
+        private double GridThickness; // The lines thickness
         private List<Rectangle> Lines; // The lines of the grid
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
         private List<List<Node>> Nodes;
-
+        private Component SelectedComponent; // The component currently selected
         #endregion
 
 
         #region Accessors/Mutators
 
-        public int GetGridSpacing() => this.GridSpacing;
+        public double GetGridSpacing() => this.GridSpacing;
         public void SetGridSpacing(int spacing) => this.GridSpacing = spacing;
 
-        public int GetGridThickness() => this.GridThickness;
+        public double GetGridThickness() => this.GridThickness;
         public void SetGridThickness(int thickness) => this.GridThickness = thickness;
 
-        public void AddComponent(Component component)
+        public Component GetSelectedComponent() => this.SelectedComponent;
+        public void SetSelectedComponent(Component selectedComponent)
         {
-            if (component != null)
+            if (SelectedComponent != null)
             {
-                this.ComponentsOnBoard.Add(component);
-                if (component.Parent != null)
-                {
-                    ((Panel)component.Parent).Children.Remove(component);
-                }
-                this.Children.Add(component);
+                this.SelectedComponent.SetIsSelected(false);
             }
+            this.SelectedComponent = selectedComponent;
         }
         public void AddNode(Node Node)
         {
@@ -62,13 +59,13 @@ namespace PPcurry
 
 
         #region Constructor
-        public BoardGrid(int spacing, int thickness)
+        public BoardGrid()
         {
             this.Loaded += BoardGrid_Loaded; // Draw the grid a first time after initialization
 
             // Initialization of attributes
-            this.GridSpacing = spacing;
-            this.GridThickness = thickness;
+            this.GridSpacing = Properties.Settings.Default.GridSpacing;
+            this.GridThickness = Properties.Settings.Default.GridThickness;
             this.Lines = new List<Rectangle>();
             this.Columns = new List<Rectangle>();
             ComponentsOnBoard = new List<Component>();
@@ -84,11 +81,14 @@ namespace PPcurry
             this.DragOver += BoardGrid_DragOver; // Event handler continusously called while dragging
             this.Drop += BoardGrid_Drop; // Event handler called when a component is dropped
             this.DragLeave += BoardGrid_DragLeave; // Event handler called when a dragged component leaves the board
+
+            this.SizeChanged += BoardGrid_SizeChanged; // Event handler called when the board is resized
         }
         #endregion
 
 
         #region Methods
+
         /// <summary>
         /// Update the grid and draw it
         /// </summary>
@@ -148,24 +148,39 @@ namespace PPcurry
             double gridTotalSpacing = GridSpacing + GridThickness;
             int nearestX = 0; // X index of the nearest node
             int nearestY = 0; // Y index of the nearest node
-
-            if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing))
+            if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing)) // If the nearest line is the upper one
             {
                 nearestX = (int)(X / gridTotalSpacing);
             }
-            else
+            else // If the nearest line is the lower one
             {
                 nearestX = ((int)(X / gridTotalSpacing) + 1);
             }
-            if (Math.Abs(Y % gridTotalSpacing) < Math.Abs(gridTotalSpacing - Y % gridTotalSpacing))
+            if (Math.Abs(Y % gridTotalSpacing) < Math.Abs(gridTotalSpacing - Y % gridTotalSpacing)) // If the nearest column is the left one
             {
                 nearestY = (int)(Y / gridTotalSpacing);
             }
-            else
+            else // If the nearest colun is the right one
             {
                 nearestY = ((int)(Y / gridTotalSpacing) + 1);
             }
             return Nodes[nearestY][nearestX];
+        }
+
+        /// <summary>
+        /// Add a component on the board
+        /// </summary>
+        public void AddComponent(Component component)
+        {
+            if (component != null)
+            {
+                this.ComponentsOnBoard.Add(component);
+                if (component.Parent != null)
+                {
+                    ((Panel)component.Parent).Children.Remove(component);
+                }
+                this.Children.Add(component);
+            }
         }
 
         /// <summary>
@@ -176,7 +191,13 @@ namespace PPcurry
             DrawGrid();
         }
 
-
+        /// <summary>
+        /// Event handler called when the board is resized
+        /// </summary>
+        private void BoardGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DrawGrid();
+        }
 
         /// <summary>
         /// Event handler called when a dragged component enters the board
@@ -198,8 +219,8 @@ namespace PPcurry
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
             Node gridNode = Magnetize(relativePosition - component.GetSize() / 2 + anchor); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X); // The component is moved
-            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y);
+            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
+            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
 
             // If the component is dragged outside of the board, it is hidden
             if (relativePosition.X < 0 || relativePosition.X > this.ActualWidth || relativePosition.Y < 0 || relativePosition.Y > this.ActualHeight)
@@ -222,10 +243,10 @@ namespace PPcurry
             Point relativePosition = e.GetPosition(this); // Position of the mouse relative to the board
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
             Node gridNode = Magnetize(relativePosition - component.GetSize() / 2 + anchor); // The nearest grid node from the anchor
-            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X); // The component is moved
-            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y);
+            component.SetValue(LeftProperty, gridNode.GetPosition().X - anchor.X - component.BorderThickness.Left); // The component is moved
+            component.SetValue(TopProperty, gridNode.GetPosition().Y - anchor.Y - component.BorderThickness.Top);
 
-            component.ConnectAnchors(); // Connect all the component's anchors to nodes
+            //component.ConnectAnchors(); // Connect all the component's anchors to nodes
         }
 
         /// <summary>
