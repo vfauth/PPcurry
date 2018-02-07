@@ -254,7 +254,7 @@ namespace PPcurry
             Vector anchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
             Node gridNode = Magnetize(relativePosition - component.GetImageSize() / 2 + anchor); // The nearest grid node from the anchor
             Vector thickness = new Vector(component.BorderThickness.Left, component.BorderThickness.Top);
-            component.SetPosition(gridNode.GetPosition() - anchor - thickness);
+            component.SetComponentPosition(gridNode.GetPosition() - anchor - thickness);
             component.UpdatePosition(); // Update the component position attribute
             component.ConnectAnchors(); // Connect anchors to nodes
         }
