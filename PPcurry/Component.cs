@@ -25,8 +25,10 @@ namespace PPcurry
 
         private Image ComponentImage;
         private BoardGrid BoardGrid; // The board on which is this component
-        private Point ImagePosition; // The position of the component on the grid // WARNING: Position of the image, border excluded
-        private Vector ImageSize; // The component displayed size as a Vector
+        private Point ImagePosition; // The position of the image on the grid
+        private Point ComponentPosition; // The position of the component with its border on the grid
+        private Vector ImageSize; // The displayed image size as a Vector
+        private Vector ComponentSize; // The size of the component and its border as a Vector
         private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
         private double Scale; // The scaling factor applied to the image
         private string ComponentName; // The component name
@@ -43,15 +45,35 @@ namespace PPcurry
 
         public List<Vector> GetAnchors() => this.Anchors;
 
-        public Vector GetImageSize() => this.ImageSize;
+        public Vector GetImageSize()
+        {
+            UpdateSize();
+            return this.ImageSize;
+        }
 
-        public Point GetImagePosition() => this.ImagePosition;
-        public void SetPosition(Point position)
+        public Vector GetComponentSize()
+        {
+            UpdateSize();
+            return this.ComponentSize;
+        }
+
+        public Point GetImagePosition()
+        {
+            UpdatePosition();
+            return this.ImagePosition;
+        }
+        public void SetComponentPosition(Point position)
         {
             Canvas.SetLeft(this, position.X); // Position
             Canvas.SetTop(this, position.Y);
 
             UpdatePosition(); // Update the image position
+        }
+
+        public Point GetComponentPosition()
+        {
+            UpdatePosition();
+            return this.ComponentPosition;
         }
 
         public string GetName() => this.ComponentName;
@@ -66,16 +88,16 @@ namespace PPcurry
             if (isSelected != this.IsSelected)
             {
                 this.IsSelected = isSelected;
+                double thickness = Properties.Settings.Default.ComponentBorderThickness;
                 if (isSelected)
                 {
                     this.BoardGrid.SetSelectedComponent(this);
-                    this.BorderThickness = new Thickness(Properties.Settings.Default.ComponentBorderThickness);
+                    this.BorderThickness = new Thickness(thickness);
 
                     // Adjust the component size and position to avoid image resizing
-                    double thickness = Properties.Settings.Default.ComponentBorderThickness;
                     this.Width += thickness * 2;
                     this.Height += thickness * 2;
-                    this.SetPosition(new Point(Canvas.GetLeft(this) - thickness, Canvas.GetTop(this) - thickness));
+                    this.SetComponentPosition(new Point(ComponentPosition.X - thickness, ComponentPosition.Y - thickness));
                 }
                 else
                 {
@@ -83,13 +105,15 @@ namespace PPcurry
                     this.BorderThickness = new Thickness(0);
 
                     // Adjust the component size and position to avoid image resizing
-                    double thickness = Properties.Settings.Default.ComponentBorderThickness;
                     this.Width -= thickness * 2;
                     this.Height -= thickness * 2;
-                    this.SetPosition(new Point(Canvas.GetLeft(this) - thickness, Canvas.GetTop(this) + thickness));
+                    this.SetComponentPosition(new Point(ComponentPosition.X + thickness, ComponentPosition.Y + thickness));
                 }
+                UpdateSize();
+                UpdatePosition();
             }
         }
+
         public void SwitchIsSelected()
         {
             SetIsSelected(!this.IsSelected);
@@ -117,6 +141,7 @@ namespace PPcurry
             this.Width = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
             this.Height = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
             this.ImageSize = new Vector(this.Width, this.Height);
+            this.ComponentSize = new Vector(this.Width, this.Height);
             this.Scale = this.Width / (double)xmlElement.Element("width");
 
             // Display the image
@@ -129,7 +154,8 @@ namespace PPcurry
 
             this.BorderBrush = new SolidColorBrush(Colors.Black);
             this.BorderThickness = new Thickness(0);
-            this.SetPosition(position);
+            this.ImagePosition = position;
+            this.ComponentPosition = position;
             this.ToolTip = this.ComponentName; // Tooltip
             boardGrid.AddComponent(this); // Add the component
 
@@ -225,6 +251,19 @@ namespace PPcurry
         {
             this.ImagePosition.X = (double)Canvas.GetLeft(this) + this.BorderThickness.Left;
             this.ImagePosition.Y = (double)Canvas.GetTop(this) + this.BorderThickness.Top;
+            this.ComponentPosition.X = (double)Canvas.GetLeft(this);
+            this.ComponentPosition.Y = (double)Canvas.GetTop(this);
+        }
+
+        /// <summary>
+        /// Updates the size attribute after the component has been resized
+        /// </summary>
+        public void UpdateSize()
+        {
+            this.ImageSize.X = this.Width - this.BorderThickness.Left - this.BorderThickness.Right;
+            this.ImageSize.Y = this.Height - this.BorderThickness.Top - this.BorderThickness.Bottom;
+            this.ComponentSize.X = this.Width;
+            this.ComponentSize.Y = this.Height;
         }
 
         /// <summary>
@@ -254,8 +293,8 @@ namespace PPcurry
                 Node node = this.BoardGrid.Magnetize(this.ImagePosition + anchor); // The nearest node
 
                 Vector nodeRelativePosition = node.GetPosition() - this.ImagePosition; // Node position relative to the image
-                Directions direction = new Directions(); // Direction of the component relative to the node 
-                
+                Directions direction = new Directions(); // Direction of the component relative to the node
+
                 try
                 {
                     if (Math.Abs(this.ImageSize.X - nodeRelativePosition.X) < Properties.Settings.Default.GridSpacing / 10) // The grid spacing is used as an error threshold
