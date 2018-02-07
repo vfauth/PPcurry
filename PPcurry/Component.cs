@@ -85,11 +85,11 @@ namespace PPcurry
 
         public void SetIsSelected(bool isSelected)
         {
-            if (isSelected != this.IsSelected)
+            if (isSelected != this.IsSelected) // Check whether the selected state has changed
             {
                 this.IsSelected = isSelected;
                 double thickness = Properties.Settings.Default.ComponentBorderThickness;
-                if (isSelected)
+                if (isSelected) // The component is selected
                 {
                     this.BoardGrid.SetSelectedComponent(this);
                     this.BorderThickness = new Thickness(thickness);
@@ -99,7 +99,7 @@ namespace PPcurry
                     this.Height += thickness * 2;
                     this.SetComponentPosition(new Point(ComponentPosition.X - thickness, ComponentPosition.Y - thickness));
                 }
-                else
+                else // The component is unselected
                 {
                     this.BoardGrid.SetSelectedComponent(null);
                     this.BorderThickness = new Thickness(0);
@@ -110,7 +110,6 @@ namespace PPcurry
                     this.SetComponentPosition(new Point(ComponentPosition.X + thickness, ComponentPosition.Y + thickness));
                 }
                 UpdateSize();
-                UpdatePosition();
             }
         }
 
@@ -160,12 +159,7 @@ namespace PPcurry
             boardGrid.AddComponent(this); // Add the component
 
             // Rotation
-            Rotation = new RotateTransform(0)
-            {
-                CenterX = this.Width / 2 + Properties.Settings.Default.ComponentBorderThickness, // To make the component rotate around its center
-                CenterY = this.Height / 2 + Properties.Settings.Default.ComponentBorderThickness
-            };
-            this.RenderTransform = Rotation;
+            this.Rotation = new RotateTransform(0);
 
             // Anchors
             IEnumerable<XElement> xmlAnchors = xmlElement.Element("anchors").Elements("anchor"); // Get all the anchors present in the XML
@@ -201,6 +195,8 @@ namespace PPcurry
             {
                 this.Rotation.Angle += 360;
             }
+            this.Rotation.CenterX = this.ComponentSize.X / 2; // To make the component rotate around its center
+            this.Rotation.CenterY = this.ComponentSize.Y / 2;
             this.RenderTransform = this.Rotation;
             TransformAnchorsAfterRotation(-90);
             ConnectAnchors(); // Reconnect anchors
@@ -216,6 +212,8 @@ namespace PPcurry
             {
                 this.Rotation.Angle -= 360;
             }
+            this.Rotation.CenterX = this.ComponentSize.X / 2; // To make the component rotate around its center
+            this.Rotation.CenterY = this.ComponentSize.Y / 2;
             this.RenderTransform = this.Rotation;
             TransformAnchorsAfterRotation(90);
             ConnectAnchors(); // Reconnect anchors
@@ -260,10 +258,13 @@ namespace PPcurry
         /// </summary>
         public void UpdateSize()
         {
-            this.ImageSize.X = this.Width - this.BorderThickness.Left - this.BorderThickness.Right;
-            this.ImageSize.Y = this.Height - this.BorderThickness.Top - this.BorderThickness.Bottom;
             this.ComponentSize.X = this.Width;
             this.ComponentSize.Y = this.Height;
+
+            // Reapply the rotation with the new center coordinates
+            this.Rotation.CenterX = this.ComponentSize.X / 2;
+            this.Rotation.CenterY = this.ComponentSize.Y / 2;
+            this.RenderTransform = this.Rotation;
         }
 
         /// <summary>
