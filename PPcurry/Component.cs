@@ -23,15 +23,18 @@ namespace PPcurry
     {
         #region Attributes
 
-        private Image ComponentImage;
         private BoardGrid BoardGrid; // The board on which is this component
+        private Image ComponentImage;
         private Point ImagePosition; // The position of the image on the grid
         private Point ComponentPosition; // The position of the component with its border on the grid
         private Vector ImageSize; // The displayed image size as a Vector
         private Vector ComponentSize; // The size of the component and its border as a Vector
-        private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
         private double Scale; // The scaling factor applied to the image
+        private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
+
         private string ComponentName; // The component name
+        private Dictionary<string, double?> Attributes; // The components attributes ; the value is always in SI units and is nullable
+        private Dictionary<string, Dictionary<string, double>> AttributesUnits; // The available units for the components attributes ; each unit is a couple symbol:multiplier 
 
         private RotateTransform Rotation; // To rotation operation to apply
 
@@ -131,7 +134,7 @@ namespace PPcurry
         /// <param name="xmlElement">The XML Element with the component data</param>
         public Component(Point position, BoardGrid boardGrid, XElement xmlElement)
         {
-            // Save attributes
+            // Save parameters
             this.BoardGrid = boardGrid as BoardGrid;
             this.ImagePosition = position;
             this.ComponentName = xmlElement.Element("name").Value;
@@ -176,6 +179,25 @@ namespace PPcurry
                 this.Anchors.Add(anchor);
             }
 
+            // Attributes
+            Attributes = new Dictionary<string, double?>();
+            AttributesUnits = new Dictionary<string, Dictionary<string, double>>();
+            if (xmlElement.Element("attributes") != null) // Check if there are attributes
+            {
+                IEnumerable<XElement> xmlAttributes = xmlElement.Element("attributes").Elements("attribute"); // Get all the attributes present in the XML
+                foreach (XElement xmlAttribute in xmlAttributes)// Parse each attribute's name and available units
+                {
+                    Attributes.Add((string)xmlAttribute.Element("name"), null); // The value is undefined for now
+                    AttributesUnits.Add((string)xmlAttribute.Element("name"), new Dictionary<string, double>());
+
+                    foreach (XElement xmlUnit in xmlAttribute.Element("units").Elements("unit"))
+                    {
+                        AttributesUnits[(string)xmlAttribute.Element("name")].Add((string)xmlUnit.Element("symbol"), (double)xmlUnit.Element("value"));
+                    }
+                }
+            }
+
+            // Event handlers
             this.MouseLeftButtonDown += Component_MouseLeftButtonDown; // Event handler to trigger selection or properties editing
             this.MouseLeftButtonUp += Component_MouseLeftButtonUp; // Event handler to trigger selection or properties editing
             this.MouseMove += Component_MouseMove; // Event handler to trigger drag&drop
