@@ -89,6 +89,10 @@ namespace PPcurry
             this.ToolTip = name; // Update the tooltip
         }
 
+        public Dictionary<string, double?> GetAttributes() => this.Attributes;
+
+        public Dictionary<string, Dictionary<string, double>> GetAttributesUnits() => this.AttributesUnits;
+
         public void SetIsSelected(bool isSelected)
         {
             if (isSelected != this.IsSelected) // Check whether the selected state has changed
