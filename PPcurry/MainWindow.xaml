@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="PPcurry"
         MinWidth="600"
-        MinHeight="400" KeyUp="Window_KeyUp" >
+        MinHeight="400" KeyUp="Window_KeyUp" Loaded="Window_Loaded" >
     <DockPanel Name="MainPanel" >
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar >

@@ -34,12 +34,10 @@ namespace PPcurry
         private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
 
         private string ComponentName; // The component name
-        private Dictionary<string, double?> Attributes; // The components attributes ; the value is always in SI units and is nullable
-        private Dictionary<string, Dictionary<string, double>> AttributesUnits; // The available units for the components attributes ; each unit is a couple symbol:multiplier 
+        public Dictionary<string, double?> Attributes { get; set; } // The components attributes ; the value is always in SI units and is nullable
+        public Dictionary<string, Dictionary<string, double>> AttributesUnits { get; } // The available units for the components attributes ; each unit is a couple symbol:multiplier 
 
         private RotateTransform Rotation; // To rotation operation to apply
-
-        private ComponentDialog Dialog; // The dialog window to edit attributes
 
         private bool IsSelected = false; // Is true when the component is selected
         private int LastMouseLeftButtonDown = 0; // Timestamp of last MouseLeftButtonDown event; 0 if already handled
@@ -88,10 +86,6 @@ namespace PPcurry
             this.ComponentName = name;
             this.ToolTip = name; // Update the tooltip
         }
-
-        public Dictionary<string, double?> GetAttributes() => this.Attributes;
-
-        public Dictionary<string, Dictionary<string, double>> GetAttributesUnits() => this.AttributesUnits;
 
         public void SetIsSelected(bool isSelected)
         {
@@ -203,9 +197,6 @@ namespace PPcurry
                 }
             }
 
-            // Dialog
-            this.Dialog = new ComponentDialog(this);
-
             // Event handlers
             this.MouseLeftButtonDown += Component_MouseLeftButtonDown; // Event handler to trigger selection or properties editing
             this.MouseLeftButtonUp += Component_MouseLeftButtonUp; // Event handler to trigger selection or properties editing
@@ -221,15 +212,7 @@ namespace PPcurry
         /// </summary>
         public void DisplayDialog()
         {
-            this.Dialog.ShowDialog();
-        }
-
-        /// <summary>
-        /// Close the dialog
-        /// </summary>
-        public void CloseDialog()
-        {
-            this.Dialog.Hide();
+            this.BoardGrid.Dialog.Display(this);
         }
 
         /// <summary>

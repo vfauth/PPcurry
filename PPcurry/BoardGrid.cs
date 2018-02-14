@@ -23,6 +23,7 @@ namespace PPcurry
         private List<Component> ComponentsOnBoard; // The list of components on the board
         private List<List<Node>> Nodes;
         private Component SelectedComponent; // The component currently selected
+        public ComponentDialog Dialog { get; } // The dialog to edit a component attributes
         #endregion
 
 
@@ -58,8 +59,9 @@ namespace PPcurry
             this.GridThickness = Properties.Settings.Default.GridThickness;
             this.Lines = new List<Rectangle>();
             this.Columns = new List<Rectangle>();
-            ComponentsOnBoard = new List<Component>();
-            Nodes = new List<List<Node>>();
+            this.ComponentsOnBoard = new List<Component>();
+            this.Nodes = new List<List<Node>>();
+            this.Dialog = new ComponentDialog();
 
             this.Background = new SolidColorBrush
             {
