@@ -43,9 +43,6 @@ namespace PPcurry
         {
             InitializeComponent();
             Application.Current.MainWindow = this; // Application.Current.MainWindow can return null sometimes, so we prevent it
-            this.BoardGrid = new BoardGrid();
-            MainPanel.Children.Add(BoardGrid);
-            LoadComponents();
         }
         #endregion
 
@@ -147,6 +144,16 @@ namespace PPcurry
             }
             Application.Current.Shutdown(); // Close the window
             Environment.Exit(0); // Terminate the process
+        }
+
+        /// <summary>
+        /// Create the board once the windows is loaded to avoid some issues 
+        /// </summary>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid = new BoardGrid();
+            MainPanel.Children.Add(BoardGrid);
+            LoadComponents();
         }
         #endregion
     }

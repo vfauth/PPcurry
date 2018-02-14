@@ -15,6 +15,74 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Amplitude</name>
+                <units>
+                    <unit>
+                        <symbol>µV</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mV</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>V</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kV</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MV</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GV</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TV</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+            <attribute>
+                <name>Fréquence</name>
+                <units>
+                    <unit>
+                        <symbol>µHz</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mHz</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>Hz</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kHz</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MHz</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GHz</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>THz</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </ac_voltage_source>
     <capacitor>
         <type>capacitor</type>
@@ -32,6 +100,41 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Capacité</name>
+                <units>
+                    <unit>
+                        <symbol>µF</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mF</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>F</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kF</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MF</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GF</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TF</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </capacitor>
     <current_source>
         <type>current_source</type>
@@ -49,6 +152,41 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Courant</name>
+                <units>
+                    <unit>
+                        <symbol>µA</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mA</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>A</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kA</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MA</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GA</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TA</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </current_source>
     <dc_voltage_source>
         <type>dc_voltage_source</type>
@@ -66,6 +204,41 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Tension</name>
+                <units>
+                    <unit>
+                        <symbol>µV</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mV</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>V</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kV</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MV</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GV</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TV</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </dc_voltage_source>
     <diode>
         <type>diode</type>
@@ -83,6 +256,41 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Tension de seuil</name>
+                <units>
+                    <unit>
+                        <symbol>µV</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mV</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>V</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kV</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MV</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GV</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TV</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </diode>
     <ground>
         <type>ground</type>
@@ -96,6 +304,8 @@
                 <posY>0</posY>
             </anchor>
         </anchors>
+        <attributes>
+        </attributes>
     </ground>
     <inductor>
         <type>inductor</type>
@@ -113,6 +323,41 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Inductance</name>
+                <units>
+                    <unit>
+                        <symbol>µH</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mH</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>H</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kH</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MH</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GH</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TH</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </inductor>
     <resistor>
         <type>resistor</type>
@@ -130,5 +375,40 @@
                 <posY>460</posY>
             </anchor>
         </anchors>
+        <attributes>
+            <attribute>
+                <name>Résistance</name>
+                <units>
+                    <unit>
+                        <symbol>µΩ</symbol>
+                        <value>0.000001</value>
+                    </unit>
+                    <unit>
+                        <symbol>mΩ</symbol>
+                        <value>0.001</value>
+                    </unit>
+                    <unit>
+                        <symbol>Ω</symbol>
+                        <value>1</value>
+                    </unit>
+                    <unit>
+                        <symbol>kΩ</symbol>
+                        <value>1000</value>
+                    </unit>
+                    <unit>
+                        <symbol>MΩ</symbol>
+                        <value>1000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>GΩ</symbol>
+                        <value>1000000000</value>
+                    </unit>
+                    <unit>
+                        <symbol>TΩ</symbol>
+                        <value>1000000000000</value>
+                    </unit>
+                </units>
+            </attribute>
+        </attributes>
     </resistor>
 </components>

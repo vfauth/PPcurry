@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Windows;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -23,21 +24,24 @@ namespace PPcurry
     {
         #region Attributes
 
-        private Image ComponentImage;
         private BoardGrid BoardGrid; // The board on which is this component
+        private Image ComponentImage;
         private Point ImagePosition; // The position of the image on the grid
         private Point ComponentPosition; // The position of the component with its border on the grid
         private Vector ImageSize; // The displayed image size as a Vector
         private Vector ComponentSize; // The size of the component and its border as a Vector
-        private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
         private double Scale; // The scaling factor applied to the image
+        private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
+
         private string ComponentName; // The component name
+        public Dictionary<string, double?> Attributes { get; set; } // The components attributes ; the value is always in SI units and is nullable
+        public Dictionary<string, Dictionary<string, double>> AttributesUnits { get; } // The available units for the components attributes ; each unit is a couple symbol:multiplier 
 
         private RotateTransform Rotation; // To rotation operation to apply
 
-        private bool IsSelected; // Is true when the component is selected
-        private int LastMouseLeftButtonDown; // Timestamp of last MouseLeftButtonDown event; 0 if already handled
-        private int LastMouseLeftButtonUp; // Timestamp of last MouseLeftButtonUp event; 0 if already handled
+        private bool IsSelected = false; // Is true when the component is selected
+        private int LastMouseLeftButtonDown = 0; // Timestamp of last MouseLeftButtonDown event; 0 if already handled
+        private int LastClick = 0; // Timestamp of the last full click
         #endregion
 
 
@@ -125,13 +129,12 @@ namespace PPcurry
         /// <summary>
         /// Add one component to the board
         /// </summary>
-        /// <param name="x">The component abscissa</param>
-        /// <param name="y">The component ordinate</param>
+        /// <param name="position">The component position</param>
         /// <param name="boardGrid">The canvas on which to display the component</param>
         /// <param name="xmlElement">The XML Element with the component data</param>
         public Component(Point position, BoardGrid boardGrid, XElement xmlElement)
         {
-            // Save attributes
+            // Save parameters
             this.BoardGrid = boardGrid as BoardGrid;
             this.ImagePosition = position;
             this.ComponentName = xmlElement.Element("name").Value;
@@ -176,6 +179,25 @@ namespace PPcurry
                 this.Anchors.Add(anchor);
             }
 
+            // Attributes
+            Attributes = new Dictionary<string, double?>();
+            AttributesUnits = new Dictionary<string, Dictionary<string, double>>();
+            if (xmlElement.Element("attributes") != null) // Check if there are attributes
+            {
+                IEnumerable<XElement> xmlAttributes = xmlElement.Element("attributes").Elements("attribute"); // Get all the attributes present in the XML
+                foreach (XElement xmlAttribute in xmlAttributes)// Parse each attribute's name and available units
+                {
+                    Attributes.Add((string)xmlAttribute.Element("name"), null); // The value is undefined for now
+                    AttributesUnits.Add((string)xmlAttribute.Element("name"), new Dictionary<string, double>());
+
+                    foreach (XElement xmlUnit in xmlAttribute.Element("units").Elements("unit"))
+                    {
+                        AttributesUnits[(string)xmlAttribute.Element("name")].Add((string)xmlUnit.Element("symbol"), (double)xmlUnit.Element("value"));
+                    }
+                }
+            }
+
+            // Event handlers
             this.MouseLeftButtonDown += Component_MouseLeftButtonDown; // Event handler to trigger selection or properties editing
             this.MouseLeftButtonUp += Component_MouseLeftButtonUp; // Event handler to trigger selection or properties editing
             this.MouseMove += Component_MouseMove; // Event handler to trigger drag&drop
@@ -184,6 +206,14 @@ namespace PPcurry
 
 
         #region Methods
+
+        /// <summary>
+        /// Display a dialog to manage the component attributes
+        /// </summary>
+        public void DisplayDialog()
+        {
+            this.BoardGrid.Dialog.Display(this);
+        }
 
         /// <summary>
         /// Rotate the component by 90 degrees counterclockwise and reconnects anchors to nodes
@@ -270,7 +300,7 @@ namespace PPcurry
         /// <summary>
         /// If the mouse moves over a component on the board and the left mouse button is pressed, the component is dragged
         /// </summary>
-        public void Component_MouseMove(object sender, MouseEventArgs e)
+        private void Component_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed) // Drag only if the left button is pressed
             {
@@ -330,7 +360,7 @@ namespace PPcurry
         /// <summary>
         /// Remove this object from all connected anchors
         /// </summary>
-        public void ClearAnchors()
+        private void ClearAnchors()
         {
             foreach (List<Node> lineNode in this.BoardGrid.GetNodes())
             {
@@ -350,7 +380,6 @@ namespace PPcurry
         private void Component_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.LastMouseLeftButtonDown = e.Timestamp; // Save the time of the event
-            this.LastMouseLeftButtonUp = 0; // Clear the time of the last MouseLeftButtonUp event
         }
 
         /// <summary>
@@ -358,12 +387,16 @@ namespace PPcurry
         /// </summary>
         private void Component_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            this.LastMouseLeftButtonUp = e.Timestamp; // Save the time of the event
-            if (LastMouseLeftButtonUp - LastMouseLeftButtonDown < Properties.Settings.Default.SingleClickMaxDuration) // Single-click
+            if (e.Timestamp - this.LastClick < Properties.Settings.Default.DoubleClickMaxDuration) // Double-click
+            {
+                DisplayDialog(); // A double-click opens the attributes dialog
+                SwitchIsSelected(); // Revert the action triggered by the first click
+            }
+            else if (e.Timestamp - this.LastMouseLeftButtonDown < Properties.Settings.Default.SingleClickMaxDuration) // Single-click
             {
                 SwitchIsSelected();
+                this.LastClick = e.Timestamp; // The click timestamp is saved
             }
-            this.LastMouseLeftButtonDown = 0; // Clear the time of the last MouseLeftButtonDown event
         }
         #endregion
     }

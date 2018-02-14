@@ -67,5 +67,14 @@ namespace PPcurry.Properties {
                 return ((int)(this["SingleClickMaxDuration"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public int DoubleClickMaxDuration {
+            get {
+                return ((int)(this["DoubleClickMaxDuration"]));
+            }
+        }
     }
 }
