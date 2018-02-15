@@ -76,5 +76,14 @@ namespace PPcurry.Properties {
                 return ((int)(this["DoubleClickMaxDuration"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public double WireThickness {
+            get {
+                return ((double)(this["WireThickness"]));
+            }
+        }
     }
 }

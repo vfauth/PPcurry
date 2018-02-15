@@ -20,5 +20,8 @@
     <Setting Name="DoubleClickMaxDuration" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">400</Value>
     </Setting>
+    <Setting Name="WireThickness" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

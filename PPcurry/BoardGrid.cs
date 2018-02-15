@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -21,9 +22,29 @@ namespace PPcurry
         private List<Rectangle> Lines; // The lines of the grid
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
+        private List<Wire> WiresOnBoard = new List<Wire>(); // The list of wires on the board
         private List<List<Node>> Nodes;
+
         private Component SelectedComponent; // The component currently selected
         public ComponentDialog Dialog { get; } // The dialog to edit a component attributes
+
+        private bool AddingWire; // Whether we are in "wire mode"
+        public bool IsAddingWire
+        {
+            get
+            {
+                return AddingWire;
+            }
+            set
+            {
+                AddingWire = value;
+                if (!AddingWire)
+                {
+                    this.CurrentWireDragger = null;
+                }
+            }
+        }
+        public WireDragger CurrentWireDragger { get; set; } // The WireDragger is not null when a wire is being dragged
         #endregion
 
 
@@ -74,6 +95,12 @@ namespace PPcurry
             this.Drop += BoardGrid_Drop; // Event handler called when a component is dropped
             this.DragLeave += BoardGrid_DragLeave; // Event handler called when a dragged component leaves the board
 
+            this.AddingWire = false;
+
+            // Event handlers
+            this.MouseLeftButtonDown += BoardGrid_MouseLeftButtonDown; // Event handler called when left-clicking
+            this.MouseLeftButtonUp += BoardGrid_MouseLeftButtonUp; // Event handler called when releasing the mouse left button
+            this.MouseMove += BoardGrid_MouseMove; // Event handler called when the mouse moves
             this.SizeChanged += BoardGrid_SizeChanged; // Event handler called when the board is resized
         }
         #endregion
@@ -156,7 +183,7 @@ namespace PPcurry
         {
             int X = (int)point.X;
             int Y = (int)point.Y;
-            double gridTotalSpacing = GridSpacing + GridThickness;
+            double gridTotalSpacing = GridSpacing;
             int nearestX = 0; // X index of the nearest node
             int nearestY = 0; // Y index of the nearest node
             if (Math.Abs(X % gridTotalSpacing) < Math.Abs(gridTotalSpacing - X % gridTotalSpacing)) // If the nearest line is the upper one
@@ -269,6 +296,50 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
 
             component.Opacity = 0; // Do not display the component
+        }
+
+        /// <summary>
+        /// Event handler called when the mouse left button is pressed
+        /// </summary>
+        private void BoardGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (this.AddingWire)
+            {
+                Wire wire = new Wire(this, Magnetize(e.GetPosition(this)));
+                this.WiresOnBoard.Add(wire);
+                this.CurrentWireDragger = new WireDragger(this, wire, e.GetPosition(this));
+            }
+        }
+
+        /// <summary>
+        /// Event handler called when the mouse left button is released
+        /// </summary>
+        private void BoardGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.AddingWire && this.CurrentWireDragger != null)
+            {
+                this.CurrentWireDragger.Dragging(Magnetize(e.GetPosition(this)));
+            }
+        }
+
+        /// <summary>
+        /// Event handler called when the mouse left button is released
+        /// </summary>
+        private void BoardGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (this.AddingWire)
+            {
+                this.AddingWire = false;
+            }
+        }
+
+        /// <summary>
+        /// Event handler called when a wire dragging is finished
+        /// </summary>
+        private void Wire_EndDrag(object sender, RoutedEventArgs e)
+        {
+            this.CurrentWireDragger.EndDrag();
+            this.CurrentWireDragger = null;
         }
         #endregion
     }

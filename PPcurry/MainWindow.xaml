@@ -22,6 +22,14 @@
                     </Button.Background>
                 </Button>
             </ToolBar >
+
+            <ToolBar >
+                <Button MinWidth="30" MinHeight="30" Margin="5" Style="{StaticResource ImageButton}" Click="WireButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="pack://siteoforigin:,,,/Resources/wire.png"/>
+                    </Button.Background>
+                </Button>
+            </ToolBar >
         </ToolBarTray>
         <ScrollViewer DockPanel.Dock="Left" >
             <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" />

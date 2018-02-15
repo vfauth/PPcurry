@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Wire.cs" />
+    <Compile Include="WireDragger.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -108,6 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\rotate_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wire.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

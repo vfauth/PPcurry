@@ -18,6 +18,9 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Opacity" Value="0.8" />
                             </Trigger>
+                            <Trigger Property="Button.IsPressed" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

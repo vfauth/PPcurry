@@ -108,6 +108,9 @@ namespace PPcurry
                 case Key.R:
                     RightRotationButton_Click(sender, e);
                     break;
+                case Key.W:
+                    WireButton_Click(sender, e);
+                    break;
             }
         }
 
@@ -131,6 +134,14 @@ namespace PPcurry
             {
                 this.BoardGrid.GetSelectedComponent().RotateRight();
             }
+        }
+
+        /// <summary>
+        /// Handler called when the wire button is clicked or when the R key is pressed
+        /// </summary>
+        private void WireButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid.IsAddingWire = true;
         }
 
         /// <summary>
