@@ -136,12 +136,11 @@ namespace PPcurry
         {
             // Save parameters
             this.BoardGrid = boardGrid as BoardGrid;
-            this.ImagePosition = position;
             this.ComponentName = xmlElement.Element("name").Value;
 
             // Size
-            this.Width = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
-            this.Height = 2 * BoardGrid.GetGridSpacing() + 3 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
+            this.Width = 2 * BoardGrid.GetGridSpacing() + 2 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
+            this.Height = 2 * BoardGrid.GetGridSpacing() + 2 * BoardGrid.GetGridThickness(); // The component covers 2 grid cells
             this.ImageSize = new Vector(this.Width, this.Height);
             this.ComponentSize = new Vector(this.Width, this.Height);
             this.Scale = this.Width / (double)xmlElement.Element("width");
@@ -229,7 +228,7 @@ namespace PPcurry
             this.Rotation.CenterY = this.ComponentSize.Y / 2;
             this.RenderTransform = this.Rotation;
             TransformAnchorsAfterRotation(-90);
-            ConnectAnchors(); // Reconnect anchors
+            ConnectToNodes(); // Reconnect anchors
         }
 
         /// <summary>
@@ -246,7 +245,7 @@ namespace PPcurry
             this.Rotation.CenterY = this.ComponentSize.Y / 2;
             this.RenderTransform = this.Rotation;
             TransformAnchorsAfterRotation(90);
-            ConnectAnchors(); // Reconnect anchors
+            ConnectToNodes(); // Reconnect anchors
         }
 
         /// <summary>
@@ -281,6 +280,8 @@ namespace PPcurry
             this.ImagePosition.Y = (double)Canvas.GetTop(this) + this.BorderThickness.Top;
             this.ComponentPosition.X = (double)Canvas.GetLeft(this);
             this.ComponentPosition.Y = (double)Canvas.GetTop(this);
+
+            this.ConnectToNodes(); // Connect anchors to nodes
         }
 
         /// <summary>
@@ -316,7 +317,7 @@ namespace PPcurry
         /// <summary>
         /// Connect all anchors to the nearest nodes
         /// </summary>
-        public void ConnectAnchors()
+        private void ConnectToNodes()
         {
             ClearAnchors(); // Clear previous connections
             foreach (Vector anchor in this.Anchors)
@@ -325,33 +326,32 @@ namespace PPcurry
 
                 Vector nodeRelativePosition = node.GetPosition() - this.ImagePosition; // Node position relative to the image
                 Directions direction = new Directions(); // Direction of the component relative to the node
-
                 try
                 {
-                    if (Math.Abs(this.ImageSize.X - nodeRelativePosition.X) < Properties.Settings.Default.GridSpacing / 10) // The grid spacing is used as an error threshold
+                    if (Math.Abs(this.ImageSize.X - nodeRelativePosition.X) < Properties.Settings.Default.GridThickness) // The grid thickness is used as an error threshold
                     {
                         direction = Directions.Left;
                     }
-                    else if (Math.Abs(this.ImageSize.Y - nodeRelativePosition.Y) < Properties.Settings.Default.GridSpacing / 10)
+                    else if (Math.Abs(this.ImageSize.Y - nodeRelativePosition.Y) < Properties.Settings.Default.GridThickness)
                     {
                         direction = Directions.Up;
                     }
-                    else if (Math.Abs(nodeRelativePosition.Y) < Properties.Settings.Default.GridSpacing / 10)
+                    else if (Math.Abs(nodeRelativePosition.Y) < Properties.Settings.Default.GridThickness)
                     {
                         direction = Directions.Down;
                     }
-                    else if (Math.Abs(nodeRelativePosition.X) < Properties.Settings.Default.GridSpacing / 10)
+                    else if (Math.Abs(nodeRelativePosition.X) < Properties.Settings.Default.GridThickness)
                     {
                         direction = Directions.Right;
                     }
                     else
                     {
-                        throw new System.ApplicationException("Can't determine anchor position relatively to the node.");
+                        throw new System.ApplicationException($"Can't determine anchor position relatively to the node. Position relative to the canvas : {node.GetPosition()}. Canvas size : {this.BoardGrid.ActualWidth};{this.BoardGrid.ActualHeight}.");
                     }
                 }
                 catch (System.ApplicationException e)
                 {
-                    ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log
+                    ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log and close the processus
                 }
                 node.ConnectedComponents.Add(this, direction);
             }
@@ -360,7 +360,7 @@ namespace PPcurry
         /// <summary>
         /// Remove this object from all connected anchors
         /// </summary>
-        private void ClearAnchors()
+        public void ClearAnchors()
         {
             foreach (List<Node> lineNode in this.BoardGrid.GetNodes())
             {
@@ -387,10 +387,11 @@ namespace PPcurry
         /// </summary>
         private void Component_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.Timestamp - this.LastClick < Properties.Settings.Default.DoubleClickMaxDuration) // Double-click
+            if (e.Timestamp - this.LastClick < Properties.Settings.Default.DoubleClickMaxDuration && e.Timestamp - this.LastClick > Properties.Settings.Default.ClicksMinimumInterval) // Double-click
             {
                 DisplayDialog(); // A double-click opens the attributes dialog
                 SwitchIsSelected(); // Revert the action triggered by the first click
+                this.LastClick = e.Timestamp; // The click timestamp is saved
             }
             else if (e.Timestamp - this.LastMouseLeftButtonDown < Properties.Settings.Default.SingleClickMaxDuration) // Single-click
             {

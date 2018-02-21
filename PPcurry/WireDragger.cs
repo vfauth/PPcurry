@@ -27,7 +27,7 @@ namespace PPcurry
         private BoardGrid BoardGrid;
         private Wire Wire; // The wire to drag
         private Node StaticNode; // The node that doesn't move
-        private Node CurrentDraggingNode; // The wire end to drag
+        private Node DraggingNode; // The node to drag
         #endregion
 
 
@@ -37,9 +37,9 @@ namespace PPcurry
         {
             this.BoardGrid = boardGrid;
             this.Wire = wire;
-            this.CurrentDraggingNode = this.BoardGrid.Magnetize(mousePos);
+            this.DraggingNode = this.BoardGrid.Magnetize(mousePos);
             // Search the static node
-            if (CurrentDraggingNode == Wire.Nodes[0])
+            if (DraggingNode == Wire.Nodes[0])
             {
                 this.StaticNode = Wire.Nodes[1];
             }
@@ -60,10 +60,10 @@ namespace PPcurry
         /// </summary>
         public void Dragging(Node nearestNode)
         {
-            if (nearestNode != CurrentDraggingNode)
+            if (nearestNode != DraggingNode)
             {
-                this.CurrentDraggingNode = nearestNode;
-                this.Wire.Nodes = new List<Node>() { StaticNode, CurrentDraggingNode }; // Moves the wire
+                this.DraggingNode = nearestNode;
+                this.Wire.Nodes = new List<Node>() { StaticNode, DraggingNode }; // Move the wire
             }
         }
 
@@ -72,7 +72,14 @@ namespace PPcurry
         /// </summary>
         public void EndDrag()
         {
-            this.BoardGrid.IsAddingWire = false;
+            if (this.StaticNode == this.DraggingNode) // Remove the wire if it is just a point
+            {
+                BoardGrid.RemoveWire(this.Wire);
+            }
+            else
+            {
+                this.Wire.ConnectToNodes();
+            }
         }
         #endregion
     }

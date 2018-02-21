@@ -27,7 +27,7 @@ namespace PPcurry
                 Move();
             }
         }
-        private List<Rectangle> Rectangles { get; set; } // The 3 rectangles composing the wire
+        public List<Rectangle> Rectangles { get; } // The 3 rectangles composing the wire
         #endregion
 
 
@@ -39,7 +39,7 @@ namespace PPcurry
             this.Rectangles = new List<Rectangle>();
             for (int i = 0; i < 3; i++)
             {
-                this.Rectangles.Add(new Rectangle() { Fill = new SolidColorBrush(Colors.Black) });
+                this.Rectangles.Add(new Rectangle() { Fill = Brushes.Black });
                 BoardGrid.Children.Add(Rectangles[i]);
             }
             this.Nodes = new List<Node>() { originNode, originNode };
@@ -59,8 +59,15 @@ namespace PPcurry
             // Positions of vertices
             Node[] vertices = new Node[4];
             vertices[0] = ExtremitiesNodes[0];
-            vertices[1] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[0].GetPosition().Y));
-            vertices[2] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X )/ 2, ExtremitiesNodes[1].GetPosition().Y));
+            if (ExtremitiesNodes[0].GetPosition().Y < ExtremitiesNodes[1].GetPosition().Y)
+            {
+                vertices[1] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[0].GetPosition().Y));
+            }
+            else
+            {
+                vertices[1] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[1].GetPosition().Y));
+            }
+            vertices[2] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[1].GetPosition().Y));
             vertices[3] = ExtremitiesNodes[1];
 
             // Set the rectangles position and size
@@ -69,21 +76,16 @@ namespace PPcurry
                 Canvas.SetLeft(this.Rectangles[k], vertices[k].GetPosition().X - Properties.Settings.Default.WireThickness / 2);
                 Canvas.SetTop(this.Rectangles[k], vertices[k].GetPosition().Y - Properties.Settings.Default.WireThickness / 2);
 
-                if (vertices[k].GetPosition().X == vertices[k + 1].GetPosition().X) // If the nodes are on the same column
+                if (k == 1) // The middle rectangle is the vertical one
                 {
-                    this.Rectangles[k].Height = Math.Abs(vertices[k+1].GetPosition().Y - vertices[k].GetPosition().Y + Properties.Settings.Default.WireThickness + Properties.Settings.Default.GridThickness); // Size
+                    this.Rectangles[k].Height = Math.Abs(vertices[0].GetPosition().Y - vertices[2].GetPosition().Y) + Properties.Settings.Default.WireThickness; // Size
                     this.Rectangles[k].Width = Properties.Settings.Default.WireThickness;
                 }
-                else // If the nodes are on the same line
+                else // The two other rectangles are horizontal
                 {
                     this.Rectangles[k].Height = Properties.Settings.Default.WireThickness; // Size
-                    this.Rectangles[k].Width = Math.Abs(vertices[k+1].GetPosition().X - vertices[k].GetPosition().X + Properties.Settings.Default.WireThickness + Properties.Settings.Default.GridThickness);
+                    this.Rectangles[k].Width = Math.Abs(vertices[k+1].GetPosition().X - vertices[k].GetPosition().X) + Properties.Settings.Default.WireThickness;
                 }
-                Debug.WriteLine("TEST");
-                Debug.WriteLine(Rectangles[k].Width);
-                Debug.WriteLine(Rectangles[k].Height);
-                Debug.WriteLine(Canvas.GetLeft(Rectangles[k]));
-                Debug.WriteLine(Canvas.GetTop(Rectangles[k]));
             }
         }
 
@@ -105,6 +107,56 @@ namespace PPcurry
 
                     this.ExtremitiesNodes.Reverse();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Connect the wire to the nodes at its extremities
+        /// </summary>
+        public void ConnectToNodes()
+        {
+            ClearAnchors(); // Clear previous connections
+
+            if (this.ExtremitiesNodes[0].GetPosition().X == this.ExtremitiesNodes[1].GetPosition().X) // Vertical wire
+            {
+                if (this.ExtremitiesNodes[0].GetPosition().Y > this.ExtremitiesNodes[1].GetPosition().Y)
+                {
+                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Up);
+                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Down);
+                }
+                else if (this.ExtremitiesNodes[0].GetPosition().Y < this.ExtremitiesNodes[1].GetPosition().Y)
+                {
+                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Down);
+                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Up);
+                }
+            }
+            else // Vertical wire
+            {
+                if (this.ExtremitiesNodes[0].GetPosition().X > this.ExtremitiesNodes[1].GetPosition().X)
+                {
+                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Left);
+                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Right);
+                }
+                else if (this.ExtremitiesNodes[0].GetPosition().X < this.ExtremitiesNodes[1].GetPosition().X)
+                {
+                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Right);
+                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Left);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Remove this object from all connected nodes
+        /// </summary>
+        public void ClearAnchors()
+        {
+            if (this.ExtremitiesNodes[1].ConnectedComponents.ContainsKey(this))
+            {
+                this.ExtremitiesNodes[1].ConnectedComponents.Remove(this); // Remove the anchor from the node connected elements
+            }
+            if (this.ExtremitiesNodes[0].ConnectedComponents.ContainsKey(this))
+            {
+                this.ExtremitiesNodes[0].ConnectedComponents.Remove(this); // Remove the anchor from the node connected elements
             }
         }
         #endregion

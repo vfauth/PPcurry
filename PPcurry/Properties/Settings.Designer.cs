@@ -43,7 +43,7 @@ namespace PPcurry.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public double ComponentBorderThickness {
             get {
                 return ((double)(this["ComponentBorderThickness"]));
@@ -83,6 +83,15 @@ namespace PPcurry.Properties {
         public double WireThickness {
             get {
                 return ((double)(this["WireThickness"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int ClicksMinimumInterval {
+            get {
+                return ((int)(this["ClicksMinimumInterval"]));
             }
         }
     }

@@ -109,7 +109,7 @@ namespace PPcurry
                     RightRotationButton_Click(sender, e);
                     break;
                 case Key.W:
-                    WireButton_Click(sender, e);
+                    WireModeButton_Click(sender, e);
                     break;
             }
         }
@@ -139,9 +139,9 @@ namespace PPcurry
         /// <summary>
         /// Handler called when the wire button is clicked or when the R key is pressed
         /// </summary>
-        private void WireButton_Click(object sender, RoutedEventArgs e)
+        private void WireModeButton_Click(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid.IsAddingWire = true;
+            this.BoardGrid.IsAddingWire = true; // Enable "wire mode"            
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace PPcurry
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.BoardGrid = new BoardGrid();
-            MainPanel.Children.Add(BoardGrid);
+            CanvasController.Content = BoardGrid;
             LoadComponents();
         }
         #endregion
