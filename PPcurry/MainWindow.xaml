@@ -9,7 +9,7 @@
         MinWidth="600"
         MinHeight="400" KeyUp="Window_KeyUp" Loaded="Window_Loaded" >
     <DockPanel Name="MainPanel" >
-        <ToolBarTray DockPanel.Dock="Top">
+        <ToolBarTray DockPanel.Dock="Top" Panel.ZIndex="1">
             <ToolBar >
                 <Button MinWidth="30" MinHeight="30" Margin="5" Style="{StaticResource ImageButton}" Click="LeftRotationButton_Click">
                     <Button.Background>
@@ -22,10 +22,19 @@
                     </Button.Background>
                 </Button>
             </ToolBar >
+
+            <ToolBar >
+                <Button Name="WireModeButton" MinWidth="30" MinHeight="30" Margin="5" Style="{StaticResource ImageButton}" Click="WireModeButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="pack://siteoforigin:,,,/Resources/wire.png"/>
+                    </Button.Background>
+                </Button>
+            </ToolBar >
         </ToolBarTray>
         <ScrollViewer DockPanel.Dock="Left" >
             <StackPanel VerticalAlignment="Stretch" Name="ComponentsPanel" DockPanel.Dock="Left" Background="#FF9EC2F5" />
         </ScrollViewer>
         <Rectangle DockPanel.Dock="Left" Height="Auto" Width="3" Fill="Black" />
+        <ContentControl Name="CanvasController"/>
     </DockPanel>
 </Window>

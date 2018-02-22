@@ -58,6 +58,7 @@ namespace PPcurry
         {
             this.ComponentEdited = component;
             this.Content = null; // Delete all previous elements
+            this.Title = "Edit attributes";
             this.FillDialog();
             this.Show();
         }
