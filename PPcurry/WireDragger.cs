@@ -28,17 +28,20 @@ namespace PPcurry
         private Wire Wire; // The wire to drag
         private Node StaticNode; // The node that doesn't move
         private Node DraggingNode; // The node to drag
+        private Vector MouseOffset; // The position of the node to drag relative to the mouse
         #endregion
 
 
         #region Constructor
 
-        public WireDragger(BoardGrid boardGrid, Wire wire, Point mousePos)
+        public WireDragger(BoardGrid boardGrid, Wire wire, Node draggingNode, Vector mouseOffset)
         {
             this.BoardGrid = boardGrid;
             this.Wire = wire;
-            this.DraggingNode = this.BoardGrid.Magnetize(mousePos);
-            // Search the static node
+            this.DraggingNode = draggingNode;
+            this.MouseOffset = mouseOffset;
+
+            // Search for the static node
             if (DraggingNode == Wire.Nodes[0])
             {
                 this.StaticNode = Wire.Nodes[1];
@@ -48,7 +51,7 @@ namespace PPcurry
                 this.StaticNode = Wire.Nodes[0];
             }
 
-            this.BoardGrid.IsAddingWire = true;
+            this.BoardGrid.DraggingWire = true;
         }
         #endregion
 
@@ -58,12 +61,17 @@ namespace PPcurry
         /// <summary>
         /// Called when the mouse moves
         /// </summary>
-        public void Dragging(Node nearestNode)
+        public void DragOver(Point mousePos)
         {
-            if (nearestNode != DraggingNode)
+            Node newNode = this.BoardGrid.Magnetize(mousePos + MouseOffset);
+            // Move the wire if the new node is inside the canvas and different from the former node
+            if (!(newNode.GetPosition().X < -this.BoardGrid.GridThickness || newNode.GetPosition().Y < -this.BoardGrid.GridThickness || newNode.GetPosition().X > this.BoardGrid.ActualWidth + this.BoardGrid.GridThickness || newNode.GetPosition().Y > this.BoardGrid.ActualHeight + this.BoardGrid.GridThickness))
             {
-                this.DraggingNode = nearestNode;
-                this.Wire.Nodes = new List<Node>() { StaticNode, DraggingNode }; // Move the wire
+                if (newNode != DraggingNode)
+                {
+                    this.DraggingNode = newNode;
+                    this.Wire.Nodes = new List<Node>() { StaticNode, DraggingNode }; // Move the wire
+                }
             }
         }
 

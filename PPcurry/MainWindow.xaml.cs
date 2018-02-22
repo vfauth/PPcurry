@@ -111,6 +111,9 @@ namespace PPcurry
                 case Key.W:
                     WireModeButton_Click(sender, e);
                     break;
+                case Key.Delete:
+                    this.BoardGrid.DeleteSelected();
+                    break;
             }
         }
 
@@ -119,9 +122,9 @@ namespace PPcurry
         /// </summary>
         private void LeftRotationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.BoardGrid.GetSelectedComponent() != null)
+            if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
             {
-                this.BoardGrid.GetSelectedComponent().RotateLeft();
+                ((Component)BoardGrid.SelectedElement).RotateLeft();
             }
         }
 
@@ -130,9 +133,9 @@ namespace PPcurry
         /// </summary>
         private void RightRotationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.BoardGrid.GetSelectedComponent() != null)
+            if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
             {
-                this.BoardGrid.GetSelectedComponent().RotateRight();
+                ((Component)BoardGrid.SelectedElement).RotateRight();
             }
         }
 
@@ -141,7 +144,7 @@ namespace PPcurry
         /// </summary>
         private void WireModeButton_Click(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid.IsAddingWire = true; // Enable "wire mode"            
+            this.BoardGrid.AddingWire = true; // Enable "wire mode"            
         }
 
         /// <summary>

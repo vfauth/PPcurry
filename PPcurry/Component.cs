@@ -32,6 +32,7 @@ namespace PPcurry
         private Vector ComponentSize; // The size of the component and its border as a Vector
         private double Scale; // The scaling factor applied to the image
         private List<Vector> Anchors = new List<Vector>(); // The vectors between the image origin and the component anchors
+        public List<Node> ConnectedNodes { get; set; } = new List<Node>(); // The nodes to which that component is connected
 
         private string ComponentName; // The component name
         public Dictionary<string, double?> Attributes { get; set; } // The components attributes ; the value is always in SI units and is nullable
@@ -85,41 +86,6 @@ namespace PPcurry
         {
             this.ComponentName = name;
             this.ToolTip = name; // Update the tooltip
-        }
-
-        public void SetIsSelected(bool isSelected)
-        {
-            if (isSelected != this.IsSelected) // Check whether the selected state has changed
-            {
-                this.IsSelected = isSelected;
-                double thickness = Properties.Settings.Default.ComponentBorderThickness;
-                if (isSelected) // The component is selected
-                {
-                    this.BoardGrid.SetSelectedComponent(this);
-                    this.BorderThickness = new Thickness(thickness);
-
-                    // Adjust the component size and position to avoid image resizing
-                    this.Width += thickness * 2;
-                    this.Height += thickness * 2;
-                    this.SetComponentPosition(new Point(ComponentPosition.X - thickness, ComponentPosition.Y - thickness));
-                }
-                else // The component is unselected
-                {
-                    this.BoardGrid.SetSelectedComponent(null);
-                    this.BorderThickness = new Thickness(0);
-
-                    // Adjust the component size and position to avoid image resizing
-                    this.Width -= thickness * 2;
-                    this.Height -= thickness * 2;
-                    this.SetComponentPosition(new Point(ComponentPosition.X + thickness, ComponentPosition.Y + thickness));
-                }
-                UpdateSize();
-            }
-        }
-
-        public void SwitchIsSelected()
-        {
-            SetIsSelected(!this.IsSelected);
         }
         #endregion
 
@@ -303,13 +269,34 @@ namespace PPcurry
         /// </summary>
         private void Component_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed) // Drag only if the left button is pressed
+            if (e.LeftButton == MouseButtonState.Pressed && this.BoardGrid.DraggingWire == false) // Drag only if the left button is pressed and the user is not dragging a wire
             {
-                // Disconnect all anchors from their node
-                foreach (Vector anchor in this.Anchors)
+                List<Wire> connectedWires = new List<Wire>(); // All the wires connected to this component
+                List<Node> connectedNodes = new List<Node>(); // The node by which every wire is connected to this component
+                List<Vector> connectedVectorsOffsets = new List<Vector>(); // The vectors between the image center and the  node to which every wire is connected
+                Vector imageCenter = (Vector)this.GetImagePosition() + this.ImageSize / 2; // The center of the image
+                foreach (Node node in ConnectedNodes)
                 {
-                    this.BoardGrid.Magnetize(this.ImagePosition + anchor).ConnectedComponents.Remove(this);
+                    foreach (object element in node.ConnectedComponents.Keys)
+                    {
+                        if (element is Wire)
+                        {
+                            connectedWires.Add((Wire)element);
+                            connectedNodes.Add(node);
+                            connectedVectorsOffsets.Add((Vector)node.GetPosition() - imageCenter);
+                        }
+                    }
                 }
+
+                // Initializes the WireDraggers to drag all connected wires
+                this.BoardGrid.CurrentWireDraggers = new List<WireDragger>();
+                for (int i = 0; i < connectedWires.Count; i++)
+                {
+                    this.BoardGrid.CurrentWireDraggers.Add(new WireDragger(this.BoardGrid, connectedWires[i], connectedNodes[i], connectedVectorsOffsets[i]));
+                }
+                this.BoardGrid.DragConnectedWires();
+
+                ClearNodes(); // Disconnect all anchors from their node
                 DragDrop.DoDragDrop((Component)sender, (Component)sender, DragDropEffects.Move); // Begin the drag&drop
             }
         }
@@ -319,7 +306,7 @@ namespace PPcurry
         /// </summary>
         private void ConnectToNodes()
         {
-            ClearAnchors(); // Clear previous connections
+            ClearNodes(); // Clear previous connections
             foreach (Vector anchor in this.Anchors)
             {
                 Node node = this.BoardGrid.Magnetize(this.ImagePosition + anchor); // The nearest node
@@ -353,6 +340,7 @@ namespace PPcurry
                 {
                     ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log and close the processus
                 }
+                this.ConnectedNodes.Add(node);
                 node.ConnectedComponents.Add(this, direction);
             }
         }
@@ -360,18 +348,13 @@ namespace PPcurry
         /// <summary>
         /// Remove this object from all connected anchors
         /// </summary>
-        public void ClearAnchors()
+        public void ClearNodes()
         {
-            foreach (List<Node> lineNode in this.BoardGrid.GetNodes())
+            foreach (Node node in ConnectedNodes)
             {
-                foreach (Node node in lineNode)
-                {
-                    if (node.ConnectedComponents.ContainsKey(this))
-                    {
-                        node.ConnectedComponents.Remove(this); // Remove the anchor from the node connected elements
-                    }
-                }
+                node.ConnectedComponents.Remove(this); // Remove the anchor from the node
             }
+            ConnectedNodes.Clear();
         }
 
         /// <summary>
@@ -398,6 +381,48 @@ namespace PPcurry
                 SwitchIsSelected();
                 this.LastClick = e.Timestamp; // The click timestamp is saved
             }
+        }
+
+        /// <summary>
+        /// Select or deselect the component
+        /// </summary>
+        /// <param name="isSelected"></param>
+        public void SetIsSelected(bool isSelected)
+        {
+            if (isSelected != this.IsSelected) // Check whether the selected state has changed
+            {
+                this.IsSelected = isSelected;
+                double thickness = Properties.Settings.Default.ComponentBorderThickness;
+                if (isSelected) // The component is selected
+                {
+                    this.BoardGrid.SelectedElement = this;
+                    this.BorderThickness = new Thickness(thickness);
+
+                    // Adjust the component size and position to avoid image resizing
+                    this.Width += thickness * 2;
+                    this.Height += thickness * 2;
+                    this.SetComponentPosition(new Point(ComponentPosition.X - thickness, ComponentPosition.Y - thickness));
+                }
+                else // The component is unselected
+                {
+                    this.BoardGrid.SelectedElement = null;
+                    this.BorderThickness = new Thickness(0);
+
+                    // Adjust the component size and position to avoid image resizing
+                    this.Width -= thickness * 2;
+                    this.Height -= thickness * 2;
+                    this.SetComponentPosition(new Point(ComponentPosition.X + thickness, ComponentPosition.Y + thickness));
+                }
+                UpdateSize();
+            }
+        }
+
+        /// <summary>
+        /// Change the selection status of the component
+        /// </summary>
+        public void SwitchIsSelected()
+        {
+            SetIsSelected(!this.IsSelected);
         }
         #endregion
     }

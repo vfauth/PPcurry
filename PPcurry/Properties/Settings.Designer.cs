@@ -94,5 +94,14 @@ namespace PPcurry.Properties {
                 return ((int)(this["ClicksMinimumInterval"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public double WireThicknessSelected {
+            get {
+                return ((double)(this["WireThicknessSelected"]));
+            }
+        }
     }
 }

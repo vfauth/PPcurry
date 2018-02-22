@@ -18,33 +18,18 @@ namespace PPcurry
         #region Attributes
         
         private double GridSpacing; // The distance between two lines or columns
-        private double GridThickness; // The lines thickness
+        public double GridThickness { get; set; } // The lines thickness
         private List<Rectangle> Lines; // The lines of the grid
         private List<Rectangle> Columns; // The columns of the grid
         private List<Component> ComponentsOnBoard; // The list of components on the board
         private List<Wire> WiresOnBoard = new List<Wire>(); // The list of wires on the board
         private List<List<Node>> Nodes;
-
-        private Component SelectedComponent; // The component currently selected
+        private object _SelectedElement; // The element currently selected
         public ComponentDialog Dialog { get; } // The dialog to edit a component attributes
+        public List<WireDragger> CurrentWireDraggers { get; set; } // The WireDraggers to drag every wire connected to a component along with it
 
-        private bool AddingWire; // Whether we are in "wire mode"
-        public bool IsAddingWire
-        {
-            get
-            {
-                return AddingWire;
-            }
-            set
-            {
-                AddingWire = value;
-                if (!AddingWire)
-                {
-                    this.CurrentWireDragger = null;
-                }
-            }
-        }
-        public WireDragger CurrentWireDragger { get; set; } // The WireDragger is not null when a wire is being dragged
+        public bool AddingWire { get; set; } = false; // Whether we are in "adding wire mode"
+        public bool DraggingWire { get; set; } = false; // Whether we are dragging wires
         #endregion
 
 
@@ -56,17 +41,30 @@ namespace PPcurry
         public double GetGridThickness() => this.GridThickness;
         public void SetGridThickness(int thickness) => this.GridThickness = thickness;
 
-        public Component GetSelectedComponent() => this.SelectedComponent;
-        public void SetSelectedComponent(Component selectedComponent)
-        {
-            if (SelectedComponent != null)
-            {
-                this.SelectedComponent.SetIsSelected(false);
-            }
-            this.SelectedComponent = selectedComponent;
-        }
-
         public List<List<Node>> GetNodes() => this.Nodes;
+
+        public object SelectedElement
+        {
+            get
+            {
+                return _SelectedElement;
+            }
+            set
+            {
+                if (_SelectedElement != null)
+                {
+                    if (_SelectedElement is Component)
+                    {
+                        ((Component)_SelectedElement).SetIsSelected(false);
+                    }
+                    else if (_SelectedElement is Wire)
+                    {
+                        ((Wire)_SelectedElement).SetIsSelected(false);
+                    }
+                }
+                this._SelectedElement = value;
+            }
+        }
         #endregion
 
 
@@ -100,8 +98,6 @@ namespace PPcurry
             this.DragOver += BoardGrid_DragOver; // Event handler continusously called while dragging
             this.Drop += BoardGrid_Drop; // Event handler called when a component is dropped
             this.DragLeave += BoardGrid_DragLeave; // Event handler called when a dragged component leaves the board
-
-            this.AddingWire = false; // Whether we are in "wire mode"
 
             // Event handlers
             this.MouseLeftButtonDown += BoardGrid_MouseLeftButtonDown; // Event handler called when left-clicking
@@ -223,13 +219,25 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Remove a component of the board
+        /// Delete the currently selected object
         /// </summary>
-        public void RemoveComponent(Component component)
+        public void DeleteSelected()
         {
-            component.ClearAnchors();
-            this.ComponentsOnBoard.Remove(component);
-            this.Children.Remove(component);
+            // Delete the selected component
+            if (SelectedElement != null)
+            {
+                if (SelectedElement is Component)
+                {
+                    ((Component)SelectedElement).ClearNodes();
+                    this.ComponentsOnBoard.Remove((Component)SelectedElement);
+                    this.Children.Remove((Component)SelectedElement);
+                }
+                else if (SelectedElement is Wire)
+                {
+                    RemoveWire((Wire)SelectedElement);
+                }
+                SelectedElement = null;
+            }
         }
 
         /// <summary>
@@ -237,7 +245,7 @@ namespace PPcurry
         /// </summary>
         public void RemoveWire(Wire wire)
         {
-            wire.ClearAnchors();
+            wire.ClearNodes();
             this.WiresOnBoard.Remove(wire);
             foreach (Rectangle rectangle in wire.Rectangles)
             {
@@ -299,6 +307,26 @@ namespace PPcurry
                 Vector thickness = new Vector(component.BorderThickness.Left, component.BorderThickness.Top);
                 component.SetComponentPosition(componentNewPos - thickness);
             }
+
+            // Dragging connected wires
+            if (DraggingWire)
+            {
+                foreach (WireDragger dragger in CurrentWireDraggers)
+                {
+                    dragger.DragOver(e.GetPosition(this));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Drag all connected wires along with the component
+        /// </summary>
+        public void DragConnectedWires()
+        {
+            if (!DraggingWire) // If the dragging begins
+            {
+                DraggingWire = true;
+            }
         }
 
         /// <summary>
@@ -309,6 +337,7 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
             Point mousePos = e.GetPosition(this); // Position of the mouse relative to the board
             Vector firstAnchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
+            Debug.WriteLine("POINT : " + (mousePos - component.GetImageSize() / 2 + firstAnchor));
             Node gridNode = Magnetize(mousePos - component.GetImageSize() / 2 + firstAnchor); // The nearest grid node from the anchor
             Point componentNewPos = gridNode.GetPosition() - firstAnchor; // New position of the image relative to the board
 
@@ -330,6 +359,12 @@ namespace PPcurry
                 Vector gridThickness = new Vector(GridThickness, GridThickness);
                 component.SetComponentPosition(componentNewPos - thickness);
             }
+
+            // Stopping to drag the connected wires
+            if (DraggingWire)
+            {
+                Wire_EndDrag();
+            }
         }
 
         /// <summary>
@@ -338,8 +373,6 @@ namespace PPcurry
         private void BoardGrid_DragLeave(object sender, DragEventArgs e)
         {
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
-
-            //component.Opacity = 0; // Do not display the component
         }
 
         /// <summary>
@@ -351,7 +384,9 @@ namespace PPcurry
             {
                 Wire wire = new Wire(this, Magnetize(e.GetPosition(this)));
                 this.WiresOnBoard.Add(wire);
-                this.CurrentWireDragger = new WireDragger(this, wire, e.GetPosition(this));
+                this.DraggingWire = true;
+                this.AddingWire = false;
+                this.CurrentWireDraggers = new List<WireDragger> { new WireDragger(this, wire, Magnetize(e.GetPosition(this)), new Vector(0, 0)) }; // New WireDragger centered on the mouse
             }
         }
 
@@ -360,7 +395,7 @@ namespace PPcurry
         /// </summary>
         private void BoardGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (this.AddingWire)
+            if (this.DraggingWire)
             {
                 Wire_EndDrag(); // End the dragging
             }
@@ -371,9 +406,12 @@ namespace PPcurry
         /// </summary>
         private void BoardGrid_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.AddingWire && this.CurrentWireDragger != null)
+            if (this.DraggingWire)
             {
-                this.CurrentWireDragger.Dragging(Magnetize(e.GetPosition(this)));
+                foreach (WireDragger wireDragger in this.CurrentWireDraggers)
+                {
+                    wireDragger.DragOver(e.GetPosition(this));
+                }
             }
         }
 
@@ -382,9 +420,12 @@ namespace PPcurry
         /// </summary>
         private void Wire_EndDrag()
         {
-            this.CurrentWireDragger.EndDrag();
-            this.CurrentWireDragger = null;
-            this.IsAddingWire = false;
+            foreach (WireDragger wireDragger in this.CurrentWireDraggers)
+            {
+                wireDragger.EndDrag();
+            }
+            this.CurrentWireDraggers = null;
+            this.DraggingWire = false;
         }
         #endregion
     }
