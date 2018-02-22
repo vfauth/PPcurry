@@ -43,9 +43,6 @@ namespace PPcurry
         {
             InitializeComponent();
             Application.Current.MainWindow = this; // Application.Current.MainWindow can return null sometimes, so we prevent it
-            this.BoardGrid = new BoardGrid();
-            MainPanel.Children.Add(BoardGrid);
-            LoadComponents();
         }
         #endregion
 
@@ -111,6 +108,12 @@ namespace PPcurry
                 case Key.R:
                     RightRotationButton_Click(sender, e);
                     break;
+                case Key.W:
+                    WireModeButton_Click(sender, e);
+                    break;
+                case Key.Delete:
+                    this.BoardGrid.DeleteSelected();
+                    break;
             }
         }
 
@@ -119,9 +122,9 @@ namespace PPcurry
         /// </summary>
         private void LeftRotationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.BoardGrid.GetSelectedComponent() != null)
+            if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
             {
-                this.BoardGrid.GetSelectedComponent().RotateLeft();
+                ((Component)BoardGrid.SelectedElement).RotateLeft();
             }
         }
 
@@ -130,10 +133,18 @@ namespace PPcurry
         /// </summary>
         private void RightRotationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.BoardGrid.GetSelectedComponent() != null)
+            if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
             {
-                this.BoardGrid.GetSelectedComponent().RotateRight();
+                ((Component)BoardGrid.SelectedElement).RotateRight();
             }
+        }
+
+        /// <summary>
+        /// Handler called when the wire button is clicked or when the R key is pressed
+        /// </summary>
+        private void WireModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid.AddingWire = true; // Enable "wire mode"            
         }
 
         /// <summary>
@@ -147,6 +158,16 @@ namespace PPcurry
             }
             Application.Current.Shutdown(); // Close the window
             Environment.Exit(0); // Terminate the process
+        }
+
+        /// <summary>
+        /// Create the board once the windows is loaded to avoid some issues 
+        /// </summary>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid = new BoardGrid();
+            CanvasController.Content = BoardGrid;
+            LoadComponents();
         }
         #endregion
     }

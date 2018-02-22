@@ -9,13 +9,25 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="ComponentBorderThickness" Type="System.Double" Scope="Application">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="GridSpacing" Type="System.Double" Scope="Application">
       <Value Profile="(Default)">40</Value>
     </Setting>
     <Setting Name="SingleClickMaxDuration" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">500</Value>
+    </Setting>
+    <Setting Name="DoubleClickMaxDuration" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">400</Value>
+    </Setting>
+    <Setting Name="WireThickness" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="ClicksMinimumInterval" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="WireThicknessSelected" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">6</Value>
     </Setting>
   </Settings>
 </SettingsFile>

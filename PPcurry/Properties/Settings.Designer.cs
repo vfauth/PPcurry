@@ -43,7 +43,7 @@ namespace PPcurry.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public double ComponentBorderThickness {
             get {
                 return ((double)(this["ComponentBorderThickness"]));
@@ -65,6 +65,42 @@ namespace PPcurry.Properties {
         public int SingleClickMaxDuration {
             get {
                 return ((int)(this["SingleClickMaxDuration"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public int DoubleClickMaxDuration {
+            get {
+                return ((int)(this["DoubleClickMaxDuration"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public double WireThickness {
+            get {
+                return ((double)(this["WireThickness"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int ClicksMinimumInterval {
+            get {
+                return ((int)(this["ClicksMinimumInterval"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public double WireThicknessSelected {
+            get {
+                return ((double)(this["WireThicknessSelected"]));
             }
         }
     }

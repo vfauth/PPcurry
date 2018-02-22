@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Wire.cs" />
+    <Compile Include="WireDragger.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -66,6 +68,7 @@
     </Compile>
     <Compile Include="BoardGrid.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="ComponentDialog.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -107,6 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\rotate_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wire.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
