@@ -187,16 +187,13 @@ namespace PPcurry
                 if (isSelected)
                 {
                     this.Thickness = Properties.Settings.Default.WireThicknessSelected; // The selected wire is thicker
-                    this.BoardGrid.SelectedElement = this;
                 }
                 else
                 {
                     this.Thickness = Properties.Settings.Default.WireThickness; // The default wire thickness
-                    this.BoardGrid.SelectedElement = null;
                 }
                 Redraw();
             }
-            this.IsSelected = isSelected;
         }
 
         /// <summary>
@@ -204,7 +201,14 @@ namespace PPcurry
         /// </summary>
         public void SwitchIsSelected(object sender, MouseButtonEventArgs e)
         {
-            SetIsSelected(!this.IsSelected);
+            if (this.IsSelected) // The wire is deselected
+            {
+                this.BoardGrid.SelectedElement = null;
+            }
+            else // The wire is selected
+            {
+                this.BoardGrid.SelectedElement = this;
+            }
         }
         #endregion
     }

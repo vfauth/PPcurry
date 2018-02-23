@@ -395,7 +395,6 @@ namespace PPcurry
                 double thickness = Properties.Settings.Default.ComponentBorderThickness;
                 if (isSelected) // The component is selected
                 {
-                    this.BoardGrid.SelectedElement = this;
                     this.BorderThickness = new Thickness(thickness);
 
                     // Adjust the component size and position to avoid image resizing
@@ -403,9 +402,8 @@ namespace PPcurry
                     this.Height += thickness * 2;
                     this.SetComponentPosition(new Point(ComponentPosition.X - thickness, ComponentPosition.Y - thickness));
                 }
-                else // The component is unselected
+                else // The component is deselected
                 {
-                    this.BoardGrid.SelectedElement = null;
                     this.BorderThickness = new Thickness(0);
 
                     // Adjust the component size and position to avoid image resizing
@@ -422,7 +420,14 @@ namespace PPcurry
         /// </summary>
         public void SwitchIsSelected()
         {
-            SetIsSelected(!this.IsSelected);
+            if (this.IsSelected) // The component is deselected
+            {
+                this.BoardGrid.SelectedElement = null;
+            }
+            else // The component is selected
+            {
+                this.BoardGrid.SelectedElement = this;
+            }
         }
         #endregion
     }
