@@ -109,35 +109,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\rotate_left.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\rotate_right.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\wire.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\back.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\multiple_wires.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\open.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\save.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UI\new_file.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
