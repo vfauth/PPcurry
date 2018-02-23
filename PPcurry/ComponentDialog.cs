@@ -18,6 +18,8 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Globalization;
+using MaterialDesignThemes.Wpf;
+using MaterialDesignThemes.Wpf.Transitions;
 
 namespace PPcurry
 {
@@ -38,7 +40,7 @@ namespace PPcurry
         public ComponentDialog()
         {
             this.Owner = Application.Current.MainWindow;
-
+            
             this.SizeToContent = SizeToContent.WidthAndHeight; // The dialog size is that of its children
             this.WindowStyle = WindowStyle.ToolWindow; // To have only the close button
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner; // The dialog is positionned in the center of the main window
@@ -69,17 +71,11 @@ namespace PPcurry
         private void FillDialog()
         {
             this.EditableFields = new Dictionary<string, TextBox>();
-            DockPanel mainDockPanel = new DockPanel
-            {
-                LastChildFill = false // If set to true, the last element would not be placed right
-            };
-            this.Content = mainDockPanel;
 
             // The StackPanel to stack all the controls
             StackPanel mainStackPanel = new StackPanel();
-            mainDockPanel.Children.Add(mainStackPanel);
+            this.Content = mainStackPanel;
             mainStackPanel.Orientation = Orientation.Vertical;
-            DockPanel.SetDock(mainStackPanel, Dock.Top);
 
             // To edit the name
             TextBlock textName = new TextBlock
@@ -94,14 +90,14 @@ namespace PPcurry
                 MinWidth = 200,
                 HorizontalContentAlignment = HorizontalAlignment.Center
             };
-
             this.EditableFields.Add("name", nameBox);
+
             DockPanel namePanel = new DockPanel
             {
                 Margin = new Thickness(10)
             };
+            DockPanel.SetDock(textName, Dock.Left);
             DockPanel.SetDock(nameBox, Dock.Right);
-            DockPanel.SetDock(textName, Dock.Right);
             namePanel.Children.Add(nameBox);
             namePanel.Children.Add(textName);
             mainStackPanel.Children.Add(namePanel);
@@ -134,8 +130,8 @@ namespace PPcurry
                 {
                     Margin = new Thickness(10)
                 };
+                DockPanel.SetDock(attributeNameControl, Dock.Left);
                 DockPanel.SetDock(attributeValueControl, Dock.Right);
-                DockPanel.SetDock(attributeNameControl, Dock.Right);
                 attributeControl.Children.Add(attributeValueControl);
                 attributeControl.Children.Add(attributeNameControl);
                 mainStackPanel.Children.Add(attributeControl);
@@ -148,22 +144,19 @@ namespace PPcurry
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             mainStackPanel.Children.Add(buttonsStackPanel);
-            DockPanel.SetDock(buttonsStackPanel, Dock.Bottom);
             Button buttonOk = new Button
             {
-                Width = 50,
-                Height = 25,
                 Margin = new Thickness(10),
-                Content = "Ok"
+                Content = "Ok",
+                ToolTip = "Close the dialog and save the attributes"
             };
             buttonOk.Click += ButtonOk_Click;
             buttonsStackPanel.Children.Add(buttonOk);
             Button buttonCancel = new Button
             {
-                Width = 50,
-                Height = 25,
                 Margin = new Thickness(10),
-                Content = "Annuler"
+                Content = "Cancel",
+                ToolTip = "Close the dialog but doesn't save the attributes"
             };
             buttonCancel.Click += ButtonCancel_Click;
             buttonsStackPanel.Children.Add(buttonCancel);
