@@ -25,7 +25,7 @@ namespace PPcurry.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Resources")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Resources/Components")]
         public string ResourcesFolder {
             get {
                 return ((string)(this["ResourcesFolder"]));

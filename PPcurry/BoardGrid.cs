@@ -25,10 +25,11 @@ namespace PPcurry
         private List<Wire> WiresOnBoard = new List<Wire>(); // The list of wires on the board
         private List<List<Node>> Nodes;
         private object _SelectedElement; // The element currently selected
-        public ComponentDialog Dialog { get; } // The dialog to edit a component attributes
-        public List<WireDragger> CurrentWireDraggers { get; set; } // The WireDraggers to drag every wire connected to a component along with it
+        public ComponentDialog DialogContent { get; } // The dialog to edit a component attributes
+        public List<WireDragger> CurrentWireDraggers { get; set; } = new List<WireDragger>(); // The WireDraggers to drag every wire connected to a component along with it
 
         public bool AddingWire { get; set; } = false; // Whether we are in "adding wire mode"
+        public bool AddingMultipleWires { get; set; } = false; // Whether we are in "adding multiple wires mode"
         public bool DraggingWire { get; set; } = false; // Whether we are dragging wires
         #endregion
 
@@ -51,18 +52,60 @@ namespace PPcurry
             }
             set
             {
-                if (_SelectedElement != null)
+                if (_SelectedElement == null) // If no element was previously selected
                 {
-                    if (_SelectedElement is Component)
+                    if (value != null)
                     {
-                        ((Component)_SelectedElement).SetIsSelected(false);
+                        ((MainWindow)Application.Current.MainWindow).DeleteButton.IsEnabled = true; // Enable the delete button
                     }
-                    else if (_SelectedElement is Wire)
+                    if (value is Component)
                     {
-                        ((Wire)_SelectedElement).SetIsSelected(false);
+                        ((MainWindow)Application.Current.MainWindow).RotateLeftButton.IsEnabled = true; // Enable both rotation buttons
+                        ((MainWindow)Application.Current.MainWindow).RotateRightButton.IsEnabled = true;
                     }
                 }
-                this._SelectedElement = value;
+                else if (_SelectedElement is Component) // If a component was previsouly selected
+                {
+                    ((Component)_SelectedElement).SetIsSelected(false);
+                    if (value == null)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).RotateLeftButton.IsEnabled = false; // Disable both rotation buttons
+                        ((MainWindow)Application.Current.MainWindow).RotateRightButton.IsEnabled = false;
+                        ((MainWindow)Application.Current.MainWindow).DeleteButton.IsEnabled = false; // Disable the delete button
+
+                    }
+                    else if (value is Wire)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).RotateLeftButton.IsEnabled = false; // Disable both rotation buttons
+                        ((MainWindow)Application.Current.MainWindow).RotateRightButton.IsEnabled = false;
+                    }
+                }
+                else if (_SelectedElement is Wire) // If a wire was previsouly selected
+                {
+                    ((Wire)_SelectedElement).SetIsSelected(false);
+                    if (value == null)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).DeleteButton.IsEnabled = false; // Disable the delete button
+
+                    }
+                    else if (value is Component)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).RotateLeftButton.IsEnabled = true; // Enable both rotation buttons
+                        ((MainWindow)Application.Current.MainWindow).RotateRightButton.IsEnabled = true;
+                    }
+                }
+
+                // Notify to the new selected element that it is selected
+                if (value is Component)
+                {
+                    ((Component)value).SetIsSelected(true);
+                }
+                else if (value is Wire)
+                {
+                    ((Wire)value).SetIsSelected(true);
+                }
+
+                _SelectedElement = value;
             }
         }
         #endregion
@@ -84,12 +127,9 @@ namespace PPcurry
             this.Columns = new List<Rectangle>();
             this.ComponentsOnBoard = new List<Component>();
             this.Nodes = new List<List<Node>>();
-            this.Dialog = new ComponentDialog();
+            this.DialogContent = ((MainWindow)Application.Current.MainWindow).AttributesDialog;
 
-            this.Background = new SolidColorBrush
-            {
-                Opacity = 0 // Transparent background
-            }; // A background is required to enable mouse events
+            this.Background = new SolidColorBrush { Opacity = 0 }; // A background is required to enable mouse events
             this.ClipToBounds = true; // To have the (0, 0) point in the top left corner even with components with negative positions
 
             // Enable drag&drop
@@ -337,7 +377,6 @@ namespace PPcurry
             Component component = e.Data.GetData(typeof(Component)) as Component; // The dragged component
             Point mousePos = e.GetPosition(this); // Position of the mouse relative to the board
             Vector firstAnchor = component.GetAnchors()[0]; // One anchor must be superposed with a node
-            Debug.WriteLine("POINT : " + (mousePos - component.GetImageSize() / 2 + firstAnchor));
             Node gridNode = Magnetize(mousePos - component.GetImageSize() / 2 + firstAnchor); // The nearest grid node from the anchor
             Point componentNewPos = gridNode.GetPosition() - firstAnchor; // New position of the image relative to the board
 
@@ -359,7 +398,6 @@ namespace PPcurry
                 Vector gridThickness = new Vector(GridThickness, GridThickness);
                 component.SetComponentPosition(componentNewPos - thickness);
             }
-
             // Stopping to drag the connected wires
             if (DraggingWire)
             {
@@ -385,8 +423,13 @@ namespace PPcurry
                 Wire wire = new Wire(this, Magnetize(e.GetPosition(this)));
                 this.WiresOnBoard.Add(wire);
                 this.DraggingWire = true;
-                this.AddingWire = false;
-                this.CurrentWireDraggers = new List<WireDragger> { new WireDragger(this, wire, Magnetize(e.GetPosition(this)), new Vector(0, 0)) }; // New WireDragger centered on the mouse
+                if (!AddingMultipleWires)
+                {
+                    this.AddingWire = false;
+                    ((MainWindow)Application.Current.MainWindow).WireModeButton.IsChecked = false;
+                    ((MainWindow)Application.Current.MainWindow).MultipleWiresModeCheckBox.IsEnabled = false;
+                }
+                this.CurrentWireDraggers.Add(new WireDragger(this, wire, Magnetize(e.GetPosition(this)), new Vector(0, 0))); // New WireDragger centered on the mouse
             }
         }
 
@@ -413,6 +456,11 @@ namespace PPcurry
                     wireDragger.DragOver(e.GetPosition(this));
                 }
             }
+            // Open the left drawer to select components when the mouse is on the left, otherwise close it
+            else
+            {
+                ((MainWindow)Application.Current.MainWindow).Drawer.IsLeftDrawerOpen = (e.GetPosition(this).X < ((MainWindow)Application.Current.MainWindow).ComponentsPanel.DesiredSize.Width);
+            }
         }
 
         /// <summary>
@@ -424,8 +472,11 @@ namespace PPcurry
             {
                 wireDragger.EndDrag();
             }
-            this.CurrentWireDraggers = null;
-            this.DraggingWire = false;
+            CurrentWireDraggers.Clear();
+            if (!this.AddingMultipleWires)
+            {
+                this.DraggingWire = false;
+            }
         }
         #endregion
     }

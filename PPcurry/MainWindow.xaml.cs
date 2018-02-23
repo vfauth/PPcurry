@@ -54,7 +54,7 @@ namespace PPcurry
         /// </summary>
         private void LoadComponents()
         { 
-            this.XmlComponentsList = XElement.Load(@"Components.xml"); // Load the XML file
+            this.XmlComponentsList = XElement.Load(@"./Data/Components.xml"); // Load the XML file
             foreach (XElement element in XmlComponentsList.Elements())
             {
                 Image newComponent = new Image
@@ -62,8 +62,8 @@ namespace PPcurry
                     Source = new BitmapImage(new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value))), // The image to display
                     Margin = new Thickness(10, 5, 5, 10), // The thickness around the image
                     VerticalAlignment = VerticalAlignment.Top,
-                    Width = 2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness(), // The component covers 2 grid cells
-                    Height = 2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness() // The component covers 2 grid cells
+                    Width = 2 * BoardGrid.GetGridSpacing() + 2 * BoardGrid.GetGridThickness(), // The component covers 2 grid cells
+                    Height = 2 * BoardGrid.GetGridSpacing() + 2 * BoardGrid.GetGridThickness() // The component covers 2 grid cells
                 };
                 newComponent.MouseMove += ComponentInLeftPanel_MouseMove; // Event handler for component selection
                 newComponent.ToolTip = element.Element("name").Value; // The name of the component appears on the tooltip
@@ -71,6 +71,29 @@ namespace PPcurry
                 
                 ComponentsPanel.Children.Add(newComponent); // The component is added to the left panel
             }
+        }
+
+        /// <summary>
+        /// Create the board once the windows is loaded to avoid some issues 
+        /// </summary>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid = new BoardGrid();
+            CanvasController.Content = BoardGrid;
+            LoadComponents();
+        }
+
+        /// <summary>
+        /// Write an error message to the log file and terminate the application
+        /// </summary>
+        public void LogError(System.Exception exception)
+        {
+            using (StreamWriter logFile = new StreamWriter("log.txt", true)) // The file to which append the text
+            {
+                logFile.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ff ") + exception.Message);
+            }
+            Application.Current.Shutdown(); // Close the window
+            Environment.Exit(0); // Terminate the process
         }
 
         /// <summary>
@@ -103,24 +126,49 @@ namespace PPcurry
             switch (e.Key)
             {
                 case Key.E:
-                    LeftRotationButton_Click(sender, e);
+                    RotateLeftButton_Click(sender, e);
                     break;
                 case Key.R:
-                    RightRotationButton_Click(sender, e);
+                    RotateRightButton_Click(sender, e);
                     break;
                 case Key.W:
                     WireModeButton_Click(sender, e);
                     break;
                 case Key.Delete:
-                    this.BoardGrid.DeleteSelected();
+                    DeleteButton_Click(sender, e);
                     break;
             }
         }
 
         /// <summary>
+        /// Handler called when the new circuit button is clicked
+        /// </summary>
+        private void NewCircuitButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid = new BoardGrid();
+            this.CanvasController.Content = this.BoardGrid;
+        }
+
+        /// <summary>
+        /// Handler called when the load button is clicked
+        /// </summary>
+        private void LoadCircuitButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Handler called when the save button is clicked
+        /// </summary>
+        private void SaveCircuitButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        /// <summary>
         /// Handler called when the left rotation button is clicked or when the E key is pressed
         /// </summary>
-        private void LeftRotationButton_Click(object sender, RoutedEventArgs e)
+        private void RotateLeftButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
             {
@@ -131,7 +179,7 @@ namespace PPcurry
         /// <summary>
         /// Handler called when the right rotation button is clicked or when the R key is pressed
         /// </summary>
-        private void RightRotationButton_Click(object sender, RoutedEventArgs e)
+        private void RotateRightButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
             {
@@ -140,34 +188,65 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Handler called when the wire button is clicked or when the R key is pressed
+        /// Handler called when the delete button is clicked or when the Del key is pressed
+        /// </summary>
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.BoardGrid.DeleteSelected();
+        }
+
+        /// <summary>
+        /// Handler called when the wire button is clicked or when the W key is pressed
         /// </summary>
         private void WireModeButton_Click(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid.AddingWire = true; // Enable "wire mode"            
+            this.BoardGrid.AddingWire = (bool)WireModeButton.IsChecked; // Enable or disable "wire mode"
+            MultipleWiresModeCheckBox.IsEnabled = (bool)WireModeButton.IsChecked; // Enable or disable the multiple wires mod checker
         }
 
         /// <summary>
-        /// Write an error message to the log file and terminate the application
+        /// Handler called when the multiple wires mode checker is clicked
         /// </summary>
-        public void LogError(System.Exception exception)
+        private void MultipleWiresModeCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            using (StreamWriter logFile = new StreamWriter("log.txt", true)) // The file to which append the text
+            BoardGrid.AddingMultipleWires = ((bool)MultipleWiresModeCheckBox.IsChecked);
+        }
+
+        /// <summary>
+        /// Display or hide the textblock right to the multiple wires mode checker when it is enabled or disabled
+        /// </summary>
+        private void MultipleWiresModeCheckBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (MultipleWiresModeTextBlock != null) // To prevent a bug where this method is called before the TextBlock is initialized
             {
-                logFile.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ff ") + exception.Message);
+                if (MultipleWiresModeCheckBox.IsEnabled)
+                {
+                    MultipleWiresModeTextBlock.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    MultipleWiresModeTextBlock.Visibility = Visibility.Collapsed;
+                }
             }
-            Application.Current.Shutdown(); // Close the window
-            Environment.Exit(0); // Terminate the process
         }
 
         /// <summary>
-        /// Create the board once the windows is loaded to avoid some issues 
+        /// Hide the left drawer when the mouse leaves
         /// </summary>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void ComponentsPanel_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.BoardGrid = new BoardGrid();
-            CanvasController.Content = BoardGrid;
-            LoadComponents();
+            Drawer.IsLeftDrawerOpen = false;
+        }
+
+        /// <summary>
+        /// Check whether the drawer must be closed
+        /// </summary>
+        private void Drawer_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.GetPosition(this).X > ComponentsPanel.DesiredSize.Width)
+            {
+                Drawer.IsLeftDrawerOpen = false;
+            }
         }
         #endregion
     }

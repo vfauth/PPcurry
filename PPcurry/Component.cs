@@ -173,14 +173,6 @@ namespace PPcurry
         #region Methods
 
         /// <summary>
-        /// Display a dialog to manage the component attributes
-        /// </summary>
-        public void DisplayDialog()
-        {
-            this.BoardGrid.Dialog.Display(this);
-        }
-
-        /// <summary>
         /// Rotate the component by 90 degrees counterclockwise and reconnects anchors to nodes
         /// </summary>
         public void RotateLeft()
@@ -372,7 +364,7 @@ namespace PPcurry
         {
             if (e.Timestamp - this.LastClick < Properties.Settings.Default.DoubleClickMaxDuration && e.Timestamp - this.LastClick > Properties.Settings.Default.ClicksMinimumInterval) // Double-click
             {
-                DisplayDialog(); // A double-click opens the attributes dialog
+                this.BoardGrid.DialogContent.Display(this); // A double-click opens the attributes dialog
                 SwitchIsSelected(); // Revert the action triggered by the first click
                 this.LastClick = e.Timestamp; // The click timestamp is saved
             }
@@ -386,7 +378,6 @@ namespace PPcurry
         /// <summary>
         /// Select or deselect the component
         /// </summary>
-        /// <param name="isSelected"></param>
         public void SetIsSelected(bool isSelected)
         {
             if (isSelected != this.IsSelected) // Check whether the selected state has changed
@@ -395,7 +386,6 @@ namespace PPcurry
                 double thickness = Properties.Settings.Default.ComponentBorderThickness;
                 if (isSelected) // The component is selected
                 {
-                    this.BoardGrid.SelectedElement = this;
                     this.BorderThickness = new Thickness(thickness);
 
                     // Adjust the component size and position to avoid image resizing
@@ -403,9 +393,8 @@ namespace PPcurry
                     this.Height += thickness * 2;
                     this.SetComponentPosition(new Point(ComponentPosition.X - thickness, ComponentPosition.Y - thickness));
                 }
-                else // The component is unselected
+                else // The component is deselected
                 {
-                    this.BoardGrid.SelectedElement = null;
                     this.BorderThickness = new Thickness(0);
 
                     // Adjust the component size and position to avoid image resizing
@@ -422,7 +411,14 @@ namespace PPcurry
         /// </summary>
         public void SwitchIsSelected()
         {
-            SetIsSelected(!this.IsSelected);
+            if (this.IsSelected) // The component is deselected
+            {
+                this.BoardGrid.SelectedElement = null;
+            }
+            else // The component is selected
+            {
+                this.BoardGrid.SelectedElement = this;
+            }
         }
         #endregion
     }

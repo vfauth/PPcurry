@@ -18,10 +18,12 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Globalization;
+using MaterialDesignThemes.Wpf;
+using MaterialDesignThemes.Wpf.Transitions;
 
 namespace PPcurry
 {
-    public class ComponentDialog : Window
+    public class ComponentDialog : StackPanel
     {
         #region Attributes
 
@@ -37,14 +39,21 @@ namespace PPcurry
         /// </summary>
         public ComponentDialog()
         {
-            this.Owner = Application.Current.MainWindow;
+            this.Orientation = Orientation.Vertical;
+            this.KeyDown += ComponentDialog_KeyUp;
+        }
 
-            this.SizeToContent = SizeToContent.WidthAndHeight; // The dialog size is that of its children
-            this.WindowStyle = WindowStyle.ToolWindow; // To have only the close button
-            this.WindowStartupLocation = WindowStartupLocation.CenterOwner; // The dialog is positionned in the center of the main window
-
-            // Event handlers
-            this.Closing += ComponentDialog_Closing;
+        private void ComponentDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    ButtonOk_Click(sender, e);
+                    break;
+                case Key.Escape:
+                    ButtonCancel_Click(sender, e);
+                    break;
+            }
         }
         #endregion
 
@@ -57,10 +66,9 @@ namespace PPcurry
         public void Display(Component component)
         {
             this.ComponentEdited = component;
-            this.Content = null; // Delete all previous elements
-            this.Title = "Edit attributes";
+            this.Children.Clear(); // Delete all previous elements
             this.FillDialog();
-            this.Show();
+            ((MainWindow)Application.Current.MainWindow).AttributesDialogHost.IsOpen = true; // Display the dialog
         }
 
         /// <summary>
@@ -69,17 +77,6 @@ namespace PPcurry
         private void FillDialog()
         {
             this.EditableFields = new Dictionary<string, TextBox>();
-            DockPanel mainDockPanel = new DockPanel
-            {
-                LastChildFill = false // If set to true, the last element would not be placed right
-            };
-            this.Content = mainDockPanel;
-
-            // The StackPanel to stack all the controls
-            StackPanel mainStackPanel = new StackPanel();
-            mainDockPanel.Children.Add(mainStackPanel);
-            mainStackPanel.Orientation = Orientation.Vertical;
-            DockPanel.SetDock(mainStackPanel, Dock.Top);
 
             // To edit the name
             TextBlock textName = new TextBlock
@@ -94,17 +91,17 @@ namespace PPcurry
                 MinWidth = 200,
                 HorizontalContentAlignment = HorizontalAlignment.Center
             };
-
             this.EditableFields.Add("name", nameBox);
+
             DockPanel namePanel = new DockPanel
             {
                 Margin = new Thickness(10)
             };
+            DockPanel.SetDock(textName, Dock.Left);
             DockPanel.SetDock(nameBox, Dock.Right);
-            DockPanel.SetDock(textName, Dock.Right);
             namePanel.Children.Add(nameBox);
             namePanel.Children.Add(textName);
-            mainStackPanel.Children.Add(namePanel);
+            this.Children.Add(namePanel);
 
             // To edit attributes
             Dictionary<string, double?> attributes = this.ComponentEdited.Attributes; // The components attributes
@@ -134,11 +131,11 @@ namespace PPcurry
                 {
                     Margin = new Thickness(10)
                 };
+                DockPanel.SetDock(attributeNameControl, Dock.Left);
                 DockPanel.SetDock(attributeValueControl, Dock.Right);
-                DockPanel.SetDock(attributeNameControl, Dock.Right);
                 attributeControl.Children.Add(attributeValueControl);
                 attributeControl.Children.Add(attributeNameControl);
-                mainStackPanel.Children.Add(attributeControl);
+                this.Children.Add(attributeControl);
             }
 
             // For the "ok" and "cancel" buttons
@@ -147,23 +144,20 @@ namespace PPcurry
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            mainStackPanel.Children.Add(buttonsStackPanel);
-            DockPanel.SetDock(buttonsStackPanel, Dock.Bottom);
+            this.Children.Add(buttonsStackPanel);
             Button buttonOk = new Button
             {
-                Width = 50,
-                Height = 25,
                 Margin = new Thickness(10),
-                Content = "Ok"
+                Content = "Ok",
+                ToolTip = "Close the dialog and save the attributes"
             };
             buttonOk.Click += ButtonOk_Click;
             buttonsStackPanel.Children.Add(buttonOk);
             Button buttonCancel = new Button
             {
-                Width = 50,
-                Height = 25,
                 Margin = new Thickness(10),
-                Content = "Annuler"
+                Content = "Cancel",
+                ToolTip = "Close the dialog but doesn't save the attributes"
             };
             buttonCancel.Click += ButtonCancel_Click;
             buttonsStackPanel.Children.Add(buttonCancel);
@@ -189,7 +183,7 @@ namespace PPcurry
                 }
                 else if (attribute != "name")
                 {
-                    attributes[attribute] = double.Parse(EditableFields[attribute].Text, CultureInfo.InvariantCulture); // Parse the string while supporting decimal points and commas 
+                    attributes[attribute] = double.Parse(EditableFields[attribute].Text.Replace('.', ',')); // Parse the string while supporting decimal points and commas 
                 }
             }
 
@@ -197,29 +191,20 @@ namespace PPcurry
         }
 
         /// <summary>
-        /// Handle the click on the "Ok" button
+        /// Handler called when the "Ok" button is clicked or the Enter key is pressed
         /// </summary>
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             this.SaveValues();
-            this.Hide();
+            ((MainWindow)Application.Current.MainWindow).AttributesDialogHost.IsOpen = false; // Close the dialog
         }
 
         /// <summary>
-        /// Handle the click on the "Cancel" button
+        /// Handler called when the "Cancel" button is clicked or the Esc key is pressed
         /// </summary>
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
-        }
-
-        /// <summary>
-        /// Handle the closing of the window to cancel it and hide the window instead
-        /// </summary>
-        private void ComponentDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true; // Cancel the closing
-            this.Hide();
+            ((MainWindow)Application.Current.MainWindow).AttributesDialogHost.IsOpen = false; // Close the dialog
         }
         #endregion
     }
