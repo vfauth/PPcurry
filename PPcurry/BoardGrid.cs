@@ -25,7 +25,7 @@ namespace PPcurry
         private List<Wire> WiresOnBoard = new List<Wire>(); // The list of wires on the board
         private List<List<Node>> Nodes;
         private object _SelectedElement; // The element currently selected
-        public ComponentDialog Dialog { get; } // The dialog to edit a component attributes
+        public ComponentDialog DialogContent { get; } // The dialog to edit a component attributes
         public List<WireDragger> CurrentWireDraggers { get; set; } = new List<WireDragger>(); // The WireDraggers to drag every wire connected to a component along with it
 
         public bool AddingWire { get; set; } = false; // Whether we are in "adding wire mode"
@@ -127,7 +127,7 @@ namespace PPcurry
             this.Columns = new List<Rectangle>();
             this.ComponentsOnBoard = new List<Component>();
             this.Nodes = new List<List<Node>>();
-            this.Dialog = new ComponentDialog();
+            this.DialogContent = ((MainWindow)Application.Current.MainWindow).AttributesDialog;
 
             this.Background = new SolidColorBrush { Opacity = 0 }; // A background is required to enable mouse events
             this.ClipToBounds = true; // To have the (0, 0) point in the top left corner even with components with negative positions

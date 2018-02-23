@@ -17,120 +17,126 @@
         Title="PPcurry"
         MinWidth="600"
         MinHeight="400" KeyUp="Window_KeyUp" Loaded="Window_Loaded" >
-    <DockPanel x:Name="MainPanel" >
-        <ToolBarTray DockPanel.Dock="Top" Panel.ZIndex="1" Background="{DynamicResource MaterialDesignPaper}">
-            <ToolBar Background="{x:Null}" Style="{DynamicResource MaterialDesignToolBar}" >
+    <materialDesign:DialogHost Name="AttributesDialogHost">
+        <materialDesign:DialogHost.DialogContent>
+            <local:ComponentDialog x:Name="AttributesDialog"/>
+        </materialDesign:DialogHost.DialogContent>
 
-                <Button Name="NewCircuitButton"
-                        Width="48"
-                        Height="48"
-                        Margin="5"
-                        ToolTip="New circuit"
-                        Click="NewCircuitButton_Click"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}">
-                    <materialDesign:PackIcon Kind="FileOutline" Height="30" Width="30" />
-                </Button>
+        <DockPanel x:Name="MainPanel" >
+            <ToolBarTray DockPanel.Dock="Top" Panel.ZIndex="1" Background="{DynamicResource MaterialDesignPaper}">
+                <ToolBar Background="{x:Null}" Style="{DynamicResource MaterialDesignToolBar}" >
 
-                <Button Name="LoadCircuitButton"
-                        Width="48"
-                        Height="48"
-                        Margin="5"
-                        ToolTip="Open a file"
-                        Click="LoadCircuitButton_Click"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}">
-                    <materialDesign:PackIcon Kind="FolderOutline" Height="30" Width="30" />
-                </Button>
+                    <Button Name="NewCircuitButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="New circuit"
+                            Click="NewCircuitButton_Click"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="FileOutline" Height="30" Width="30" />
+                    </Button>
 
-                <Button Name="SaveCircuitButton"
-                        Width="48"
-                        Height="48"
-                        Margin="5"
-                        ToolTip="Save the circuit"
-                        Click="SaveCircuitButton_Click"
-                        IsEnabled="False"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}">
-                    <materialDesign:PackIcon Kind="ContentSave" Height="30" Width="30" />
-                </Button>
+                    <Button Name="LoadCircuitButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="Open a file"
+                            Click="LoadCircuitButton_Click"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="FolderOutline" Height="30" Width="30" />
+                    </Button>
 
-                <Separator />
+                    <Button Name="SaveCircuitButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="Save the circuit"
+                            Click="SaveCircuitButton_Click"
+                            IsEnabled="False"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="ContentSave" Height="30" Width="30" />
+                    </Button>
 
-                <Button Name="RotateLeftButton"
-                        Width="48"
-                        Height="48"
-                        Margin="5"
-                        ToolTip="Rotate the selected component to the left"
-                        Click="RotateLeftButton_Click"
-                        IsEnabled="False"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}">
-                    <materialDesign:PackIcon Kind="RotateLeft" Height="30" Width="30" />
-                </Button>
+                    <Separator />
 
-                <Button Name="RotateRightButton"
-                        Width="48"
-                        Height="48"
-                        Margin="5"
-                        ToolTip="Rotate the selected component to the right"
-                        Click="RotateRightButton_Click"
-                        IsEnabled="False"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}">
-                    <materialDesign:PackIcon Kind="RotateRight" Height="30" Width="30" />
-                </Button>
+                    <Button Name="RotateLeftButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="Rotate the selected component to the left (E)"
+                            Click="RotateLeftButton_Click"
+                            IsEnabled="False"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="RotateLeft" Height="30" Width="30" />
+                    </Button>
 
-                <Button Name="DeleteButton"
-                        Width="48"
-                        Height="48"
-                        Margin="5"
-                        ToolTip="Delete the selected component or wire"
-                        Click="DeleteButton_Click"
-                        IsEnabled="False"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}">
-                    <materialDesign:PackIcon Kind="Delete" Height="30" Width="30" />
-                </Button>
+                    <Button Name="RotateRightButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="Rotate the selected component to the right (R)"
+                            Click="RotateRightButton_Click"
+                            IsEnabled="False"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="RotateRight" Height="30" Width="30" />
+                    </Button>
 
-                <Separator />
+                    <Button Name="DeleteButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="Delete the selected component or wire (Del)"
+                            Click="DeleteButton_Click"
+                            IsEnabled="False"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="Delete" Height="30" Width="30" />
+                    </Button>
 
-                <ToggleButton Name="WireModeButton"
+                    <Separator />
+
+                    <ToggleButton Name="WireModeButton"
+                                  Width="48"
+                                  Height="48"
+                                  Margin="5,5,5,5"
+                                  ToolTip="Add a wire (W)"
+                                  Click="WireModeButton_Click"
+                                  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
+                                  IsChecked="False">
+                                  <materialDesign:PackIcon Kind="EthernetCable" Height="30" Width="30" />
+                    </ToggleButton>
+
+                    <CheckBox Name="MultipleWiresModeCheckBox"
                               Width="48"
                               Height="48"
-                              Margin="5,5,5,5"
-                              ToolTip="Add a wire"
-                              Click="WireModeButton_Click"
-                              Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
-                              IsChecked="False">
-                              <materialDesign:PackIcon Kind="EthernetCable" Height="30" Width="30" />
-                </ToggleButton>
+                              Margin="5,5,0,5"
+                              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                              IsEnabled="False"
+                              IsChecked="False" Click="MultipleWiresModeCheckBox_Click" IsEnabledChanged="MultipleWiresModeCheckBox_IsEnabledChanged">
+                    </CheckBox>
+                    <TextBlock Name="MultipleWiresModeTextBlock"
+                               Margin="5,5,0,5"
+                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                               VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               Visibility="Collapsed">
+                               Add multiple<LineBreak/>
+                               wires
+                    </TextBlock>
+                </ToolBar>
+            </ToolBarTray>
 
-                <CheckBox Name="MultipleWiresModeCheckBox"
-                          Width="48"
-                          Height="48"
-                          Margin="5,5,0,5"
-                          Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                          IsEnabled="False"
-                          IsChecked="False" Click="MultipleWiresModeCheckBox_Click" IsEnabledChanged="MultipleWiresModeCheckBox_IsEnabledChanged">
-                </CheckBox>
-                <TextBlock Name="MultipleWiresModeTextBlock"
-                           Margin="5,5,0,5"
-                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                           VerticalAlignment="Center"
-                           TextAlignment="Center"
-                           Visibility="Collapsed">
-                           Add multiple<LineBreak/>
-                           wires
-                </TextBlock>
-            </ToolBar>
-        </ToolBarTray>
+            <materialDesign:DrawerHost DockPanel.Dock="Left" Name="Drawer" MouseMove="Drawer_MouseMove">
+                <materialDesign:DrawerHost.LeftDrawerContent>
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <StackPanel Name="ComponentsPanel" 
+                                    VerticalAlignment="Stretch" 
+                                    DockPanel.Dock="Left" 
+                                    Background="{DynamicResource MaterialDesignPaper}" MouseLeave="ComponentsPanel_MouseLeave" />
+                    </ScrollViewer>
+                </materialDesign:DrawerHost.LeftDrawerContent>
 
-        <materialDesign:DrawerHost DockPanel.Dock="Left" Name="Drawer" MouseMove="Drawer_MouseMove">
-            <materialDesign:DrawerHost.LeftDrawerContent>
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <StackPanel Name="ComponentsPanel" 
-                                VerticalAlignment="Stretch" 
-                                DockPanel.Dock="Left" 
-                                Background="{DynamicResource MaterialDesignPaper}" MouseLeave="ComponentsPanel_MouseLeave" />
-                </ScrollViewer>
-            </materialDesign:DrawerHost.LeftDrawerContent>
-
-            <ContentControl x:Name="CanvasController"/>
-        </materialDesign:DrawerHost>
-    </DockPanel>
+                <ContentControl x:Name="CanvasController"/>
+            </materialDesign:DrawerHost>
+        </DockPanel>
+    </materialDesign:DialogHost>
 </Window>

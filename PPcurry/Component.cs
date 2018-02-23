@@ -173,14 +173,6 @@ namespace PPcurry
         #region Methods
 
         /// <summary>
-        /// Display a dialog to manage the component attributes
-        /// </summary>
-        public void DisplayDialog()
-        {
-            this.BoardGrid.Dialog.Display(this);
-        }
-
-        /// <summary>
         /// Rotate the component by 90 degrees counterclockwise and reconnects anchors to nodes
         /// </summary>
         public void RotateLeft()
@@ -372,7 +364,7 @@ namespace PPcurry
         {
             if (e.Timestamp - this.LastClick < Properties.Settings.Default.DoubleClickMaxDuration && e.Timestamp - this.LastClick > Properties.Settings.Default.ClicksMinimumInterval) // Double-click
             {
-                DisplayDialog(); // A double-click opens the attributes dialog
+                this.BoardGrid.DialogContent.Display(this); // A double-click opens the attributes dialog
                 SwitchIsSelected(); // Revert the action triggered by the first click
                 this.LastClick = e.Timestamp; // The click timestamp is saved
             }
@@ -386,7 +378,6 @@ namespace PPcurry
         /// <summary>
         /// Select or deselect the component
         /// </summary>
-        /// <param name="isSelected"></param>
         public void SetIsSelected(bool isSelected)
         {
             if (isSelected != this.IsSelected) // Check whether the selected state has changed
