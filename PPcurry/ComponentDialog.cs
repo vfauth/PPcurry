@@ -39,8 +39,8 @@ namespace PPcurry
         /// </summary>
         public ComponentDialog()
         {
-            this.Orientation = Orientation.Vertical;
-            this.KeyDown += ComponentDialog_KeyUp;
+            Orientation = Orientation.Vertical;
+            KeyDown += ComponentDialog_KeyUp;
         }
 
         private void ComponentDialog_KeyUp(object sender, KeyEventArgs e)
@@ -65,9 +65,9 @@ namespace PPcurry
         /// </summary>
         public void Display(Component component)
         {
-            this.ComponentEdited = component;
-            this.Children.Clear(); // Delete all previous elements
-            this.FillDialog();
+            ComponentEdited = component;
+            Children.Clear(); // Delete all previous elements
+            FillDialog();
             ((MainWindow)Application.Current.MainWindow).AttributesDialogHost.IsOpen = true; // Display the dialog
         }
 
@@ -76,7 +76,7 @@ namespace PPcurry
         /// </summary>
         private void FillDialog()
         {
-            this.EditableFields = new Dictionary<string, TextBox>();
+            EditableFields = new Dictionary<string, TextBox>();
 
             // To edit the name
             TextBlock textName = new TextBlock
@@ -87,11 +87,11 @@ namespace PPcurry
 
             TextBox nameBox = new TextBox
             {
-                Text = this.ComponentEdited.GetName(),
+                Text = ComponentEdited.Name,
                 MinWidth = 200,
                 HorizontalContentAlignment = HorizontalAlignment.Center
             };
-            this.EditableFields.Add("name", nameBox);
+            EditableFields.Add("name", nameBox);
 
             DockPanel namePanel = new DockPanel
             {
@@ -101,11 +101,11 @@ namespace PPcurry
             DockPanel.SetDock(nameBox, Dock.Right);
             namePanel.Children.Add(nameBox);
             namePanel.Children.Add(textName);
-            this.Children.Add(namePanel);
+            Children.Add(namePanel);
 
             // To edit attributes
-            Dictionary<string, double?> attributes = this.ComponentEdited.Attributes; // The components attributes
-            Dictionary<string, Dictionary<string, double>> attributesUnits = this.ComponentEdited.AttributesUnits; // The component attributes available units
+            Dictionary<string, double?> attributes = ComponentEdited.Attributes; // The components attributes
+            Dictionary<string, Dictionary<string, double>> attributesUnits = ComponentEdited.AttributesUnits; // The component attributes available units
             List<TextBox> attributesValuesControls = new List<TextBox>(); // The controls to edit the attributes
             
             foreach (string attributeName in attributes.Keys)
@@ -126,7 +126,7 @@ namespace PPcurry
                     attributeValueControl.Text = ((double)attributes[attributeName]).ToString();
                 }
 
-                this.EditableFields.Add(attributeName, attributeValueControl);
+                EditableFields.Add(attributeName, attributeValueControl);
                 DockPanel attributeControl = new DockPanel
                 {
                     Margin = new Thickness(10)
@@ -135,7 +135,7 @@ namespace PPcurry
                 DockPanel.SetDock(attributeValueControl, Dock.Right);
                 attributeControl.Children.Add(attributeValueControl);
                 attributeControl.Children.Add(attributeNameControl);
-                this.Children.Add(attributeControl);
+                Children.Add(attributeControl);
             }
 
             // For the "ok" and "cancel" buttons
@@ -144,7 +144,7 @@ namespace PPcurry
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            this.Children.Add(buttonsStackPanel);
+            Children.Add(buttonsStackPanel);
             Button buttonOk = new Button
             {
                 Margin = new Thickness(10),
@@ -169,11 +169,11 @@ namespace PPcurry
         private void SaveValues()
         {
             // Names
-            this.ComponentEdited.SetName(EditableFields["name"].Text);
+            ComponentEdited.Name = EditableFields["name"].Text;
 
             // Attributes
-            Dictionary<string, double?> attributes = new Dictionary<string, double?>(this.ComponentEdited.Attributes); // The components attributes
-            Dictionary<string, Dictionary<string, double>> attributesUnits = this.ComponentEdited.AttributesUnits; // The component attributes available units
+            Dictionary<string, double?> attributes = new Dictionary<string, double?>(ComponentEdited.Attributes); // The components attributes
+            Dictionary<string, Dictionary<string, double>> attributesUnits = ComponentEdited.AttributesUnits; // The component attributes available units
 
             foreach (string attribute in EditableFields.Keys)
             {
@@ -187,7 +187,7 @@ namespace PPcurry
                 }
             }
 
-            this.ComponentEdited.Attributes = attributes;
+            ComponentEdited.Attributes = attributes;
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace PPcurry
         /// </summary>
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            this.SaveValues();
+            SaveValues();
             ((MainWindow)Application.Current.MainWindow).AttributesDialogHost.IsOpen = false; // Close the dialog
         }
 

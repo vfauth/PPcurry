@@ -52,7 +52,7 @@
                             Margin="5"
                             ToolTip="Save the circuit"
                             Click="SaveCircuitButton_Click"
-                            IsEnabled="False"
+                            IsEnabled="True"
                             Style="{StaticResource MaterialDesignFloatingActionButton}">
                         <materialDesign:PackIcon Kind="ContentSave" Height="30" Width="30" />
                     </Button>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,6 +17,8 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.IO;
+using System.Windows.Markup;
+using System.Xml;
 
 namespace PPcurry
 {
@@ -27,13 +31,6 @@ namespace PPcurry
 
         private BoardGrid BoardGrid; // The grid on the board
         private XElement XmlComponentsList; // The XML Element containing all the available components data
-        #endregion
-
-
-        #region Accessors/Mutators
-
-        public XElement GetXmlComponentsList() => this.XmlComponentsList;
-        public void SetXmlComponentsList(XElement xmlComponentsList) => this.XmlComponentsList = xmlComponentsList;
         #endregion
 
 
@@ -53,8 +50,8 @@ namespace PPcurry
         /// Load the components then display them in the panel at the left
         /// </summary>
         private void LoadComponents()
-        { 
-            this.XmlComponentsList = XElement.Load(@"./Data/Components.xml"); // Load the XML file
+        {
+            XmlComponentsList = XElement.Load(@"./Data/Components.xml"); // Load the XML file
             foreach (XElement element in XmlComponentsList.Elements())
             {
                 Image newComponent = new Image
@@ -62,8 +59,8 @@ namespace PPcurry
                     Source = new BitmapImage(new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value))), // The image to display
                     Margin = new Thickness(10, 5, 5, 10), // The thickness around the image
                     VerticalAlignment = VerticalAlignment.Top,
-                    Width = 2 * BoardGrid.GetGridSpacing() + 2 * BoardGrid.GetGridThickness(), // The component covers 2 grid cells
-                    Height = 2 * BoardGrid.GetGridSpacing() + 2 * BoardGrid.GetGridThickness() // The component covers 2 grid cells
+                    Width = 2 * BoardGrid.GridSpacing + 2 * BoardGrid.GridThickness, // The component covers 2 grid cells
+                    Height = 2 * BoardGrid.GridSpacing + 2 * BoardGrid.GridThickness // The component covers 2 grid cells
                 };
                 newComponent.MouseMove += ComponentInLeftPanel_MouseMove; // Event handler for component selection
                 newComponent.ToolTip = element.Element("name").Value; // The name of the component appears on the tooltip
@@ -78,7 +75,7 @@ namespace PPcurry
         /// </summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid = new BoardGrid();
+            BoardGrid = new BoardGrid();
             CanvasController.Content = BoardGrid;
             LoadComponents();
         }
@@ -105,16 +102,14 @@ namespace PPcurry
             {
 
                 Point relativePosition = e.GetPosition(this); // Position of the drop relative to the board
-                relativePosition.X -= (2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness()) / 2;
-                relativePosition.Y -= (2 * BoardGrid.GetGridSpacing() + BoardGrid.GetGridThickness()) / 2;
+                relativePosition.X -= (2 * BoardGrid.GridSpacing + BoardGrid.GridThickness) / 2;
+                relativePosition.Y -= (2 * BoardGrid.GridSpacing + BoardGrid.GridThickness) / 2;
                 XElement xmlElement = XmlComponentsList.Element((string)((Image)sender).Tag); // Get the XML element with all the component data
 
-                Component newComponent = new Component(relativePosition, BoardGrid, xmlElement)
-                {
-                    Opacity = 0 // The component is only displayed once on the board
-                }; // Create the component and display it
+                Component newComponent = new Component(relativePosition, BoardGrid, xmlElement); // Create the component
+                newComponent.GraphicalComponent.Opacity = 0; // The component is only displayed once on the board
                 
-                DragDrop.DoDragDrop(newComponent, newComponent, DragDropEffects.Move); // Begin the drag&drop
+                DragDrop.DoDragDrop(newComponent.GraphicalComponent, newComponent, DragDropEffects.Move); // Begin the drag&drop
             }
         }
 
@@ -145,8 +140,16 @@ namespace PPcurry
         /// </summary>
         private void NewCircuitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid = new BoardGrid();
-            this.CanvasController.Content = this.BoardGrid;
+            BoardGrid = new BoardGrid();
+            CanvasController.Content = BoardGrid;
+
+            // Reinitialize the buttons
+            RotateLeftButton.IsEnabled = false;
+            RotateRightButton.IsEnabled = false;
+            DeleteButton.IsEnabled = false;
+            WireModeButton.IsChecked = false;
+            MultipleWiresModeCheckBox.IsEnabled = false;
+            MultipleWiresModeTextBlock.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -154,7 +157,33 @@ namespace PPcurry
         /// </summary>
         private void LoadCircuitButton_Click(object sender, RoutedEventArgs e)
         {
+            // Open file "data.xml" and deserialize the object from it
+            Stream stream = File.Open("data.xml", FileMode.Open);
+            BinaryFormatter formatter = new BinaryFormatter();
 
+            NewCircuitButton_Click(sender, e); // Reset the circuit and the buttons
+            SavedCircuit savedCircuit = ((SavedCircuit)formatter.Deserialize(stream)); // Load the circuit
+            stream.Close();
+
+            // Add the saved elements to the board
+            BoardGrid.Nodes = savedCircuit.Nodes;
+            BoardGrid.ComponentsOnBoard = savedCircuit.Components;
+            BoardGrid.WiresOnBoard = savedCircuit.Wires;
+            foreach (List<Node> line in savedCircuit.Nodes)
+            {
+                foreach (Node node in line)
+                {
+                    node.Deserialized(BoardGrid);
+                }
+            }
+            foreach (Component component in savedCircuit.Components)
+            {
+                component.Deserialized(BoardGrid);
+            }
+            foreach (Wire wire in savedCircuit.Wires)
+            {
+                wire.Deserialized(BoardGrid);
+            }
         }
 
         /// <summary>
@@ -162,7 +191,24 @@ namespace PPcurry
         /// </summary>
         private void SaveCircuitButton_Click(object sender, RoutedEventArgs e)
         {
+            // CHOOSE FILE THERE
 
+            // Unselected every element before serialization
+            foreach (Component component in BoardGrid.ComponentsOnBoard)
+            {
+                component.SetIsSelected(false);
+            }
+            foreach (Wire wire in BoardGrid.WiresOnBoard)
+            {
+                wire.SetIsSelected(false);
+            }
+
+            // File to which save the circuit
+            Stream stream = File.Open("data.xml", FileMode.Create);
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(stream, new SavedCircuit(BoardGrid)); // Save the BoardGrid
+            stream.Close();
         }
 
         /// <summary>
@@ -170,7 +216,7 @@ namespace PPcurry
         /// </summary>
         private void RotateLeftButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
+            if (BoardGrid.SelectedElement != null && BoardGrid.SelectedElement is Component)
             {
                 ((Component)BoardGrid.SelectedElement).RotateLeft();
             }
@@ -181,7 +227,7 @@ namespace PPcurry
         /// </summary>
         private void RotateRightButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.BoardGrid.SelectedElement != null && this.BoardGrid.SelectedElement is Component)
+            if (BoardGrid.SelectedElement != null && BoardGrid.SelectedElement is Component)
             {
                 ((Component)BoardGrid.SelectedElement).RotateRight();
             }
@@ -192,7 +238,7 @@ namespace PPcurry
         /// </summary>
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid.DeleteSelected();
+            BoardGrid.DeleteSelected();
         }
 
         /// <summary>
@@ -200,7 +246,11 @@ namespace PPcurry
         /// </summary>
         private void WireModeButton_Click(object sender, RoutedEventArgs e)
         {
-            this.BoardGrid.AddingWire = (bool)WireModeButton.IsChecked; // Enable or disable "wire mode"
+            BoardGrid.AddingWire = (bool)WireModeButton.IsChecked; // Enable or disable "wire mode"
+            if (!(bool)WireModeButton.IsChecked && BoardGrid.DraggingWire) // Dragging is interrupted if the wire button is unselected 
+            {
+                BoardGrid.DraggingWire = false;
+            }
             MultipleWiresModeCheckBox.IsEnabled = (bool)WireModeButton.IsChecked; // Enable or disable the multiple wires mod checker
         }
 
