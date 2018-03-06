@@ -25,7 +25,7 @@ namespace PPcurry.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Resources")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Resources/Components")]
         public string ResourcesFolder {
             get {
                 return ((string)(this["ResourcesFolder"]));
@@ -101,6 +101,15 @@ namespace PPcurry.Properties {
         public double WireThicknessSelected {
             get {
                 return ((double)(this["WireThicknessSelected"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SavedCircuits")]
+        public string SaveFolder {
+            get {
+                return ((string)(this["SaveFolder"]));
             }
         }
     }

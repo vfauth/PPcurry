@@ -36,22 +36,22 @@ namespace PPcurry
 
         public WireDragger(BoardGrid boardGrid, Wire wire, Node draggingNode, Vector mouseOffset)
         {
-            this.BoardGrid = boardGrid;
-            this.Wire = wire;
-            this.DraggingNode = draggingNode;
-            this.MouseOffset = mouseOffset;
+            BoardGrid = boardGrid;
+            Wire = wire;
+            DraggingNode = draggingNode;
+            MouseOffset = mouseOffset;
 
             // Search for the static node
             if (DraggingNode == Wire.Nodes[0])
             {
-                this.StaticNode = Wire.Nodes[1];
+                StaticNode = Wire.Nodes[1];
             }
             else
             {
-                this.StaticNode = Wire.Nodes[0];
+                StaticNode = Wire.Nodes[0];
             }
 
-            this.BoardGrid.DraggingWire = true;
+            BoardGrid.DraggingWire = true;
         }
         #endregion
 
@@ -63,14 +63,14 @@ namespace PPcurry
         /// </summary>
         public void DragOver(Point mousePos)
         {
-            Node newNode = this.BoardGrid.Magnetize(mousePos + MouseOffset);
+            Node newNode = BoardGrid.Magnetize(mousePos + MouseOffset);
             // Move the wire if the new node is inside the canvas and different from the former node
-            if (!(newNode.GetPosition().X < -this.BoardGrid.GridThickness || newNode.GetPosition().Y < -this.BoardGrid.GridThickness || newNode.GetPosition().X > this.BoardGrid.ActualWidth + this.BoardGrid.GridThickness || newNode.GetPosition().Y > this.BoardGrid.ActualHeight + this.BoardGrid.GridThickness))
+            if (!(newNode.Position.X < -BoardGrid.GridThickness || newNode.Position.Y < -BoardGrid.GridThickness || newNode.Position.X > BoardGrid.ActualWidth + BoardGrid.GridThickness || newNode.Position.Y > BoardGrid.ActualHeight + BoardGrid.GridThickness))
             {
                 if (newNode != DraggingNode)
                 {
-                    this.DraggingNode = newNode;
-                    this.Wire.Nodes = new List<Node>() { StaticNode, DraggingNode }; // Move the wire
+                    DraggingNode = newNode;
+                    Wire.Nodes = new List<Node>() { StaticNode, DraggingNode }; // Move the wire
                 }
             }
         }
@@ -80,13 +80,13 @@ namespace PPcurry
         /// </summary>
         public void EndDrag()
         {
-            if (this.StaticNode == this.DraggingNode) // Remove the wire if it is just a point
+            if (StaticNode == DraggingNode) // Remove the wire if it is just a point
             {
-                BoardGrid.RemoveWire(this.Wire);
+                BoardGrid.RemoveWire(Wire);
             }
             else
             {
-                this.Wire.ConnectToNodes();
+                Wire.ConnectToNodes();
             }
         }
         #endregion
