@@ -20,11 +20,12 @@ using System.Xml.Linq;
 
 namespace PPcurry
 {
+    [Serializable()]
     public class Wire
     {
         #region Attributes
 
-        private BoardGrid BoardGrid;
+        [NonSerialized()] private BoardGrid BoardGrid;
         private double Thickness; // The thickness of the wires
         private bool IsSelected = false; // Whether the wire is currently selected or not
         private List<Node> ExtremitiesNodes; // Nodes connected to the wire
@@ -40,7 +41,12 @@ namespace PPcurry
                 Redraw();
             }
         }
-        public List<Rectangle> Rectangles { get; } // The 3 rectangles composing the wire
+        [NonSerialized()] private List<Rectangle> Rectangles; // The 3 rectangles composing the wire
+        #endregion
+
+
+        #region Accessors/Mutators
+        
         #endregion
 
 
@@ -48,17 +54,17 @@ namespace PPcurry
 
         public Wire(BoardGrid boardGrid, Node originNode)
         {
-            this.BoardGrid = boardGrid;
-            this.Thickness = Properties.Settings.Default.WireThickness; // Default thickness
-            this.Rectangles = new List<Rectangle>();
+            BoardGrid = boardGrid;
+            Thickness = Properties.Settings.Default.WireThickness; // Default thickness
+            Rectangles = new List<Rectangle>();
             for (int i = 0; i < 3; i++)
             {
                 Rectangle newRect = new Rectangle() { Fill = Brushes.Black };
                 newRect.MouseLeftButtonUp += SwitchIsSelected;
-                this.Rectangles.Add(newRect);
+                Rectangles.Add(newRect);
                 BoardGrid.Children.Add(Rectangles[i]);
             }
-            this.Nodes = new List<Node>() { originNode, originNode };
+            Nodes = new List<Node>() { originNode, originNode };
         }
         #endregion
 
@@ -68,39 +74,39 @@ namespace PPcurry
         /// <summary>
         /// Update the attributes of the rectangles associated to the wire
         /// </summary>
-        public void Redraw()
+        private void Redraw()
         {
             SortNodes();
 
             // Positions of vertices
             Node[] vertices = new Node[4];
             vertices[0] = ExtremitiesNodes[0];
-            if (ExtremitiesNodes[0].GetPosition().Y < ExtremitiesNodes[1].GetPosition().Y)
+            if (ExtremitiesNodes[0].Position.Y < ExtremitiesNodes[1].Position.Y)
             {
-                vertices[1] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[0].GetPosition().Y));
+                vertices[1] = BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].Position.X + ExtremitiesNodes[1].Position.X) / 2, ExtremitiesNodes[0].Position.Y));
             }
             else
             {
-                vertices[1] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[1].GetPosition().Y));
+                vertices[1] = BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].Position.X + ExtremitiesNodes[1].Position.X) / 2, ExtremitiesNodes[1].Position.Y));
             }
-            vertices[2] = this.BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].GetPosition().X + ExtremitiesNodes[1].GetPosition().X) / 2, ExtremitiesNodes[1].GetPosition().Y));
+            vertices[2] = BoardGrid.Magnetize(new Point((ExtremitiesNodes[0].Position.X + ExtremitiesNodes[1].Position.X) / 2, ExtremitiesNodes[1].Position.Y));
             vertices[3] = ExtremitiesNodes[1];
 
             // Set the rectangles position and size
             for (int k = 0; k < 3; k++)
             {
-                Canvas.SetLeft(this.Rectangles[k], vertices[k].GetPosition().X - this.Thickness / 2);
-                Canvas.SetTop(this.Rectangles[k], vertices[k].GetPosition().Y - this.Thickness / 2);
+                Canvas.SetLeft(Rectangles[k], vertices[k].Position.X - Thickness / 2);
+                Canvas.SetTop(Rectangles[k], vertices[k].Position.Y - Thickness / 2);
 
                 if (k == 1) // The middle rectangle is the vertical one
                 {
-                    this.Rectangles[k].Height = Math.Abs(vertices[0].GetPosition().Y - vertices[2].GetPosition().Y) + this.Thickness; // Size
-                    this.Rectangles[k].Width = this.Thickness;
+                    Rectangles[k].Height = Math.Abs(vertices[0].Position.Y - vertices[2].Position.Y) + Thickness; // Size
+                    Rectangles[k].Width = Thickness;
                 }
                 else // The two other rectangles are horizontal
                 {
-                    this.Rectangles[k].Height = this.Thickness; // Size
-                    this.Rectangles[k].Width = Math.Abs(vertices[k+1].GetPosition().X - vertices[k].GetPosition().X) + this.Thickness;
+                    Rectangles[k].Height = Thickness; // Size
+                    Rectangles[k].Width = Math.Abs(vertices[k+1].Position.X - vertices[k].Position.X) + Thickness;
                 }
             }
         }
@@ -110,18 +116,18 @@ namespace PPcurry
         /// </summary>
         private void SortNodes()
         {
-            if (this.ExtremitiesNodes.Count > 1)
+            if (ExtremitiesNodes.Count > 1)
             {
-                Point Point1 = this.ExtremitiesNodes[0].GetPosition();
-                Point Point2 = this.ExtremitiesNodes[1].GetPosition();
+                Point Point1 = ExtremitiesNodes[0].Position;
+                Point Point2 = ExtremitiesNodes[1].Position;
                 if (Point1.X > Point2.X)
                 {
-                    this.ExtremitiesNodes.Reverse();
+                    ExtremitiesNodes.Reverse();
                 }
                 else if (Point1.X == Point2.X && Point1.Y > Point2.Y)
                 {
 
-                    this.ExtremitiesNodes.Reverse();
+                    ExtremitiesNodes.Reverse();
                 }
             }
         }
@@ -133,30 +139,30 @@ namespace PPcurry
         {
             ClearNodes(); // Clear previous connections
 
-            if (this.ExtremitiesNodes[0].GetPosition().X == this.ExtremitiesNodes[1].GetPosition().X) // Vertical wire
+            if (ExtremitiesNodes[0].Position.X == ExtremitiesNodes[1].Position.X) // Vertical wire
             {
-                if (this.ExtremitiesNodes[0].GetPosition().Y > this.ExtremitiesNodes[1].GetPosition().Y)
+                if (ExtremitiesNodes[0].Position.Y > ExtremitiesNodes[1].Position.Y)
                 {
-                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Up);
-                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Down);
+                    ExtremitiesNodes[0].ConnectedElements.Add(this, Directions.Up);
+                    ExtremitiesNodes[1].ConnectedElements.Add(this, Directions.Down);
                 }
-                else if (this.ExtremitiesNodes[0].GetPosition().Y < this.ExtremitiesNodes[1].GetPosition().Y)
+                else if (ExtremitiesNodes[0].Position.Y < ExtremitiesNodes[1].Position.Y)
                 {
-                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Down);
-                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Up);
+                    ExtremitiesNodes[0].ConnectedElements.Add(this, Directions.Down);
+                    ExtremitiesNodes[1].ConnectedElements.Add(this, Directions.Up);
                 }
             }
             else // Vertical wire
             {
-                if (this.ExtremitiesNodes[0].GetPosition().X > this.ExtremitiesNodes[1].GetPosition().X)
+                if (ExtremitiesNodes[0].Position.X > ExtremitiesNodes[1].Position.X)
                 {
-                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Left);
-                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Right);
+                    ExtremitiesNodes[0].ConnectedElements.Add(this, Directions.Left);
+                    ExtremitiesNodes[1].ConnectedElements.Add(this, Directions.Right);
                 }
-                else if (this.ExtremitiesNodes[0].GetPosition().X < this.ExtremitiesNodes[1].GetPosition().X)
+                else if (ExtremitiesNodes[0].Position.X < ExtremitiesNodes[1].Position.X)
                 {
-                    this.ExtremitiesNodes[0].ConnectedComponents.Add(this, Directions.Right);
-                    this.ExtremitiesNodes[1].ConnectedComponents.Add(this, Directions.Left);
+                    ExtremitiesNodes[0].ConnectedElements.Add(this, Directions.Right);
+                    ExtremitiesNodes[1].ConnectedElements.Add(this, Directions.Left);
                 }
             }
         }
@@ -164,15 +170,15 @@ namespace PPcurry
         /// <summary>
         /// Remove this object from all connected nodes
         /// </summary>
-        public void ClearNodes()
+        private void ClearNodes()
         {
-            if (this.ExtremitiesNodes[1].ConnectedComponents.ContainsKey(this))
+            if (ExtremitiesNodes[1].ConnectedElements.ContainsKey(this))
             {
-                this.ExtremitiesNodes[1].ConnectedComponents.Remove(this); // Remove the anchor from the node connected elements
+                ExtremitiesNodes[1].ConnectedElements.Remove(this); // Remove the anchor from the node connected elements
             }
-            if (this.ExtremitiesNodes[0].ConnectedComponents.ContainsKey(this))
+            if (ExtremitiesNodes[0].ConnectedElements.ContainsKey(this))
             {
-                this.ExtremitiesNodes[0].ConnectedComponents.Remove(this); // Remove the anchor from the node connected elements
+                ExtremitiesNodes[0].ConnectedElements.Remove(this); // Remove the anchor from the node connected elements
             }
         }
 
@@ -181,16 +187,16 @@ namespace PPcurry
         /// </summary>
         public void SetIsSelected(bool isSelected)
         {
-            if (isSelected != this.IsSelected) // Check whether the selected state has changed
+            if (isSelected != IsSelected) // Check whether the selected state has changed
             {
-                this.IsSelected = isSelected;
+                IsSelected = isSelected;
                 if (isSelected)
                 {
-                    this.Thickness = Properties.Settings.Default.WireThicknessSelected; // The selected wire is thicker
+                    Thickness = Properties.Settings.Default.WireThicknessSelected; // The selected wire is thicker
                 }
                 else
                 {
-                    this.Thickness = Properties.Settings.Default.WireThickness; // The default wire thickness
+                    Thickness = Properties.Settings.Default.WireThickness; // The default wire thickness
                 }
                 Redraw();
             }
@@ -199,16 +205,46 @@ namespace PPcurry
         /// <summary>
         /// Change the selection status of the wire
         /// </summary>
-        public void SwitchIsSelected(object sender, MouseButtonEventArgs e)
+        private void SwitchIsSelected(object sender, MouseButtonEventArgs e)
         {
-            if (this.IsSelected) // The wire is deselected
+            if (IsSelected) // The wire is deselected
             {
-                this.BoardGrid.SelectedElement = null;
+                BoardGrid.SelectedElement = null;
             }
             else // The wire is selected
             {
-                this.BoardGrid.SelectedElement = this;
+                BoardGrid.SelectedElement = this;
             }
+        }
+
+        /// <summary>
+        /// Remove the wire from the board by removing the rectangles and the connections to the nodes
+        /// </summary>
+        public void RemoveFromBoard()
+        {
+            foreach (Rectangle rectangle in Rectangles)
+            {
+                BoardGrid.Children.Remove(rectangle);
+            }
+            ClearNodes();
+        }
+
+        /// <summary>
+        /// Add to the new BoardGrid and recreate the rectangles after deserialization
+        /// </summary>
+        public void Deserialized(BoardGrid boardGrid)
+        {
+            BoardGrid = boardGrid;
+
+            Rectangles = new List<Rectangle>();
+            for (int i = 0; i < 3; i++)
+            {
+                Rectangle newRect = new Rectangle() { Fill = Brushes.Black };
+                newRect.MouseLeftButtonUp += SwitchIsSelected;
+                Rectangles.Add(newRect);
+                BoardGrid.Children.Add(Rectangles[i]);
+            }
+            Redraw();
         }
         #endregion
     }

@@ -40,7 +40,7 @@
                             Width="48"
                             Height="48"
                             Margin="5"
-                            ToolTip="Open a file"
+                            ToolTip="Load a saved circuit"
                             Click="LoadCircuitButton_Click"
                             Style="{StaticResource MaterialDesignFloatingActionButton}">
                         <materialDesign:PackIcon Kind="FolderOutline" Height="30" Width="30" />
@@ -52,7 +52,7 @@
                             Margin="5"
                             ToolTip="Save the circuit"
                             Click="SaveCircuitButton_Click"
-                            IsEnabled="False"
+                            IsEnabled="True"
                             Style="{StaticResource MaterialDesignFloatingActionButton}">
                         <materialDesign:PackIcon Kind="ContentSave" Height="30" Width="30" />
                     </Button>
