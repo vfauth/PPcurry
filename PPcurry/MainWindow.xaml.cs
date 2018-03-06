@@ -19,6 +19,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Windows.Markup;
 using System.Xml;
+using Microsoft.Win32;
 
 namespace PPcurry
 {
@@ -51,6 +52,18 @@ namespace PPcurry
         /// </summary>
         private void LoadComponents()
         {
+            // Check the existence of ./Data/Components.xml
+            try
+            {
+                if (!File.Exists(@"./Data/Components.xml"))
+                {
+                    throw new System.ApplicationException($"The file Data/Components.xml cannot be found.");
+                }
+            }
+            catch (System.ApplicationException e)
+            {
+                LogError(e); // Write error to log and close the processus
+            }
             XmlComponentsList = XElement.Load(@"./Data/Components.xml"); // Load the XML file
             foreach (XElement element in XmlComponentsList.Elements())
             {
@@ -85,7 +98,7 @@ namespace PPcurry
         /// </summary>
         public void LogError(System.Exception exception)
         {
-            using (StreamWriter logFile = new StreamWriter("log.txt", true)) // The file to which append the text
+            using (StreamWriter logFile = new StreamWriter(@"log.txt", true)) // The file to which append the text
             {
                 logFile.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ff ") + exception.Message);
             }
@@ -157,32 +170,46 @@ namespace PPcurry
         /// </summary>
         private void LoadCircuitButton_Click(object sender, RoutedEventArgs e)
         {
-            // Open file "data.xml" and deserialize the object from it
-            Stream stream = File.Open("data.xml", FileMode.Open);
-            BinaryFormatter formatter = new BinaryFormatter();
+            string savedFolderPath = System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.SaveFolder);
+            Directory.CreateDirectory(savedFolderPath); // Create the folder to save circuits if it doesn't exist
 
-            NewCircuitButton_Click(sender, e); // Reset the circuit and the buttons
-            SavedCircuit savedCircuit = ((SavedCircuit)formatter.Deserialize(stream)); // Load the circuit
-            stream.Close();
-
-            // Add the saved elements to the board
-            BoardGrid.Nodes = savedCircuit.Nodes;
-            BoardGrid.ComponentsOnBoard = savedCircuit.Components;
-            BoardGrid.WiresOnBoard = savedCircuit.Wires;
-            foreach (List<Node> line in savedCircuit.Nodes)
+            // Open a dialog to choose a file to open
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                foreach (Node node in line)
+                InitialDirectory = savedFolderPath, // Default directory of saved circuits
+                Filter = "PPcurry circuit|*.ppc", // The extension of saved PPcurry circuits
+                CheckFileExists = true // Only existing files are accepted
+            };
+
+            if ((bool)openFileDialog.ShowDialog(this)) // If a file is selected and OK is clicked
+            {
+                // Open selected file and deserialize the object from it
+                Stream stream = openFileDialog.OpenFile();
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                NewCircuitButton_Click(sender, e); // Reset the circuit and the buttons
+                SavedCircuit savedCircuit = ((SavedCircuit)formatter.Deserialize(stream)); // Load the circuit
+                stream.Close();
+
+                // Add the saved elements to the board
+                BoardGrid.Nodes = savedCircuit.Nodes;
+                BoardGrid.ComponentsOnBoard = savedCircuit.Components;
+                BoardGrid.WiresOnBoard = savedCircuit.Wires;
+                foreach (List<Node> line in savedCircuit.Nodes)
                 {
-                    node.Deserialized(BoardGrid);
+                    foreach (Node node in line)
+                    {
+                        node.Deserialized(BoardGrid);
+                    }
                 }
-            }
-            foreach (Component component in savedCircuit.Components)
-            {
-                component.Deserialized(BoardGrid);
-            }
-            foreach (Wire wire in savedCircuit.Wires)
-            {
-                wire.Deserialized(BoardGrid);
+                foreach (Component component in savedCircuit.Components)
+                {
+                    component.Deserialized(BoardGrid);
+                }
+                foreach (Wire wire in savedCircuit.Wires)
+                {
+                    wire.Deserialized(BoardGrid);
+                }
             }
         }
 
@@ -191,24 +218,42 @@ namespace PPcurry
         /// </summary>
         private void SaveCircuitButton_Click(object sender, RoutedEventArgs e)
         {
-            // CHOOSE FILE THERE
+            string savedFolderPath = System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.SaveFolder);
+            Directory.CreateDirectory(savedFolderPath); // Create the folder to save circuits if it doesn't exist
 
-            // Unselected every element before serialization
-            foreach (Component component in BoardGrid.ComponentsOnBoard)
+            // Open a dialog to choose a file to open
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                component.SetIsSelected(false);
-            }
-            foreach (Wire wire in BoardGrid.WiresOnBoard)
+                InitialDirectory = savedFolderPath, // Default directory of saved circuits
+                Filter = "PPcurry circuit|*.ppc", // The extension of saved PPcurry circuits
+                CheckPathExists = true, // The folder must exist
+                //AddExtension = true, // Add the .ppc extension if the file has no extension
+            };
+
+            if ((bool)saveFileDialog.ShowDialog(this)) // If a file is selected and OK is clicked
             {
-                wire.SetIsSelected(false);
+                // Unselected the selected element before serialization
+                object selectedElement = BoardGrid.SelectedElement; // To select the element again after the serialization
+                BoardGrid.SelectedElement = null;
+
+                foreach (Component component in BoardGrid.ComponentsOnBoard)
+                {
+                    component.SetIsSelected(false);
+                }
+                foreach (Wire wire in BoardGrid.WiresOnBoard)
+                {
+                    wire.SetIsSelected(false);
+                }
+
+                // Open the file
+                Stream stream = saveFileDialog.OpenFile();
+
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, new SavedCircuit(BoardGrid)); // Save the BoardGrid
+                stream.Close();
+
+                BoardGrid.SelectedElement = selectedElement; // Select again the slected element
             }
-
-            // File to which save the circuit
-            Stream stream = File.Open("data.xml", FileMode.Create);
-
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, new SavedCircuit(BoardGrid)); // Save the BoardGrid
-            stream.Close();
         }
 
         /// <summary>

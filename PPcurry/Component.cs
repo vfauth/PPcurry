@@ -322,7 +322,7 @@ namespace PPcurry
                     }
                     else
                     {
-                        throw new System.ApplicationException($"Can't determine anchor position relatively to the node. Position relative to the canvas : {node.Position}. Canvas size : {BoardGrid.ActualWidth};{BoardGrid.ActualHeight}.");
+                        throw new System.ApplicationException("Can't determine anchor position relatively to the node.");
                     }
                 }
                 catch (System.ApplicationException e)
@@ -448,7 +448,7 @@ namespace PPcurry
             // Rotation
             Rotation = new RotateTransform();
             GraphicalComponent.RenderTransform = Rotation;
-            RotationAngle = RotationAngle; // To compute the rotation center
+            RotationAngle = RotationAngle; // To compute the rotation center and apply the rotation to anchors
         }
         #endregion
     }

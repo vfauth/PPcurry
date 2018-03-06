@@ -103,5 +103,14 @@ namespace PPcurry.Properties {
                 return ((double)(this["WireThicknessSelected"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SavedCircuits")]
+        public string SaveFolder {
+            get {
+                return ((string)(this["SaveFolder"]));
+            }
+        }
     }
 }
