@@ -11,6 +11,14 @@ namespace PPcurry
     {
         #region Attributes
         private Component EdgeComponent { get; set; } //The value of the variable is null if the node is the Edge represents a Wire
+        private TensionNode[] ConnectedNodes = new TensionNode[2];  
+        #endregion
+
+        #region Constructor
+        public TensionEdge(Component edgeComponent)
+        {
+            EdgeComponent = edgeComponent;
+        }
         #endregion
     }
 }

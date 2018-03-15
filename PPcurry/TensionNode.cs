@@ -10,8 +10,17 @@ namespace PPcurry
     class TensionNode
     {
         #region Attributes
-        private int CurrentsNumber { get; set; } //The number of current values considered
+        
         private int[] CurrentFlowIndicator { get; set; } //The indicator of the way of the current
+
+
+        #endregion
+
+        #region Constructor
+        public TensionNode()
+        {
+            this.CurrentFlowIndicator = new int[1] { 0 };
+        }
         #endregion
     }
 }
