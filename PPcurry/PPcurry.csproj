@@ -62,7 +62,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Graph.cs" />
+    <Compile Include="Simulation.cs" />
     <Compile Include="SavedCircuit.cs" />
+    <Compile Include="TensionEdge.cs" />
+    <Compile Include="TensionNode.cs" />
     <Compile Include="Wire.cs" />
     <Compile Include="WireDragger.cs" />
     <Page Include="MainWindow.xaml">
