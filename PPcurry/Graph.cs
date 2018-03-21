@@ -81,9 +81,9 @@ namespace PPcurry
 
         public void MergeNodes(TensionNode node1,TensionNode node2)
         {
-            if (this.Nodes.FindIndex(node => node == node1) != null & this.Nodes.FindIndex(node => node == node2) != null)
+            if (this.Nodes.FindIndex(node => node == node1) != null & this.Nodes.FindIndex(node => node == node2) != null) //checks if the nodes are in the graph
             {
-                if (this.Nodes.FindIndex(node => node == node1) > this.Nodes.FindIndex(node => node == node2) && node1 != node2)
+                if (this.Nodes.FindIndex(node => node == node1) > this.Nodes.FindIndex(node => node == node2) && node1 != node2) //sorts the nodes
                 {
                     MergeNodes(node2, node1);
                 }
@@ -95,8 +95,7 @@ namespace PPcurry
                 {
                     if (link.Item1 == node2)
                     {
-
-                        Adjacence[k].Remove(link);
+                        Adjacence[k].Remove(link); //remove the links from node 1 to node 2
                     }
                 }
 
@@ -105,8 +104,7 @@ namespace PPcurry
                 {
                     if (link.Item1 == node1)
                     {
-
-                        Adjacence[l].Remove(link);
+                        Adjacence[l].Remove(link); //remove the links from node 2 to node 1
                     }
                 }
 
@@ -127,6 +125,19 @@ namespace PPcurry
                 Adjacence.RemoveAt(l); //Remove the Adjacence list of Node2
 
             }
+        }
+
+        public TensionNode GetNodeFromId(Tuple<int, int> id)
+        {
+            foreach (TensionNode node in this.Nodes)
+            {
+                if (node.Id == id)
+                {
+                    return node;
+                }
+                
+            }
+            return null;
         }
         #endregion
     }

@@ -11,15 +11,18 @@ namespace PPcurry
     {
         #region Attributes
         
-        private int[] CurrentFlowIndicator { get; set; } //The indicator of the way of the current
+        private List<int> CurrentFlowIndicator { get; set; } //The indicator of the way of the current
+        public Tuple<int,int> Id { get; set; } //The Id of a Node : a Tuple to associate it easily with a node of the Board
+
+
 
 
         #endregion
 
         #region Constructor
-        public TensionNode()
+        public TensionNode(Tuple<int,int> id)
         {
-            this.CurrentFlowIndicator = new int[1] { 0 };
+            Id = id;
         }
         #endregion
     }

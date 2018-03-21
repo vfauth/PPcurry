@@ -48,5 +48,12 @@ namespace PPcurry
             BoardGrid = boardGrid;
         }
         #endregion
+
+        #region Methods
+        public bool IsIsolated()
+        {
+            return !(ConnectedElements.All(element => element.Key==null));  
+        }
+        #endregion
     }
 }
