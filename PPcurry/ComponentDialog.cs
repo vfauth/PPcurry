@@ -42,19 +42,6 @@ namespace PPcurry
             Orientation = Orientation.Vertical;
             KeyDown += ComponentDialog_KeyUp;
         }
-
-        private void ComponentDialog_KeyUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Enter:
-                    ButtonOk_Click(sender, e);
-                    break;
-                case Key.Escape:
-                    ButtonCancel_Click(sender, e);
-                    break;
-            }
-        }
         #endregion
 
 
@@ -205,6 +192,22 @@ namespace PPcurry
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             ((MainWindow)Application.Current.MainWindow).AttributesDialogHost.IsOpen = false; // Close the dialog
+        }
+    
+        /// <summary>
+        /// Handler called when a key is pressed
+        /// </summary>
+        private void ComponentDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    ButtonOk_Click(sender, e);
+                    break;
+                case Key.Escape:
+                    ButtonCancel_Click(sender, e);
+                    break;
+            }
         }
         #endregion
     }
