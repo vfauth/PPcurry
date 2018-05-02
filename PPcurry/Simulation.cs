@@ -26,48 +26,39 @@ namespace PPcurry
         #region Methods
         public void GenerateGraph()
         {
-            List<List<Node>> Nodes = BoardGrid.Nodes;
-            SimulationGraphs.Clear();
-            Graph Graph = new Graph();
-            int N = Nodes.Count();
-            int M = Nodes[0].Count();
+            List<Node> nodesToGoThrough = new List<Node> { };
+            List<Node> nodesAlreadyGoneThrough = new List < Node > { };
+            List<List<Node>> nodes = this.BoardGrid.Nodes;
+            int i = nodes.Count;
+            int j = nodes[0].Count;
 
-            for (int i= 0;i<N; i++) {
-
-                for (int j=0;j<M;j++)
+            while (!(nodesToGoThrough.Any()) && i != 0 && j != 0)
+            {
+                if (!(nodes[i][j].IsIsolated()))
                 {
-                    if (!Nodes[i][j].IsIsolated()) //add the node to the graph if it is not isolated
-                    {
-                        Tuple<int, int> id = new Tuple<int, int>(i, j);
-                        Graph.AddNode(new TensionNode(id));
-                    }
-                   
+                    nodesToGoThrough.Add(nodes[i][j]); //Get the first node to analyse
                 }
             }
 
-            for (int i = 0; i < N; i++)
+            while (nodesToGoThrough.Any())
             {
+                Node currentNode = nodesToGoThrough[0];
+                nodesAlreadyGoneThrough.Add(currentNode);
+                nodesToGoThrough.RemoveAt(0);
+                List<object> components = currentNode.ConnectedElements.Keys.ToList(); //components connected to current node
 
-                for (int j = 0; j < M; j++)
+                foreach (Component component in components)
                 {
-                    
-                    if (Nodes[i][j].ConnectedElements.ContainsValue(Directions.Up)){
-                        TensionNode originNode = Graph.GetNodeFromId(new Tuple<int, int>(i, j));
-                        TensionNode destinationNode = Graph.GetNodeFromId(new Tuple<int, int>(i - 1, j));
-                        Object component = Nodes[i][j].ConnectedElements.FirstOrDefault(x => x.Value == Directions.Up).Key;
-
-                        if (component.GetType().Equals(typeof(Wire)))
-                        {
-                            TensionEdge edge = new TensionEdge(null, new Tuple<TensionNode, TensionNode>(originNode, destinationNode));
-                            Graph.AddEdge(originNode, destinationNode, edge);
-                        }
-                        else
-                        {
-                            TensionEdge edge = new TensionEdge((Component) component, new Tuple<TensionNode, TensionNode>(originNode, destinationNode));
-                            Graph.AddEdge(originNode, destinationNode, edge);
-                        }
-
+                    if (!(nodesAlreadyGoneThrough.Any(c => c == component.ConnectedNodes[0]))) //check if node has already been gone through
+                    {
+                        nodesToGoThrough.Add(component.ConnectedNodes[0]);
                     }
+
+                    if (!(nodesAlreadyGoneThrough.Any(c => c == component.ConnectedNodes[1]))) //check if node has already been gone through
+                    {
+                        nodesToGoThrough.Add(component.ConnectedNodes[1]);
+                    }
+
 
                 }
             }
