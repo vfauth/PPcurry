@@ -27,7 +27,7 @@ namespace PPcurry
         public List<List<Node>> Nodes { get; set; } = new List<List<Node>>(); // THe nodes of the board
 
         private object _SelectedElement; // The element currently selected
-        public ComponentDialog _DialogContent; // The dialog to edit a component attributes, accessible through the DialogContent property
+        public ComponentDialog DialogContent { get; set; } // The dialog to edit a component attributes, accessible through the DialogContent property
         public List<WireDragger> CurrentWireDraggers { get; set; } = new List<WireDragger>(); // The WireDraggers to drag every wire connected to a component along with it
 
         public bool AddingWire { get; set; } = false; // Whether we are in "adding wire mode"
@@ -101,18 +101,6 @@ namespace PPcurry
                 }
 
                 _SelectedElement = value;
-            }
-        }
-
-        public ComponentDialog DialogContent
-        {
-            get
-            {
-                return _DialogContent;
-            }
-            set
-            {
-                _DialogContent = value;
             }
         }
         #endregion

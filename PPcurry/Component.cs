@@ -449,6 +449,11 @@ namespace PPcurry
             Rotation = new RotateTransform();
             GraphicalComponent.RenderTransform = Rotation;
             RotationAngle = RotationAngle; // To compute the rotation center and apply the rotation to anchors
+
+            // Event handlers are not serialized
+            GraphicalComponent.MouseLeftButtonDown += Component_MouseLeftButtonDown;
+            GraphicalComponent.MouseLeftButtonUp += Component_MouseLeftButtonUp;
+            GraphicalComponent.MouseMove += Component_MouseMove;
         }
         #endregion
     }
