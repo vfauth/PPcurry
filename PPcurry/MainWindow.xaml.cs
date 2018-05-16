@@ -20,13 +20,16 @@ using System.IO;
 using System.Windows.Markup;
 using System.Xml;
 using Microsoft.Win32;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Complex32;
+using MathNet.Numerics;
 
 namespace PPcurry
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         #region Attributes
 
@@ -227,7 +230,6 @@ namespace PPcurry
                 InitialDirectory = savedFolderPath, // Default directory of saved circuits
                 Filter = "PPcurry circuit|*.ppc", // The extension of saved PPcurry circuits
                 CheckPathExists = true, // The folder must exist
-                //AddExtension = true, // Add the .ppc extension if the file has no extension
             };
 
             if ((bool)saveFileDialog.ShowDialog(this)) // If a file is selected and OK is clicked
@@ -323,6 +325,14 @@ namespace PPcurry
                     MultipleWiresModeTextBlock.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        /// <summary>
+        /// Handler called when the simulation button is clicked
+        /// </summary>
+        private void LaunchSimulationButton_Click(object sender, RoutedEventArgs e)
+        {
+            new Simulation(BoardGrid);
         }
 
         /// <summary>

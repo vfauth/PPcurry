@@ -45,11 +45,6 @@ namespace PPcurry
         #endregion
 
 
-        #region Accessors/Mutators
-        
-        #endregion
-
-
         #region Constructor
 
         public Wire(BoardGrid boardGrid, Node originNode)

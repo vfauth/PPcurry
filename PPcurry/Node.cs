@@ -27,7 +27,7 @@ namespace PPcurry
 
         [NonSerialized()] private BoardGrid BoardGrid; // The board on which is this Node
         public Point Position { get; set; } // The position of the Node
-        public Dictionary<object, Directions> ConnectedElements = new Dictionary<object, Directions>(); // The elements connected (Up, Right, Down, Left)
+        public Dictionary<object, Directions> ConnectedElements { get; set; } = new Dictionary<object, Directions>(); // The elements connected (Up, Right, Down, Left)
         #endregion
 
 
@@ -36,8 +36,19 @@ namespace PPcurry
         public Node(Point position, BoardGrid boardGrid)
         {
             // Save attributes
-            BoardGrid = boardGrid as BoardGrid;
+            BoardGrid = boardGrid;
             Position = position;
+        }
+        #endregion
+
+
+        #region Methods
+        /// <summary>
+        /// Check whether the Node is connected to any other element.
+        /// </summary>
+        public bool IsIsolated()
+        {
+            return (ConnectedElements.Keys.Count == 0);
         }
 
         /// <summary>
@@ -46,13 +57,6 @@ namespace PPcurry
         public void Deserialized(BoardGrid boardGrid)
         {
             BoardGrid = boardGrid;
-        }
-        #endregion
-
-        #region Methods
-        public bool IsIsolated()
-        {
-            return !(ConnectedElements.All(element => element.Key==null));  
         }
         #endregion
     }
