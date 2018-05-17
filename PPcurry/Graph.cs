@@ -7,12 +7,14 @@ using System.Diagnostics;
 
 namespace PPcurry
 {
-    class Graph
+    public class Graph
     {
         #region Attributes
         public BoardGrid BoardGrid { get; } // The BoardGrid associated to the graph
         public List<GraphNode> Nodes { get; } = new List<GraphNode>(); // The Nodes of the graph
         public List<GraphLink> Links { get; } = new List<GraphLink>(); // The Links of the graph
+        public Dictionary<int, GraphNode> IdNodes = new Dictionary<int, GraphNode>(); //Allow to get a node with its ID
+        public Dictionary<int, GraphLink> IdLinks = new Dictionary<int, GraphLink>(); //Allow to get a link with its ID
         #endregion
 
 
@@ -21,6 +23,8 @@ namespace PPcurry
         {
             BoardGrid = boardGrid;
             GenerateGraph();
+            NumberNodesLinks();
+            BoardGrid.DisplayGraphIds(this);
         }
         #endregion
 
@@ -117,6 +121,46 @@ namespace PPcurry
             }
             node1.LinkedNodes.Remove(node2);
             Nodes.Remove(node2);
+        }
+        
+        /// <summary>
+        /// Attribute an ID to each node and link
+        /// </summary>
+        private void NumberNodesLinks()
+        {
+            if (Nodes.Count == 0)
+            {
+                return;
+            }
+
+            // Browse the graph with a depth-first search algorithm
+            List<GraphNode> nodesMarked = new List<GraphNode>();
+            Stack<GraphNode> nodesToExplore = new Stack<GraphNode>();
+            nodesToExplore.Push(Nodes[0]);
+            int counterNodes = 0;
+            while (nodesToExplore.Count > 0)
+            {
+                GraphNode node = nodesToExplore.Pop();
+                node.Id = counterNodes;
+                nodesMarked.Add(node);
+                counterNodes++;
+                foreach (GraphNode linkedNode in node.LinkedNodes)
+                {
+                    if (!nodesMarked.Contains(linkedNode) && !nodesToExplore.Contains(linkedNode))
+                    {
+                        nodesToExplore.Push(linkedNode);
+                    }
+                }
+            }
+
+            // Give IDs to links in the order of ascending i+j+(j-i), where i and j are the IDs of the nodes linked by this link
+            List<GraphLink> linksSorted = Links.OrderBy(link => link.ConnectedNodes.Item1.Id + link.ConnectedNodes.Item2.Id).ToList();
+            int counterLinks = 0;
+            foreach (GraphLink link in linksSorted)
+            {
+                link.Id = counterLinks;
+                counterLinks++;
+            }
         }
         #endregion
     }

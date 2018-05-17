@@ -8,11 +8,12 @@ using System.Diagnostics;
 
 namespace PPcurry
 {
-    class GraphLink
+    public class GraphLink
     {
         #region Attributes
         public Component LinkComponent { get; set; } // The component constituting the link
         public Tuple<GraphNode, GraphNode> ConnectedNodes { get; } // The nodes linked by this link
+        public int Id { get; set; } // The ID of the link
         #endregion
 
 

@@ -8,12 +8,13 @@ using System.Diagnostics;
 
 namespace PPcurry
 {
-    class GraphNode
+    public class GraphNode
     {
         #region Attributes
         public List<Node> GridNodes { get; } // The Nodes constituting this GraphNode
         public List<GraphLink> ConnectedLinks { get; } = new List<GraphLink>(); // The links connected to this node
         public List<GraphNode> LinkedNodes { get; } = new List<GraphNode>(); // The nodes connected to this node by links
+        public int Id { get; set; } // The ID of the node
         #endregion
 
 

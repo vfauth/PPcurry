@@ -25,6 +25,7 @@ namespace PPcurry
         public List<Component> ComponentsOnBoard { get; set; } = new List<Component>(); // The list of components on the board
         public List<Wire> WiresOnBoard { get; set; } = new List<Wire>(); // The list of wires on the board
         public List<List<Node>> Nodes { get; set; } = new List<List<Node>>(); // THe nodes of the board
+        private List<TextBlock> GraphIds; // The list oif graph IDs (nodes and links) displayed
 
         private object _SelectedElement; // The element currently selected
         public ComponentDialog DialogContent { get; set; } // The dialog to edit a component attributes, accessible through the DialogContent property
@@ -231,6 +232,88 @@ namespace PPcurry
                 nearestY = ((int)(Y / gridTotalSpacing) + 1);
             }
             return Nodes[nearestY][nearestX];
+        }
+
+        /// <summary>
+        /// Display all nodes and links IDs of a graph
+        /// </summary>
+        public void DisplayGraphIds(Graph graph)
+        {
+            RemoveGraphIds(); // Remove former IDs before displaying the newer ones
+            GraphIds = new List<TextBlock>();
+
+            // Display nodes IDs
+            foreach (GraphNode node in graph.Nodes)
+            {
+                double centerX = 0; // Position of the center of all nodes
+                double centerY = 0;
+                foreach (Node gridNode in node.GridNodes)
+                {
+                    centerX += gridNode.Position.X;
+                    centerY += gridNode.Position.Y;
+                }
+                centerX /= node.GridNodes.Count;
+                centerY /= node.GridNodes.Count;
+                // Seek the node closest to the center
+                Node nearestNode = null;
+                double minDistance = double.MaxValue; // The distance to the cenetr of the nearest node
+                foreach (Node gridNode in node.GridNodes)
+                {
+                    double distance = Math.Sqrt(Math.Pow(gridNode.Position.X - centerX, 2) + Math.Pow(gridNode.Position.Y - centerY, 2));
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        nearestNode = gridNode;
+                    }
+                }
+
+                TextBlock text = new TextBlock
+                {
+                    Text = "N" + node.Id.ToString(),
+                    Padding = new Thickness(5, 0, 0, 0),
+                    FontSize = 20
+                };
+                Canvas.SetLeft(text, nearestNode.Position.X + GridThickness);
+                Canvas.SetTop(text, nearestNode.Position.Y + GridThickness);
+                this.Children.Add(text);
+                GraphIds.Add(text);
+            }
+
+            // Display links IDs
+            foreach (GraphLink link in graph.Links)
+            {
+                // The ID will be displayed at the top right of the component
+                TextBlock text = new TextBlock
+                {
+                    Text = "B" + link.Id.ToString(),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 20
+                };
+                text.Measure(new Size(double.MaxValue, double.MaxValue)); // Without that line, text.DesiredSize is null
+                double posX = link.LinkComponent.Position.X + link.LinkComponent.GraphicalComponent.Width / 2;
+                double posY = link.LinkComponent.ImagePosition.Y + Properties.Settings.Default.ComponentBorderThickness - text.DesiredSize.Height;
+
+                Canvas.SetLeft(text, posX);
+                Canvas.SetTop(text, posY);
+                this.Children.Add(text);
+                GraphIds.Add(text);
+            }
+        }
+
+        /// <summary>
+        /// Remove all displayed graph IDs
+        /// </summary>
+        public void RemoveGraphIds()
+        {
+            if (GraphIds == null)
+            {
+                return;
+            }
+            foreach (TextBlock id in GraphIds)
+            {
+                this.Children.Remove(id);
+            }
+            GraphIds = null;
         }
 
         /// <summary>
