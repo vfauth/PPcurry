@@ -122,6 +122,18 @@
                                Add multiple<LineBreak/>
                                wires
                     </TextBlock>
+
+                    <Separator />
+                    
+                    <Button Name="LaunchSimulationButton"
+                            Width="48"
+                            Height="48"
+                            Margin="5"
+                            ToolTip="Launch simulation"
+                            Click="LaunchSimulationButton_Click"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon Kind="Play" Height="30" Width="30" />
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
 

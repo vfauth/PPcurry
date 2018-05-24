@@ -33,7 +33,6 @@ namespace PPcurry
 
 
         #region Constructor
-
         /// <summary>
         /// Create controls to allow editing of components attributes
         /// </summary>

@@ -27,7 +27,7 @@ namespace PPcurry
 
         [NonSerialized()] private BoardGrid BoardGrid; // The board on which is this component
         [NonSerialized()] private Image ComponentImage;
-        private Uri ImageSource; // The Uri to the image source must be saved to reload the image after deserialization
+        private readonly Uri ImageSource; // The Uri to the image source must be saved to reload the image after deserialization
         [NonSerialized()] private Border _GraphicalComponent; // The Border used to mark selection and which contains the Image accessed with the GraphicalComponent property
         private Point _ComponentPosition; // The position of the component with its border on the grid, accessed through the ComponentPosition property
         public Vector ImageSize { get; set; } // The displayed image size as a Vector
@@ -449,6 +449,11 @@ namespace PPcurry
             Rotation = new RotateTransform();
             GraphicalComponent.RenderTransform = Rotation;
             RotationAngle = RotationAngle; // To compute the rotation center and apply the rotation to anchors
+
+            // Event handlers are not serialized
+            GraphicalComponent.MouseLeftButtonDown += Component_MouseLeftButtonDown;
+            GraphicalComponent.MouseLeftButtonUp += Component_MouseLeftButtonUp;
+            GraphicalComponent.MouseMove += Component_MouseMove;
         }
         #endregion
     }
