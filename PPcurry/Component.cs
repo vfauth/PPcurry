@@ -27,7 +27,7 @@ namespace PPcurry
 
         [NonSerialized()] private BoardGrid BoardGrid; // The board on which is this component
         [NonSerialized()] private Image ComponentImage;
-        private readonly Uri ImageSource; // The Uri to the image source must be saved to reload the image after deserialization
+        private readonly string ImageSource; // The path to the image source must be saved to reload the image after deserialization; it is a relative path because drive letters can change across computers
         [NonSerialized()] private Border _GraphicalComponent; // The Border used to mark selection and which contains the Image accessed with the GraphicalComponent property
         private Point _ComponentPosition; // The position of the component with its border on the grid, accessed through the ComponentPosition property
         public Vector ImageSize { get; set; } // The displayed image size as a Vector
@@ -133,12 +133,28 @@ namespace PPcurry
             BoardGrid = boardGrid as BoardGrid;
             _Name = xmlElement.Element("name").Value;
 
+            // Check the existence of the source file
+            try
+            {
+                if (!File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value)))
+                {
+                    throw new System.ApplicationException($"The file {System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value)} cannot be found.");
+                }
+            }
+            catch (System.ApplicationException e)
+            {
+                ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log and close the processus
+            }
             // Display the image
-            ImageSource = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value));
+            ImageSource = System.IO.Path.Combine(Properties.Settings.Default.ResourcesFolder, xmlElement.Element("image").Value);
+            
             ComponentImage = new Image
             {
-                Source = new BitmapImage(ImageSource) // Image to display
+                Source = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ImageSource))), // The image to display
             };
+            
+
+
 
             GraphicalComponent = new Border
             {
@@ -425,9 +441,21 @@ namespace PPcurry
         {
             BoardGrid = boardGrid;
 
+            // Check the existence of the source file
+            try
+            {
+                if (!File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ImageSource)))
+                {
+                    throw new System.ApplicationException($"The file {System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ImageSource)} cannot be found.");
+                }
+            }
+            catch (System.ApplicationException e)
+            {
+                ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log and close the processus
+            }
             ComponentImage = new Image
             {
-                Source = new BitmapImage(ImageSource) // Image to display
+                Source = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ImageSource))), // The image to display
             };
 
             GraphicalComponent = new Border

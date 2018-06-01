@@ -68,8 +68,20 @@ namespace PPcurry
                 LogError(e); // Write error to log and close the processus
             }
             XmlComponentsList = XElement.Load(@"./Data/Components.xml"); // Load the XML file
-            foreach (XElement element in XmlComponentsList.Elements())
+            foreach (XElement element in XmlComponentsList.Elements()) // Load every image
             {
+                // Check the existence of the source file
+                try
+                {
+                    if (!File.Exists(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value)))
+                    {
+                        throw new System.ApplicationException($"The file {System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value)} cannot be found.");
+                    }
+                }
+                catch (System.ApplicationException e)
+                {
+                    ((MainWindow)Application.Current.MainWindow).LogError(e); // Write error to log and close the processus
+                }
                 Image newComponent = new Image
                 {
                     Source = new BitmapImage(new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ResourcesFolder, element.Element("image").Value))), // The image to display
